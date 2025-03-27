@@ -1,0 +1,26 @@
+{
+    "pages": [
+        "pages/index/index",
+        "pages/address/address"
+    ],
+    "requiredPrivateInfos": [
+        "getLocation",
+        "chooseLocation"
+    ],
+    "permission": {
+        "scope.userLocation": {
+            "desc": "你的位置信息将用于小程序获取当前位置的天气情况"
+        }
+    },
+    "window":{ 
+        "navigationBarTextStyle":"black",
+        "enablePullDownRefresh":true, 
+        "backgroundTextStyle":"light"
+      },
+    "usingComponents": {
+        "van-icon": "@vant/weapp/icon/index"
+    },
+    "navigationStyle": "custom",
+    "sitemapLocation": "sitemap.json",
+    "lazyCodeLoading": "requiredComponents"
+}

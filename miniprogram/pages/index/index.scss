@@ -1,0 +1,258 @@
+/**index.wxss**/
+page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.scrollarea {
+    overflow-y: hidden;
+}
+
+/* 背景图铺满并置于底层 */
+.bg {
+    /* 固定位置，使背景图不会随页面滚动 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    /* 让背景图覆盖整个屏幕宽度 */
+    width: 100vw;
+    /* 让背景图覆盖整个屏幕高度 */
+    height: 100vh;
+    /* 确保背景图在最底层 */
+    z-index: -1;
+}
+
+// ---------------------------------------------------------标题
+.title {
+    display: flex;
+    position: relative;
+    z-index: 1;
+    padding: 100rpx 0rpx 20rpx 10rpx;
+    align-items: center;
+}
+
+//--------------------------------------------------------- header
+.header {
+    height: 350rpx;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* 10% 透明度 */
+    background-color: rgba(0, 0, 0, 0.1);
+    /* 50% 透明度 */
+    //background-color: rgba(0, 0, 0, 0.5);
+    /* 90% 透明度 */
+    //background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 20rpx;
+    margin: 10rpx;
+    font-size: 35rpx;
+}
+
+.temperature {
+    font-size: 120rpx;
+}
+
+.weather {
+    font-weight: bold;
+}
+
+//--------------------------------------------------------- 昨天今天明天
+.ytt {
+    display: flex;
+    justify-content: space-evenly;
+    /* 10% 透明度 */
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 20rpx;
+    margin: 10rpx;
+    padding: 20rpx;
+    font-size: 35rpx;
+    white-space: nowrap;
+}
+
+/* 单个天气卡片 */
+.item {
+    width: 180rpx;
+    padding: 20rpx;
+    text-align: center;
+    margin-right: 20rpx;
+    border-radius: 10rpx;
+
+    &:first-child {
+        background-color: lightsalmon;
+    }
+
+    &:nth-child(2) {
+        background-color: lightskyblue;
+    }
+
+    &:last-child {
+        background-color: lightseagreen;
+        margin-right: 0;
+    }
+}
+
+/* 文字样式 */
+.temp text,
+.weather text {
+    display: block;
+    font-size: 28rpx;
+}
+
+/* 图标大小 */
+.weathericon {
+    width: 60rpx;
+    height: 60rpx;
+    margin-top: 10rpx;
+    /* 图标变成白色 */
+    filter: brightness(0) invert(1);
+}
+
+// ---------------------------------------------------------24小时天气
+.hourweather24 {
+    display: flex;
+    height: 200rpx;
+    /* 让子项在父容器内上下居中 */
+    align-items: center;
+    /* 10% 透明度 */
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 20rpx;
+    margin: 10rpx;
+    padding: 10rpx;
+    font-size: 35rpx;
+    /* 图标变成白色 */
+    filter: brightness(0) invert(1);
+}
+
+.scroll-x {
+    width: 100%;
+    white-space: nowrap;
+
+    .lifeitem {
+        display: inline-block;
+        flex-wrap: nowrap;
+        margin-right: 16rpx;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
+.hourweather24_item {
+    display: inline-block;
+    flex-direction: column;
+    padding: 10rpx;
+    font-size: 30rpx;
+    &:last-child {
+        margin-right: 0;
+    }
+
+    .hourweather24_item_info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* 水平居中 */
+    }
+
+    .hourweather24_item_img {
+        width: 50rpx;
+        height: 50rpx;
+        margin-bottom: 10rpx;
+    }
+}
+
+// ---------------------------------------------------------7天预报
+.yubao7day {
+    display: flex;
+    flex-direction: column;
+    height: 550rpx;
+    /* 10% 透明度 */
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 20rpx;
+    margin: 10rpx;
+    padding: 10rpx;
+    font-size: 35rpx;
+
+    .yubao7day_scrollx {
+        width: 100%;
+        white-space: nowrap;
+        /* 防止换行 */
+    }
+}
+
+.yubao7day_item {
+    display: inline-block;
+    width: 14%;
+    /* 100% / 7 个 item */
+    text-align: center;
+    /* 内容居中 */
+    box-sizing: border-box;
+    /* 防止 padding 影响宽度 */
+    padding: 0 10rpx;
+    /* 可选，增加一些间距 */
+    margin-left: 5rpx;
+
+    &:last-child {
+        margin-left: 0rpx;
+        /* 可选，增加一些间距 */
+    }
+}
+
+.yubao7day_item_info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 内容居中 */
+}
+
+.yubao7day_item_info image {
+    width: 40rpx;
+    /* 图标变成白色 */
+    filter: brightness(0) invert(1);
+}
+
+.yubao7day_item_info text {
+    font-size: 25rpx;
+}
+
+// 折线图
+.weatherCanvas {
+    width: 100%;
+    height: 250rpx;
+}
+
+// ---------------------------------------------------------生活指数
+.life {
+    display: flex;
+    flex-wrap: wrap;              /* 弹性盒子换行 */
+    align-items: center;            /* 垂直居中对齐 */
+    height: 540rpx;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 20rpx;
+    margin: 10rpx;
+    margin-bottom: 20rpx;
+    padding: 10rpx;
+    font-size: 28rpx;
+}
+
+.life_item {
+    width: 25%;                    /* 每个 item 占宽度的 25% */
+    display: flex;
+    justify-content: center;       /* 水平居中 */
+    align-items: center;           /* 垂直居中 */
+}
+
+.life_item_info {
+    display: flex;
+    flex-direction: column;        /* 竖向排列图标和文字 */
+    align-items: center;           /* 图标和文字居中 */
+}
+
+.lifeimg {
+    width: 60rpx;
+    height: 60rpx;
+}

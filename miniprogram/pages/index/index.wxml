@@ -1,0 +1,111 @@
+<!--index.wxml-->
+<view>
+    <view class="scrollarea">
+        <!-- 背景图 -->
+        <image class="bg" src="../../assets/bg/bg.png" mode="heightFix" />
+        <scroll-view scroll-y>
+            <!--标题-->
+            <view class="title" bind:tap="clickAddress">
+                <van-icon name="plus" size="35rpx" />
+                <!--<image class="add" src="../../assets/title/icon_add.png" mode="heightFix" />-->
+                <text style="color: white;margin-inline-start: 5rpx;">{{ cityData.adm2 }} · {{ cityData.name }}</text>
+            </view>
+            <!--头部-->
+            <view class="header">
+                <view>
+                    <text class="temperature">{{shishitianqi.temp}}°</text>
+                </view>
+                <view>
+                    <text class="weather">天气：{{shishitianqi.text}} </text>
+                    <text class="comfort"> 风速等级：{{shishitianqi.windScale}} 风速：{{shishitianqi.windSpeed}}公里/小时</text>
+                </view>
+                <view>
+                    <text>{{shishitianqi.windDir}}</text>
+                    <text> | </text>
+                    <text>湿度{{shishitianqi.humidity}}℃</text>
+                    <text> | </text>
+                    <text>空气质量·{{zhiliang}}</text>
+                </view>
+            </view>
+            <!--今天、明天、后天-->
+            <text style="margin-left: 10rpx;">今天、明天、后天</text>
+            <view class="ytt">
+                <block wx:for="{{daily3Weather}}" wx:key="index">
+                    <view class="item">
+                        <view class="temp">
+                            <!--明天、明天、后天-->
+                            <text>{{item.dayLabel}}</text>
+                            <!--最高温度和最低温度-->
+                            <text>{{item.tempMax}}/{{item.tempMin}}℃</text>
+                        </view>
+                        <view class="weather">
+                            <!--多云、阴天-->
+                            <text>{{item.textDay}}</text>
+                            <!--天气图片-->
+                            <image class="weathericon" src="../../assets/icons/{{item.iconDay}}-fill.svg"></image>
+                        </view>
+                    </view>
+                </block>
+            </view>
+            <!--24小时日落时间+天气显示-->
+            <text style="margin-left: 10rpx;">24小时预报</text>
+            <view class="hourweather24">
+                <scroll-view scroll-x class="scroll-x">
+                    <block wx:for="{{hourlyWeather}}" wx:key="index">
+                        <view class="hourweather24_item">
+                            <view class="hourweather24_item_info">
+                                <text>{{item.time}}</text>
+                                <image class="hourweather24_item_img" src="../../assets/icons/{{item.icon}}-fill.svg"></image>
+                                <text>{{item.temp}}°</text>
+                            </view>
+                        </view>
+                    </block>
+                </scroll-view>
+            </view>
+            <!--7天预报-->
+            <text style="margin-left: 10rpx;">7天预报</text>
+            <view class="yubao7day">
+                <view class="yubao7day_scrollx">
+                    <block wx:for="{{daily7Weather}}" wx:key="index">
+                        <view class="yubao7day_item">
+                            <view class="yubao7day_item_info">
+                                <text>{{item.weekday}}</text> <!-- 星期几 -->
+                                <text>{{item.date}}</text> <!-- 日期 -->
+                                <text>{{item.textDay}}</text> <!-- 天气描述 -->
+                                <image class="lifeimg" src="../../assets/icons/{{item.iconDay}}-fill.svg"></image>
+                            </view>
+                        </view>
+                    </block>
+                </view>
+                <!--折线图-->
+                <view>
+                    <canvas canvas-id="weatherCanvas" class="weatherCanvas" />
+                </view>
+                <view class="yubao7day_scrollx">
+                    <block wx:for="{{daily7Weather}}" wx:key="index">
+                        <view class="yubao7day_item">
+                            <view class="yubao7day_item_info">
+                                <image class="lifeimg" src="../../assets/icons/{{item.iconNight}}-fill.svg"></image>
+                                <text>{{item.windDirDay}}</text> <!-- 风向 -->
+                                <text>{{item.windScaleDay}}级</text> <!-- 风力等级 -->
+                            </view>
+                        </view>
+                    </block>
+                </view>
+            </view>
+            <!--生活指数-->
+            <text style="margin-left: 10rpx;">生活指数</text>
+            <view class="life">
+                <block wx:for="{{lifeIndices}}" wx:key="index">
+                    <view class="life_item" bindtap="showLifeDetail" data-text="{{item.text}}">
+                        <view class="life_item_info">
+                            <image class="lifeimg" src="../../assets/life/life_{{item.type}}.png"></image>
+                            <text>{{item.name}}·{{item.level}}</text>
+                            <text>{{item.category}}</text>
+                        </view>
+                    </view>
+                </block>
+            </view>
+        </scroll-view>
+    </view>
+</view>

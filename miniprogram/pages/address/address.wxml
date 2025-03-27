@@ -1,0 +1,35 @@
+<!--pages/address/address.wxml-->
+<view class="container" bindtouchstart="onTouchStart">
+    <image class="bg" src="../../assets/bg/bg_address.png" mode="heightFix"></image>
+    <scroll-view class="scrollarea" scroll-y>
+        <!-- 标题 -->
+        <view class="title" bind:tap="clickBack">
+            <van-icon name="arrow-left" size="40rpx" />
+            <text style="color: white;margin-inline-start: 5rpx;">返回</text>
+        </view>
+        <!-- 搜索框 -->
+        <view>
+            <view class="search-box">
+                <image src="../../assets/search/icon_search.png" class="search-icon" />
+                <input type="text" placeholder="输入城市名称" bindinput="onInput" value="{{searchValue}}" />
+            </view>
+            <!-- 城市列表（固定浮动） -->
+            <view class="city-list" wx:if="{{cityList.length > 0}}">
+                <block wx:for="{{cityList}}" wx:key="index">
+                    <view class="city-item" bindtap="onSelectCity" data-city="{{item}}">
+                        <text>{{item.adm1}}·{{item.name}}</text>
+                    </view>
+                </block>
+            </view>
+        </view>
+        <!-- 热门城市 -->
+        <view>
+            <text style="margin-left: 10rpx;">热门城市</text>
+            <view class="hotcity">
+                <view class="city-box" wx:for="{{hotCities}}" wx:key="id" bindtap="onSelectHotCity" data-city="{{item}}">
+                    <text>{{item.name}}</text>
+                </view>
+            </view>
+        </view>
+    </scroll-view>
+</view>

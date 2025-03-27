@@ -1,0 +1,126 @@
+/**index.wxss**/
+page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+/* 背景图铺满并置于底层 */
+.bg {
+    position: fixed; /* 固定背景，防止撑开页面 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; /* 确保背景铺满整个屏幕 */
+    z-index: 0;
+}
+
+// ---------------------------------------------------------标题
+.title {
+    display: flex;
+    position: relative;
+    z-index: 1;
+    padding: 100rpx 0rpx 20rpx 10rpx;
+    align-items: center;
+}
+
+// ---------------------------------------------------------搜索
+.search-box {
+    position: relative; /* 让 .city-list 以它为基准定位 */
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    background-color: #f3f5f7;
+    padding: 10rpx;
+    border-radius: 50rpx;
+    width: 90%;
+    margin: 20rpx auto;
+}
+
+/* 搜索图标 */
+.search-icon {
+    width: 32rpx;
+    height: 32rpx;
+    margin: 0 10rpx;
+}
+
+/* 输入框 */
+input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 28rpx;
+    color: #333;
+}
+input::placeholder {
+    color: #999;
+}
+
+/* 城市列表 */
+.city-list {
+    position: fixed; /* 固定位置，不影响后面布局 */
+    left: 50%;
+    transform: translateX(-50%); /* 居中 */
+    width: 90%;
+    background: #fff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10rpx;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100; /* 确保浮动在最上层 */
+}
+
+/* 城市列表项 */
+.city-item {
+    padding: 20rpx;
+    border-bottom: 1px solid #eee;
+    font-size: 30rpx;
+    color: #333;
+}
+
+/* 最后一个不显示底部边框 */
+.city-item:last-child {
+    border-bottom: none;
+}
+// ---------------------------------------------------------热门城市下的item
+.hotcity {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20rpx;
+    margin: 10rpx;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 20rpx;
+}
+
+.city-box {
+    width: 200rpx;
+    height: 60rpx;
+    margin-right: 20rpx;
+    margin-bottom: 20rpx;
+    background-color: #fff;
+    border-radius: 10rpx;
+    display: flex;
+    justify-content: center;
+    /* 水平居中 */
+    align-items: center;
+    /* 垂直居中 */
+    box-sizing: border-box;
+
+    /* 第3个去掉右边距 */
+    &:nth-child(3n) {
+        margin-right: 0;
+    }
+
+    /* 最后一行的元素并去掉 margin-bottom */
+    &:nth-last-child(-n + 3) {
+        margin-bottom: 0;
+    }
+}
+
+.city-box text {
+    font-size: 28rpx;
+    color: #000;
+    display: block;
+}
