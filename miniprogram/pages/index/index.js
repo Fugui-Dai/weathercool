@@ -305,17 +305,17 @@ Page({
         const text = e.currentTarget.dataset.text; // 获取 text
         // 如果文本过长，使用 wx.showModal，否则 wx.showToast
         // if (text.length > 7) {
-        //     wx.showModal({
-        //         title: "生活指数详情",
-        //         content: text,
-        //         showCancel: false
-        //     });
+             wx.showModal({
+                 title: "生活指数详情",
+                 content: text,
+                 showCancel: false
+             });
         // } else {
-        wx.showToast({
-            title: text,
-            icon: "none",
-            duration: 2000
-        });
+        //wx.showToast({
+        //    title: text,
+        //    icon: "none",
+        //    duration: 2000
+        //});
         //}
     },
     /**
