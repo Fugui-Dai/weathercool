@@ -396,5 +396,21 @@ Page({
      * 用户点击右上角分享
      */
     onShareAppMessage: function () {
+        // 自定义转发内容
+        return{
+            title:'太酷啦air',
+            path:'/pages/index/index',
+            imageUrl:'../../assets/logo.jpg'
+        }
+    },
+    /**
+     * 监听右上角 分享到朋友圏 按钮
+     */
+    onShareTimeline(){
+        // 自定义分享的内容
+        return{
+            title:'太酷啦air',
+            imageUrl:'../../assets/logo.jpg'
+        }
     }
 })
