@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "贪吃蛇小游戏",
+  "navigationBarBackgroundColor": "#4CAF50",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f8f8f8",
+  "disableScroll": true,
+  "enablePullDownRefresh": false,
+  "usingComponents": {}
+} 

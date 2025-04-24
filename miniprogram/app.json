@@ -1,7 +1,8 @@
 {
     "pages": [
         "pages/index/index",
-        "pages/address/address"
+        "pages/address/address",
+        "pages/snake/snake"
     ],
     "requiredPrivateInfos": [
         "getLocation",

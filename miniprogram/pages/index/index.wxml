@@ -5,10 +5,16 @@
         <image class="bg" src="../../assets/bg/bg.png" mode="heightFix" />
         <scroll-view scroll-y>
             <!--标题-->
-            <view class="title" bind:tap="clickAddress">
-                <van-icon name="plus" size="35rpx" />
-                <!--<image class="add" src="../../assets/title/icon_add.png" mode="heightFix" />-->
-                <text style="color: white;margin-inline-start: 5rpx;">{{ cityData.adm2 }} · {{ cityData.name }}</text>
+            <view class="title">
+                <view bindtap="clickAddress" style="display: flex; align-items: center;">
+                    <van-icon name="plus" size="35rpx" />
+                    <!--<image class="add" src="../../assets/title/icon_add.png" mode="heightFix" />-->
+                    <text style="color: white;margin-inline-start: 5rpx;">{{ cityData.adm2 }} · {{ cityData.name }}</text>
+                </view>
+                <!-- 贪吃蛇游戏入口 -->
+                <view class="snake-game-entry" bindtap="navigateToSnakeGame">
+                    <image class="snake-icon" src="../../assets/icons/snake-icon.svg" mode="aspectFit" />
+                </view>
             </view>
             <!--头部-->
             <view class="header">

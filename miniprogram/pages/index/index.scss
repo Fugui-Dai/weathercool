@@ -339,3 +339,22 @@ page {
     width: 60rpx;
     height: 60rpx;
 }
+
+.snake-game-entry {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 15rpx;
+    position: relative;
+}
+
+.snake-icon {
+    width: 40rpx;
+    height: 40rpx;
+    animation: wiggle 2s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(10deg); }
+    75% { transform: rotate(-10deg); }
+}
