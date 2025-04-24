@@ -76,7 +76,8 @@ Page({
       '#FFC6FF', // 浅粉色
       '#FF9E00', // 琥珀色
       '#BC00DD'  // 紫罗兰色
-    ]
+    ],
+    isSmallScreen: false
   },
 
   // 检查坐标是否是蛇头
@@ -97,14 +98,28 @@ Page({
   },
 
   onLoad: function() {
-    // 加载最高分数
-    const highScore = wx.getStorageSync('snakeHighScore') || 0;
+    // Get system info to detect screen size
+    const systemInfo = wx.getSystemInfoSync();
+    const isSmallScreen = systemInfo.windowHeight < 700;
+    
+    // Initialize the game
     this.setData({
-      highScore: highScore
+      isSmallScreen: isSmallScreen
     });
     
-    // 初始化游戏
     this.initGame();
+
+    // Check for high score in storage
+    try {
+      const highScore = wx.getStorageSync('snakeHighScore');
+      if (highScore) {
+        this.setData({
+          highScore: highScore
+        });
+      }
+    } catch (e) {
+      console.error('Failed to get high score from storage');
+    }
   },
 
   onUnload: function() {

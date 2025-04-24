@@ -1,8 +1,7 @@
 <!--pages/snake/snake.wxml-->
-<view class="snake-container">
+<view class="snake-container {{isSmallScreen ? 'small-screen' : ''}}">
   <view class="header">
-    <text class="title" style="text-shadow: 0 0 10rpx {{snakeColor}};">贪吃蛇小游戏</text>
-    <view class="score-container {{scoreAnimation ? 'pulse' : ''}}" style="background: linear-gradient(135deg, {{snakeColor}} 0%, {{snakeBodyColor}} 100%);">
+    <view class="score-container {{scoreAnimation ? 'pulse' : ''}} title" style="background: linear-gradient(135deg, {{snakeColor}} 0%, {{snakeBodyColor}} 100%);">
       <text class="score">得分: {{score}}</text>
     </view>
     
@@ -17,19 +16,21 @@
     </view>
   </view>
   
-  <view class="game-board" 
-        bindtouchstart="handleTouchStart" 
-        bindtouchend="handleTouchEnd">
-    
-    <view class="board-grid">
-      <block wx:for="{{boardSize}}" wx:for-index="y" wx:key="y">
-        <view class="grid-row">
-          <block wx:for="{{boardSize}}" wx:for-index="x" wx:key="x">
-            <view class="cell {{game.isSnakeHead(x, y, snake) ? 'snake-head' : (game.isSnakeBody(x, y, snake) ? 'snake-body' : '')}} {{game.isFood(x, y, food) ? 'food' : ''}} {{game.isSpecialFood(x, y, specialFood) ? 'special-food' : ''}} {{game.isObstacle(x, y, obstacles) ? 'obstacle' : ''}}"
-                  style="{{game.isSnakeHead(x, y, snake) ? 'background-color:' + snakeColor + ';box-shadow:0 0 15rpx ' + snakeColor + ';' : ''}}{{game.isSnakeBody(x, y, snake) ? 'background-color:' + game.getSnakeSegmentColor(x, y, snake, snakeSegmentColors) + ';box-shadow:0 0 10rpx ' + game.getSnakeSegmentColor(x, y, snake, snakeSegmentColors) + ';' : ''}}{{game.isFood(x, y, food) ? 'background:radial-gradient(circle at center, ' + foodColor + ' 0%, ' + foodColorDark + ' 100%);box-shadow:0 0 20rpx ' + foodColor + ';' : ''}}{{game.isSpecialFood(x, y, specialFood) ? 'background:radial-gradient(circle at center, ' + specialFood.color + ' 0%, ' + specialFood.colorDark + ' 100%);box-shadow:0 0 25rpx ' + specialFood.color + ';' : ''}}"></view>
-          </block>
-        </view>
-      </block>
+  <view class="middle-section">
+    <view class="game-board" 
+          bindtouchstart="handleTouchStart" 
+          bindtouchend="handleTouchEnd">
+      
+      <view class="board-grid">
+        <block wx:for="{{boardSize}}" wx:for-index="y" wx:key="y">
+          <view class="grid-row">
+            <block wx:for="{{boardSize}}" wx:for-index="x" wx:key="x">
+              <view class="cell {{game.isSnakeHead(x, y, snake) ? 'snake-head' : (game.isSnakeBody(x, y, snake) ? 'snake-body' : '')}} {{game.isFood(x, y, food) ? 'food' : ''}} {{game.isSpecialFood(x, y, specialFood) ? 'special-food' : ''}} {{game.isObstacle(x, y, obstacles) ? 'obstacle' : ''}}"
+                    style="{{game.isSnakeHead(x, y, snake) ? 'background-color:' + snakeColor + ';box-shadow:0 0 15rpx ' + snakeColor + ';' : ''}}{{game.isSnakeBody(x, y, snake) ? 'background-color:' + game.getSnakeSegmentColor(x, y, snake, snakeSegmentColors) + ';box-shadow:0 0 10rpx ' + game.getSnakeSegmentColor(x, y, snake, snakeSegmentColors) + ';' : ''}}{{game.isFood(x, y, food) ? 'background:radial-gradient(circle at center, ' + foodColor + ' 0%, ' + foodColorDark + ' 100%);box-shadow:0 0 20rpx ' + foodColor + ';' : ''}}{{game.isSpecialFood(x, y, specialFood) ? 'background:radial-gradient(circle at center, ' + specialFood.color + ' 0%, ' + specialFood.colorDark + ' 100%);box-shadow:0 0 25rpx ' + specialFood.color + ';' : ''}}"></view>
+            </block>
+          </view>
+        </block>
+      </view>
     </view>
   </view>
   

@@ -9,7 +9,7 @@ page {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 8rpx;
+  padding: 20rpx 0;
   height: 100vh;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
   position: relative;
@@ -53,12 +53,12 @@ page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 6rpx;
-  width: 90%;
+  width: 95%;
   background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(8px);
   border-radius: 20rpx;
-  padding: 6rpx;
+  padding: 20rpx 0;
+  margin-bottom: 20rpx;
   box-shadow: 0 8rpx 16rpx rgba(0, 0, 0, 0.2);
   z-index: 2;
   animation: fadeIn 0.5s ease;
@@ -72,7 +72,7 @@ page {
 .title {
   font-size: 36rpx;
   font-weight: bold;
-  margin-bottom: 6rpx;
+  margin-bottom: 2rpx;
   color: white;
   text-shadow: 0 0 10rpx rgba(255, 255, 255, 0.7);
   animation: glowText 2s infinite alternate;
@@ -86,11 +86,14 @@ page {
 .score-container {
   background: linear-gradient(135deg, #2A9D8F 0%, #4ECDC4 100%);
   color: white;
-  padding: 8rpx 24rpx;
-  border-radius: 30rpx;
-  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.2);
+  padding: 16rpx 60rpx;
+  border-radius: 40rpx;
+  box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.3);
   transform: scale(1);
   transition: transform 0.2s ease;
+  margin-bottom: 16rpx;
+  min-width: 260rpx;
+  text-align: center;
 }
 
 .score-container.pulse {
@@ -104,13 +107,23 @@ page {
 }
 
 .score {
-  font-size: 32rpx;
+  font-size: 44rpx;
   font-weight: bold;
 }
 
+.middle-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 .game-board {
-  width: 540rpx;
-  height: 540rpx;
+  width: 95%;
+  max-width: 540rpx;
+  height: calc(95vw - 30rpx);
+  max-height: 540rpx;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(5px);
   border-radius: 20rpx;
@@ -255,8 +268,8 @@ page {
 
 .controls-container {
   width: 100%;
-  margin-top: 10rpx;
-  margin-bottom: 10rpx;
+  margin-top: 20rpx;
+  padding-bottom: 20rpx;
   z-index: 2;
 }
 
@@ -271,10 +284,10 @@ page {
 
 .direction-controls {
   display: grid;
-  grid-template-columns: repeat(3, 80rpx);
-  grid-template-rows: repeat(3, 80rpx);
-  grid-gap: 10rpx;
-  margin-bottom: 20rpx;
+  grid-template-columns: repeat(3, 110rpx);
+  grid-template-rows: repeat(3, 110rpx);
+  grid-gap: 12rpx;
+  margin-bottom: 30rpx;
 }
 
 .game-controls {
@@ -286,15 +299,15 @@ page {
 }
 
 .control-button {
-  width: 120rpx;
-  height: 70rpx;
-  line-height: 70rpx;
-  font-size: 28rpx;
+  width: 125rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 32rpx;
   font-weight: bold;
   margin: 0 8rpx;
   color: white;
   border: none;
-  border-radius: 35rpx;
+  border-radius: 40rpx;
   box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
   position: relative;
@@ -310,7 +323,7 @@ page {
   right: 0;
   bottom: 0;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%);
-  border-radius: 35rpx;
+  border-radius: 40rpx;
 }
 
 .control-button:active {
@@ -319,14 +332,14 @@ page {
 }
 
 .direction-button {
-  width: 80rpx;
-  height: 80rpx;
+  width: 110rpx;
+  height: 110rpx;
   background: linear-gradient(135deg, rgba(42, 157, 143, 0.8) 0%, rgba(78, 205, 196, 0.9) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8rpx 16rpx rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
@@ -358,22 +371,22 @@ page {
 }
 
 .arrow.up {
-  border-width: 0 16rpx 26rpx 16rpx;
+  border-width: 0 25rpx 40rpx 25rpx;
   border-color: transparent transparent #FFF1D0 transparent;
 }
 
 .arrow.down {
-  border-width: 26rpx 16rpx 0 16rpx;
+  border-width: 40rpx 25rpx 0 25rpx;
   border-color: #FFF1D0 transparent transparent transparent;
 }
 
 .arrow.left {
-  border-width: 16rpx 26rpx 16rpx 0;
+  border-width: 25rpx 40rpx 25rpx 0;
   border-color: transparent #FFF1D0 transparent transparent;
 }
 
 .arrow.right {
-  border-width: 16rpx 0 16rpx 26rpx;
+  border-width: 25rpx 0 25rpx 40rpx;
   border-color: transparent transparent transparent #FFF1D0;
 }
 
@@ -488,23 +501,29 @@ page {
 /* Mode Selector */
 .game-modes {
   display: flex;
-  justify-content: center;
-  margin-top: 8rpx;
+  justify-content: space-between;
+  width: 90%;
+  margin: 8rpx auto;
 }
 
 .mode-option {
-  padding: 4rpx 14rpx;
-  margin: 0 6rpx;
+  flex: 1;
+  padding: 6rpx 0;
+  margin: 0 12rpx;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 20rpx;
+  border-radius: 30rpx;
   color: white;
-  font-size: 22rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+  text-align: center;
   transition: all 0.2s ease;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.1);
 }
 
 .mode-option.active {
   background: rgba(255, 255, 255, 0.4);
   box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
 }
 
 /* Countdown animation */
@@ -555,8 +574,8 @@ page {
 
 .speed-label {
   color: white;
-  font-size: 24rpx;
-  margin: 0 6rpx;
+  font-size: 28rpx;
+  margin: 0 8rpx;
 }
 
 .speed-buttons {
@@ -565,10 +584,10 @@ page {
 }
 
 .speed-button {
-  width: 50rpx;
-  height: 50rpx;
-  line-height: 50rpx;
-  font-size: 30rpx;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  font-size: 36rpx;
   font-weight: bold;
   margin: 0 6rpx;
   color: white;
@@ -598,4 +617,75 @@ page {
   align-items: center;
   justify-content: center;
   margin-left: 8rpx;
+}
+
+/* Small screen optimizations */
+.small-screen .header {
+  padding: 15rpx 0;
+  margin-bottom: 10rpx;
+}
+
+.small-screen .title {
+  font-size: 32rpx;
+  margin-bottom: 0;
+}
+
+.small-screen .score-container {
+  padding: 14rpx 50rpx;
+  margin-bottom: 10rpx;
+}
+
+.small-screen .score {
+  font-size: 38rpx;
+}
+
+.small-screen .game-modes {
+  margin: 4rpx auto;
+}
+
+.small-screen .mode-option {
+  padding: 4rpx 0;
+  font-size: 28rpx;
+}
+
+.small-screen .game-board {
+  margin: 10rpx 0;
+}
+
+.small-screen .direction-controls {
+  grid-template-columns: repeat(3, 90rpx);
+  grid-template-rows: repeat(3, 90rpx);
+  grid-gap: 10rpx;
+  margin-bottom: 20rpx;
+}
+
+.small-screen .direction-button {
+  width: 90rpx;
+  height: 90rpx;
+}
+
+.small-screen .arrow.up {
+  border-width: 0 20rpx 32rpx 20rpx;
+}
+
+.small-screen .arrow.down {
+  border-width: 32rpx 20rpx 0 20rpx;
+}
+
+.small-screen .arrow.left {
+  border-width: 20rpx 32rpx 20rpx 0;
+}
+
+.small-screen .arrow.right {
+  border-width: 20rpx 0 20rpx 32rpx;
+}
+
+.small-screen .control-button {
+  height: 70rpx;
+  line-height: 70rpx;
+  font-size: 28rpx;
+}
+
+.snake-container {
+  justify-content: flex-start;
 } 
