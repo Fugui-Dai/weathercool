@@ -554,7 +554,10 @@ Page({
     const head = {...snake[0]};
     const size = this.data.boardSize;
 
-    // 根据方向移动蛇头
+    // Record the previous tail for clean removal
+    const oldTail = {...snake[snake.length - 1]};
+
+    // Based on direction, calculate new head position
     switch(this.data.direction) {
       case 'up':
         head.y -= 1;
@@ -570,57 +573,52 @@ Page({
         break;
     }
 
-    // 边界处理
+    // Handle boundary conditions
     if (this.data.boundaryMode) {
-      // 穿越模式
+      // Wrap around mode
       if (head.x < 0) head.x = size - 1;
       if (head.x >= size) head.x = 0;
       if (head.y < 0) head.y = size - 1;
       if (head.y >= size) head.y = 0;
     } else {
-      // 撞墙检测
+      // Game over on wall hit
       if (head.x < 0 || head.x >= size || head.y < 0 || head.y >= size) {
         this.gameOver();
         return;
       }
     }
 
-    // 撞到自己检测
+    // Check for collision with self
     if (this.isOnSnake(head)) {
       this.gameOver();
       return;
     }
     
-    // 撞到障碍物检测
+    // Check for collision with obstacles
     if (this.data.gameMode === 'obstacle' && this.isPositionInArray(head, this.data.obstacles)) {
       this.gameOver();
       return;
     }
 
-    // 将新头部添加到蛇身体
+    // Add new head to snake
     snake.unshift(head);
 
-    // 检查是否吃到食物
+    // Handle food consumption
     let addPoints = 0;
     let needNewFood = false;
     let eatenColor = null;
     
-    // 普通食物
+    // Normal food
     if (head.x === this.data.food.x && head.y === this.data.food.y) {
       addPoints = 1;
       needNewFood = true;
       eatenColor = this.data.foodColor;
-      
-      // 食物被吃掉时触发闪光效果
       this.foodGlowEffect();
     }
-    
-    // 特殊食物
+    // Special food
     else if (this.data.specialFood.active && head.x === this.data.specialFood.x && head.y === this.data.specialFood.y) {
       addPoints = this.data.specialFood.points;
       eatenColor = this.data.specialFood.color;
-      
-      // 特殊食物被吃掉时触发超级闪光效果
       this.specialFoodGlowEffect();
       
       this.setData({
@@ -632,38 +630,35 @@ Page({
     }
     
     if (addPoints > 0) {
-      // 吃到食物，加分并触发动画
+      // Add score for eating food
       const newScore = this.data.score + addPoints;
       this.setData({
         score: newScore
       });
       
       this.triggerScoreAnimation();
-      
-      // 使用吃到的食物颜色添加新节点
       this.addColorForNewSegment(eatenColor);
       
-      // 如果需要生成新的普通食物
       if (needNewFood) {
         this.setData({
           food: this.generateFood(this.data.obstacles)
         });
       }
-      
-      // 删除自动加速逻辑，改为用户手动控制
     } else {
-      // 没吃到食物，移除尾部
+      // If no food eaten, remove tail
       snake.pop();
     }
 
-    // 更新蛇的位置
+    // Ensure we update in a single setData call to avoid flickering
     this.setData({
-      snake: snake
+      snake: snake,
     });
 
-    // 继续移动
+    // Continue movement with requestAnimationFrame-like timing
     const interval = setTimeout(() => {
-      this.moveSnake();
+      wx.nextTick(() => {
+        this.moveSnake();
+      });
     }, this.data.speed);
 
     this.setData({

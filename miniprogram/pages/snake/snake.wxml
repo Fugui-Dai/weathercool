@@ -1,84 +1,105 @@
 <!--pages/snake/snake.wxml-->
-<view class="snake-container {{isSmallScreen ? 'small-screen' : ''}}">
-  <view class="header">
-    <view class="score-container {{scoreAnimation ? 'pulse' : ''}} title" style="background: linear-gradient(135deg, {{snakeColor}} 0%, {{snakeBodyColor}} 100%);">
-      <text class="score">得分: {{score}}</text>
+<view class="page-container">
+  <view class="snake-container {{isSmallScreen ? 'small-screen' : ''}}">
+    <!-- Animated bubbles background -->
+    <view class="bubbles-container">
+      <view class="bubble bubble-1"></view>
+      <view class="bubble bubble-2"></view>
+      <view class="bubble bubble-3"></view>
+      <view class="bubble bubble-4"></view>
+      <view class="bubble bubble-5"></view>
+      <view class="bubble bubble-6"></view>
+      <view class="bubble bubble-7"></view>
+      <view class="bubble bubble-8"></view>
+      <view class="bubble bubble-9"></view>
+      <view class="bubble bubble-10"></view>
+      <view class="bubble bubble-11"></view>
+      <view class="bubble bubble-12"></view>
     </view>
-    
-    <view class="game-modes">
-      <view class="mode-option {{gameMode === 'classic' ? 'active' : ''}}" bindtap="switchGameMode" data-mode="classic">经典</view>
-      <view class="mode-option {{gameMode === 'timed' ? 'active' : ''}}" bindtap="switchGameMode" data-mode="timed">限时</view>
-      <view class="mode-option {{gameMode === 'obstacle' ? 'active' : ''}}" bindtap="switchGameMode" data-mode="obstacle">障碍</view>
-    </view>
-    
-    <view class="timer-bar" wx:if="{{gameMode === 'timed' && gameStatus === 'playing'}}">
-      <view class="timer-progress" style="width: {{timeRemaining}}%"></view>
-    </view>
-  </view>
-  
-  <view class="middle-section">
-    <view class="game-board" 
-          bindtouchstart="handleTouchStart" 
-          bindtouchend="handleTouchEnd">
-      
-      <view class="board-grid">
-        <block wx:for="{{boardSize}}" wx:for-index="y" wx:key="y">
-          <view class="grid-row">
-            <block wx:for="{{boardSize}}" wx:for-index="x" wx:key="x">
-              <view class="cell {{game.isSnakeHead(x, y, snake) ? 'snake-head' : (game.isSnakeBody(x, y, snake) ? 'snake-body' : '')}} {{game.isFood(x, y, food) ? 'food' : ''}} {{game.isSpecialFood(x, y, specialFood) ? 'special-food' : ''}} {{game.isObstacle(x, y, obstacles) ? 'obstacle' : ''}}"
-                    style="{{game.isSnakeHead(x, y, snake) ? 'background-color:' + snakeColor + ';box-shadow:0 0 15rpx ' + snakeColor + ';' : ''}}{{game.isSnakeBody(x, y, snake) ? 'background-color:' + game.getSnakeSegmentColor(x, y, snake, snakeSegmentColors) + ';box-shadow:0 0 10rpx ' + game.getSnakeSegmentColor(x, y, snake, snakeSegmentColors) + ';' : ''}}{{game.isFood(x, y, food) ? 'background:radial-gradient(circle at center, ' + foodColor + ' 0%, ' + foodColorDark + ' 100%);box-shadow:0 0 20rpx ' + foodColor + ';' : ''}}{{game.isSpecialFood(x, y, specialFood) ? 'background:radial-gradient(circle at center, ' + specialFood.color + ' 0%, ' + specialFood.colorDark + ' 100%);box-shadow:0 0 25rpx ' + specialFood.color + ';' : ''}}"></view>
-            </block>
-          </view>
-        </block>
-      </view>
-    </view>
-  </view>
-  
-  <view class="controls-container">
-    <view class="all-controls">
-      <!-- Direction buttons at the top -->
-      <view class="direction-controls">
-        <view class="direction-button up" bindtap="handleDirectionChange" data-direction="up">
-          <view class="arrow up"></view>
-        </view>
-        <view class="direction-button left" bindtap="handleDirectionChange" data-direction="left">
-          <view class="arrow left"></view>
-        </view>
-        <view class="direction-button right" bindtap="handleDirectionChange" data-direction="right">
-          <view class="arrow right"></view>
-        </view>
-        <view class="direction-button down" bindtap="handleDirectionChange" data-direction="down">
-          <view class="arrow down"></view>
-        </view>
-      </view>
 
-      <!-- Game controls horizontally below the direction buttons -->
-      <view class="game-controls">
-        <button class="control-button {{gameStatus === 'playing' ? 'pause' : 'play'}}" 
-                bindtap="{{gameStatus === 'playing' ? 'pauseGame' : 'startGame'}}">
-          {{gameStatus === 'playing' ? '暂停' : '开始'}}
-        </button>
-        <button class="control-button reset" bindtap="resetGame">重置</button>
-        <button class="control-button mode" bindtap="toggleBoundaryMode">
-          {{boundaryMode ? '不穿墙' : '穿墙'}}
-        </button>
+    <view class="header">
+      <view class="score-container {{scoreAnimation ? 'pulse' : ''}} title" style="background: linear-gradient(135deg, {{snakeColor}} 0%, {{snakeBodyColor}} 100%);">
+        <text class="score">得分: {{score}}</text>
+      </view>
+      
+      <view class="game-modes">
+        <view class="mode-option {{gameMode === 'classic' ? 'active' : ''}}" bindtap="switchGameMode" data-mode="classic">经典</view>
+        <view class="mode-option {{gameMode === 'timed' ? 'active' : ''}}" bindtap="switchGameMode" data-mode="timed">限时</view>
+        <view class="mode-option {{gameMode === 'obstacle' ? 'active' : ''}}" bindtap="switchGameMode" data-mode="obstacle">障碍</view>
+      </view>
+      
+      <view class="timer-bar" wx:if="{{gameMode === 'timed' && gameStatus === 'playing'}}">
+        <view class="timer-progress" style="width: {{timeRemaining}}%"></view>
+      </view>
+    </view>
+    
+    <view class="middle-section">
+      <view class="game-board" 
+            bindtouchstart="handleTouchStart" 
+            bindtouchend="handleTouchEnd">
         
-        <!-- Speed controls inline -->
-        <view class="speed-button-container">
-          <button class="speed-button decrease" bindtap="changeSpeed" data-action="decrease">-</button>
-          <text class="speed-label">速度:{{500 - speed + 100}}</text>
-          <button class="speed-button increase" bindtap="changeSpeed" data-action="increase">+</button>
+        <view class="board-grid">
+          <block wx:for="{{boardSize}}" wx:for-index="y" wx:key="y">
+            <view class="grid-row">
+              <block wx:for="{{boardSize}}" wx:for-index="x" wx:key="x">
+                <view class="cell {{game.isSnakeHead(x, y, snake) ? 'snake-head' : (game.isSnakeBody(x, y, snake) ? 'snake-body' : '')}} {{game.isFood(x, y, food) ? 'food' : ''}} {{game.isSpecialFood(x, y, specialFood) ? 'special-food' : ''}} {{game.isObstacle(x, y, obstacles) ? 'obstacle' : ''}}"
+                      style="{{game.isSnakeHead(x, y, snake) ? 'background-color:' + snakeColor + ';box-shadow:0 0 15rpx ' + snakeColor + ';' : ''}}{{game.isSnakeBody(x, y, snake) ? 'background-color:' + game.getSnakeSegmentColor(x, y, snake, snakeSegmentColors) + ';box-shadow:0 0 10rpx ' + game.getSnakeSegmentColor(x, y, snake, snakeSegmentColors) + ';' : ''}}{{game.isFood(x, y, food) ? 'background:radial-gradient(circle at center, ' + foodColor + ' 0%, ' + foodColorDark + ' 100%);box-shadow:0 0 20rpx ' + foodColor + ';' : ''}}{{game.isSpecialFood(x, y, specialFood) ? 'background:radial-gradient(circle at center, ' + specialFood.color + ' 0%, ' + specialFood.colorDark + ' 100%);box-shadow:0 0 25rpx ' + specialFood.color + ';' : ''}}"></view>
+              </block>
+            </view>
+          </block>
+        </view>
+      </view>
+    </view>
+    
+    <view class="controls-container">
+      <view class="all-controls">
+        <!-- Direction buttons at the top -->
+        <view class="direction-controls">
+          <view class="direction-button up" bindtap="handleDirectionChange" data-direction="up">
+            <view class="arrow up"></view>
+          </view>
+          <view class="direction-button left" bindtap="handleDirectionChange" data-direction="left">
+            <view class="arrow left"></view>
+          </view>
+          <view class="direction-button right" bindtap="handleDirectionChange" data-direction="right">
+            <view class="arrow right"></view>
+          </view>
+          <view class="direction-button down" bindtap="handleDirectionChange" data-direction="down">
+            <view class="arrow down"></view>
+          </view>
+        </view>
+
+        <!-- Game controls horizontally below the direction buttons -->
+        <view class="game-controls">
+          <button class="control-button {{gameStatus === 'playing' ? 'pause' : 'play'}}" 
+                  bindtap="{{gameStatus === 'playing' ? 'pauseGame' : 'startGame'}}">
+            {{gameStatus === 'playing' ? '暂停' : '开始'}}
+          </button>
+          <button class="control-button reset" bindtap="resetGame">重置</button>
+          <button class="control-button mode" bindtap="toggleBoundaryMode">
+            {{boundaryMode ? '不穿墙' : '穿墙'}}
+          </button>
+          
+          <!-- Speed controls inline -->
+          <view class="speed-button-container">
+            <button class="speed-button decrease" bindtap="changeSpeed" data-action="decrease">-</button>
+            <text class="speed-label">速度:{{500 - speed + 100}}</text>
+            <button class="speed-button increase" bindtap="changeSpeed" data-action="increase">+</button>
+          </view>
         </view>
       </view>
     </view>
   </view>
   
-  <view class="game-over-modal" wx:if="{{gameStatus === 'gameover'}}">
-    <view class="modal-content">
-      <text class="game-over-text">游戏结束</text>
-      <text class="final-score">得分: {{score}}</text>
-      <text wx:if="{{isHighScore}}" style="color: #FFC107; font-size: 32rpx; margin-bottom: 20rpx;">新高分!</text>
-      <button class="restart-button" bindtap="resetGame">重新开始</button>
+  <!-- Game over modal moved outside of snake-container -->
+  <view class="game-over-modal-container" wx:if="{{gameStatus === 'gameover'}}">
+    <view class="game-over-modal">
+      <view class="modal-content">
+        <text class="game-over-text">游戏结束</text>
+        <text class="final-score">得分: {{score}}</text>
+        <text wx:if="{{isHighScore}}" style="color: #FFC107; font-size: 32rpx; margin-bottom: 20rpx;">新高分!</text>
+        <button class="restart-button" bindtap="resetGame">重新开始</button>
+      </view>
     </view>
   </view>
 </view>

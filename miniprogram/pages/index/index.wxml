@@ -3,6 +3,23 @@
     <view class="scrollarea">
         <!-- 背景图 -->
         <image class="bg" src="../../assets/bg/bg.png" mode="heightFix" />
+        
+        <!-- Animated bubbles background -->
+        <view class="bubbles-container">
+            <view class="bubble bubble-1"></view>
+            <view class="bubble bubble-2"></view>
+            <view class="bubble bubble-3"></view>
+            <view class="bubble bubble-4"></view>
+            <view class="bubble bubble-5"></view>
+            <view class="bubble bubble-6"></view>
+            <view class="bubble bubble-7"></view>
+            <view class="bubble bubble-8"></view>
+            <view class="bubble bubble-9"></view>
+            <view class="bubble bubble-10"></view>
+            <view class="bubble bubble-11"></view>
+            <view class="bubble bubble-12"></view>
+        </view>
+        
         <scroll-view scroll-y>
             <!--标题-->
             <view class="title">

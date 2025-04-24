@@ -1,0 +1,378 @@
+/* Enhanced Dynamic Bubbles with stronger effects */
+.bubbles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -100rpx;
+  width: 60rpx;
+  height: 60rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+  border-radius: 50%;
+  opacity: 0.9;
+  animation: rise linear infinite;
+  pointer-events: none;
+  box-shadow: 0 0 35rpx rgba(255, 255, 255, 0.8);
+  z-index: 4;
+}
+
+/* Even-numbered bubbles with light blue tint */
+.bubble:nth-child(even) {
+  background: rgba(135, 206, 250, 0.3);
+  box-shadow: 0 0 30rpx rgba(135, 206, 250, 0.7);
+}
+
+/* Odd-numbered bubbles with light cyan tint */
+.bubble:nth-child(odd) {
+  background: rgba(175, 238, 238, 0.3);
+  box-shadow: 0 0 30rpx rgba(175, 238, 238, 0.7);
+}
+
+/* Special effects for certain bubbles */
+.bubble:nth-child(3n) {
+  background: rgba(127, 255, 212, 0.3);
+  box-shadow: 0 0 35rpx rgba(127, 255, 212, 0.8);
+  filter: blur(1px);
+}
+
+.bubble:nth-child(4n) {
+  background: rgba(173, 216, 230, 0.3);
+  box-shadow: 0 0 35rpx rgba(173, 216, 230, 0.8);
+  filter: blur(0.5px);
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0) scale(0.4) rotate(0deg);
+    opacity: 0.4;
+  }
+  20% {
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-50vh) scale(0.9) rotate(45deg);
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-100vh) scale(1.1) rotate(90deg);
+    opacity: 0;
+  }
+}
+
+/* Bubble sizes and positions */
+.bubble-1 {
+  left: 10%;
+  animation-duration: 15s;
+  animation-delay: 0s;
+  width: 90rpx;
+  height: 90rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 154, 162, 0.9), rgba(255, 154, 162, 0.5));
+  box-shadow: 0 0 40rpx rgba(255, 154, 162, 0.9);
+}
+
+.bubble-2 {
+  left: 20%;
+  animation-duration: 21s;
+  animation-delay: 1s;
+  width: 110rpx;
+  height: 110rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 183, 178, 0.9), rgba(255, 183, 178, 0.5));
+  box-shadow: 0 0 45rpx rgba(255, 183, 178, 0.9);
+}
+
+.bubble-3 {
+  left: 35%;
+  animation-duration: 18s;
+  animation-delay: 5s;
+  width: 80rpx;
+  height: 80rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 218, 193, 0.9), rgba(255, 218, 193, 0.5));
+  box-shadow: 0 0 40rpx rgba(255, 218, 193, 0.9);
+}
+
+.bubble-4 {
+  left: 40%;
+  animation-duration: 24s;
+  animation-delay: 0s;
+  width: 120rpx;
+  height: 120rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(226, 240, 203, 0.9), rgba(226, 240, 203, 0.5));
+  box-shadow: 0 0 50rpx rgba(226, 240, 203, 0.9);
+}
+
+.bubble-5 {
+  left: 60%;
+  animation-duration: 20s;
+  animation-delay: 4s;
+  width: 100rpx;
+  height: 100rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(181, 234, 215, 0.9), rgba(181, 234, 215, 0.5));
+  box-shadow: 0 0 45rpx rgba(181, 234, 215, 0.9);
+}
+
+.bubble-6 {
+  left: 75%;
+  animation-duration: 17s;
+  animation-delay: 2s;
+  width: 70rpx;
+  height: 70rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(199, 206, 234, 0.9), rgba(199, 206, 234, 0.5));
+  box-shadow: 0 0 40rpx rgba(199, 206, 234, 0.9);
+}
+
+.bubble-7 {
+  left: 85%;
+  animation-duration: 19s;
+  animation-delay: 6s;
+  width: 85rpx;
+  height: 85rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(235, 170, 224, 0.9), rgba(235, 170, 224, 0.5));
+  box-shadow: 0 0 45rpx rgba(235, 170, 224, 0.9);
+}
+
+.bubble-8 {
+  left: 50%;
+  animation-duration: 22s;
+  animation-delay: 3s;
+  width: 130rpx;
+  height: 130rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(155, 233, 245, 0.9), rgba(155, 233, 245, 0.5));
+  box-shadow: 0 0 50rpx rgba(155, 233, 245, 0.9);
+}
+
+.bubble-9 {
+  left: 30%;
+  animation-duration: 25s;
+  animation-delay: 8s;
+  width: 95rpx;
+  height: 95rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 214, 165, 0.9), rgba(255, 214, 165, 0.5));
+  box-shadow: 0 0 45rpx rgba(255, 214, 165, 0.9);
+}
+
+.bubble-10 {
+  left: 70%;
+  animation-duration: 16s;
+  animation-delay: 10s;
+  width: 75rpx;
+  height: 75rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(198, 242, 161, 0.9), rgba(198, 242, 161, 0.5));
+  box-shadow: 0 0 40rpx rgba(198, 242, 161, 0.9);
+}
+
+.bubble-11 {
+  left: 15%;
+  animation-duration: 26s;
+  animation-delay: 7s;
+  width: 140rpx;
+  height: 140rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(176, 201, 249, 0.9), rgba(176, 201, 249, 0.5));
+  box-shadow: 0 0 50rpx rgba(176, 201, 249, 0.9);
+}
+
+.bubble-12 {
+  left: 90%;
+  animation-duration: 19s;
+  animation-delay: 9s;
+  width: 85rpx;
+  height: 85rpx;
+  background: radial-gradient(circle at 30% 30%, rgba(250, 179, 212, 0.9), rgba(250, 179, 212, 0.5));
+  box-shadow: 0 0 45rpx rgba(250, 179, 212, 0.9);
+}
+
+/* Make sure all content stays above bubbles */
+.title, .header, .ytt, .hourweather24, .life {
+  position: relative;
+  z-index: 5;
+}
+
+/* Modify text transitions to avoid flickering */
+text {
+  /* Remove the general transition that might be causing flicker */
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  /* Add will-change for smoother rendering */
+  will-change: color, text-shadow;
+}
+
+/* Main title colorful effect */
+.title text {
+  background: linear-gradient(90deg, #FF9AA2, #FFB7B2, #FFDAC1, #E2F0CB, #B5EAD7, #C7CEEA);
+  background-size: 600% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientText 12s linear infinite;
+  text-shadow: 0 0 10rpx rgba(255, 255, 255, 0.1);
+  font-weight: bold;
+}
+
+@keyframes gradientText {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Temperature with glow effect */
+.temperature {
+  color: #FF9AA2;
+  font-size: 86rpx;
+  font-weight: bold;
+  text-shadow: 0 0 20rpx rgba(255, 154, 162, 0.7);
+  animation: temperaturePulse 4s ease infinite;
+  letter-spacing: -2rpx;
+}
+
+@keyframes temperaturePulse {
+  0%, 100% { text-shadow: 0 0 20rpx rgba(255, 154, 162, 0.7); }
+  50% { text-shadow: 0 0 30rpx rgba(255, 154, 162, 0.9); }
+}
+
+/* Weather condition text */
+.weather {
+  color: #FFB7B2;
+  font-weight: bold;
+  text-shadow: 0 0 15rpx rgba(255, 183, 178, 0.6);
+}
+
+.comfort {
+  color: #FFDAC1;
+  text-shadow: 0 0 15rpx rgba(255, 218, 193, 0.6);
+}
+
+/* Header details text */
+.header view:nth-child(3) text {
+  color: #E2F0CB;
+  text-shadow: 0 0 12rpx rgba(226, 240, 203, 0.5);
+}
+
+/* Section titles with rainbow effect */
+scroll-view > text {
+  font-size: 32rpx;
+  font-weight: bold;
+  background: linear-gradient(90deg, #FF9AA2, #FFB7B2, #FFDAC1, #E2F0CB, #B5EAD7, #C7CEEA);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 5rpx rgba(255, 255, 255, 0.1);
+  padding: 4rpx 0;
+  margin-left: 10rpx;
+  margin-top: 10rpx;
+  display: inline-block;
+}
+
+/* Fix flickering in the 今天、明天、后天 section */
+.ytt {
+  /* Add stability to the container */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ytt .item {
+  /* Prevent layout shifts */
+  height: auto;
+  min-height: 60rpx;
+  /* Force hardware acceleration */
+  transform: translateZ(0);
+}
+
+.ytt .item .temp text {
+  /* Remove transitions for these specific elements */
+  transition: none;
+  /* Use static colors without animations */
+  display: inline-block;
+  /* Prevent text from jumping */
+  height: 1.4em;
+}
+
+.ytt .item .temp text:first-child {
+  color: #B5EAD7;
+  font-weight: bold;
+  text-shadow: 0 0 10rpx rgba(181, 234, 215, 0.5);
+}
+
+.ytt .item .temp text:last-child {
+  color: #C7CEEA;
+  font-weight: bold;
+  text-shadow: 0 0 10rpx rgba(199, 206, 234, 0.5);
+}
+
+.ytt .item .weather text {
+  color: #9ED8DB;
+  font-weight: bold;
+  text-shadow: 0 0 10rpx rgba(158, 216, 219, 0.5);
+  /* Remove transitions */
+  transition: none;
+  display: inline-block;
+  /* Prevent text from jumping */
+  height: 1.4em;
+}
+
+/* 24 hour forecast text */
+.hourweather24_item_info text:first-child {
+  color: #FF9AA2;
+  font-weight: bold;
+}
+
+.hourweather24_item_info text:last-child {
+  color: #FFB7B2;
+  font-weight: bold;
+}
+
+/* 7 day forecast text */
+.yubao7day_item_info text:nth-child(1) {
+  color: #FFDAC1;
+  font-weight: bold;
+}
+
+.yubao7day_item_info text:nth-child(2) {
+  color: #E2F0CB;
+}
+
+.yubao7day_item_info text:nth-child(3) {
+  color: #B5EAD7;
+  font-weight: bold;
+}
+
+/* Bottom container */
+.yubao7day_container:last-child .yubao7day_item_info text:nth-child(1) {
+  color: #C7CEEA;
+  font-weight: bold;
+}
+
+.yubao7day_container:last-child .yubao7day_item_info text:nth-child(2) {
+  color: #FF9AA2;
+  font-weight: bold;
+}
+
+/* Life indices */
+.life_item_info text:first-child {
+  color: #FFB7B2;
+  font-weight: bold;
+  text-shadow: 0 0 10rpx rgba(255, 183, 178, 0.4);
+}
+
+.life_item_info text:last-child {
+  color: #FFDAC1;
+  text-shadow: 0 0 10rpx rgba(255, 218, 193, 0.4);
+}
+
+/* Main content z-index adjustment to ensure it's above bubbles */
+.scrollarea {
+  position: relative;
+  z-index: 1;
+}
+
+.title, .header, .ytt, .hourweather24, .life, .bg {
+  position: relative;
+  z-index: 5;
+} 

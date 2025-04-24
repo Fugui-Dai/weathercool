@@ -4,6 +4,13 @@ page {
   overflow: hidden;
 }
 
+.page-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .snake-container {
   display: flex;
   flex-direction: column;
@@ -170,7 +177,7 @@ page {
   margin: 1rpx;
   border-radius: 3rpx;
   box-shadow: inset 0 0 1rpx rgba(255, 255, 255, 0.1);
-  transition: background-color 0.1s ease;
+  transition: all 0.08s linear;
 }
 
 .snake-head {
@@ -180,6 +187,7 @@ page {
   box-shadow: 0 0 15rpx var(--snake-color, #2A9D8F);
   background: var(--snake-color, #2A9D8F);
   animation: snakeGlow 1.5s infinite alternate;
+  transition: all 0.08s linear;
 }
 
 @keyframes snakeGlow {
@@ -212,6 +220,7 @@ page {
   border-radius: 25%;
   box-shadow: 0 0 10rpx var(--snake-color, #4ECDC4);
   animation: bodyGlow 2s infinite alternate;
+  transition: all 0.08s linear;
 }
 
 @keyframes bodyGlow {
@@ -432,8 +441,21 @@ page {
   background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
 }
 
-.game-over-modal {
+.game-over-modal-container {
   position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  pointer-events: auto;
+}
+
+.game-over-modal {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -442,41 +464,47 @@ page {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 2000;
   animation: fadeIn 0.5s ease;
 }
 
 .modal-content {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  padding: 30rpx;
+  padding: 50rpx;
+  width: 70%;
   border-radius: 30rpx;
   text-align: center;
-  width: 70%;
-  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.5), 0 0 40rpx rgba(255, 255, 255, 0.3);
   transform: translateY(0);
-  animation: modalSlideIn 0.5s ease;
+  animation: modalBounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  z-index: 2001;
+  border: 3rpx solid rgba(255, 255, 255, 0.8);
 }
 
-@keyframes modalSlideIn {
-  from { opacity: 0; transform: translateY(50rpx); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes modalBounceIn {
+  0% { opacity: 0; transform: translateY(-100rpx) scale(0.8); }
+  40% { transform: translateY(30rpx) scale(1.03); }
+  70% { transform: translateY(-15rpx) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .game-over-text {
-  font-size: 40rpx;
+  font-size: 50rpx;
   font-weight: bold;
   color: #F44336;
-  margin-bottom: 20rpx;
+  margin-bottom: 30rpx;
   display: block;
-  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
 }
 
 .final-score {
-  font-size: 36rpx;
+  font-size: 42rpx;
   color: #333;
   margin-bottom: 30rpx;
   display: block;
+  font-weight: bold;
 }
 
 .restart-button {
@@ -484,18 +512,18 @@ page {
   color: white;
   border: none;
   border-radius: 40rpx;
-  font-size: 30rpx;
+  font-size: 36rpx;
   font-weight: bold;
-  padding: 10rpx 30rpx;
-  box-shadow: 0 6rpx 12rpx rgba(0, 0, 0, 0.2);
+  padding: 16rpx 40rpx;
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
-  width: 60%;
-  margin: 0 auto;
+  width: 70%;
+  margin: 10rpx auto 0;
 }
 
 .restart-button:active {
   transform: translateY(4rpx);
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.4);
 }
 
 /* Mode Selector */
@@ -688,4 +716,175 @@ page {
 
 .snake-container {
   justify-content: flex-start;
+}
+
+/* Bubbles background */
+.bubbles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  bottom: -100rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: rise linear infinite;
+  pointer-events: none;
+  box-shadow: 0 0 10rpx rgba(255, 255, 255, 0.3);
+}
+
+/* Even-numbered bubbles with light blue tint */
+.bubble:nth-child(even) {
+  background: rgba(135, 206, 250, 0.15);
+  box-shadow: 0 0 15rpx rgba(135, 206, 250, 0.3);
+}
+
+/* Odd-numbered bubbles with light cyan tint */
+.bubble:nth-child(odd) {
+  background: rgba(175, 238, 238, 0.15);
+  box-shadow: 0 0 15rpx rgba(175, 238, 238, 0.3);
+}
+
+/* Special effects for certain bubbles */
+.bubble-2, .bubble-8, .bubble-11 {
+  background: rgba(127, 255, 212, 0.15);
+  box-shadow: 0 0 20rpx rgba(127, 255, 212, 0.4);
+}
+
+.bubble-4, .bubble-9 {
+  background: rgba(173, 216, 230, 0.15);
+  box-shadow: 0 0 20rpx rgba(173, 216, 230, 0.4);
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0) scale(0.3) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-50vh) scale(0.8) rotate(45deg);
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-100vh) scale(1) rotate(90deg);
+    opacity: 0;
+  }
+}
+
+/* Make header, game board and all interactive elements have higher z-index */
+.header, .middle-section, .controls-container, .game-over-modal {
+  position: relative;
+  z-index: 5;
+}
+
+.bubble-1 {
+  left: 10%;
+  animation-duration: 12s;
+  animation-delay: 0s;
+  width: 30rpx;
+  height: 30rpx;
+}
+
+.bubble-2 {
+  left: 20%;
+  animation-duration: 18s;
+  animation-delay: 1s;
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.bubble-3 {
+  left: 35%;
+  animation-duration: 15s;
+  animation-delay: 5s;
+  width: 45rpx;
+  height: 45rpx;
+}
+
+.bubble-4 {
+  left: 40%;
+  animation-duration: 20s;
+  animation-delay: 0s;
+  width: 70rpx;
+  height: 70rpx;
+}
+
+.bubble-5 {
+  left: 60%;
+  animation-duration: 17s;
+  animation-delay: 4s;
+  width: 50rpx;
+  height: 50rpx;
+}
+
+.bubble-6 {
+  left: 75%;
+  animation-duration: 14s;
+  animation-delay: 2s;
+  width: 35rpx;
+  height: 35rpx;
+}
+
+.bubble-7 {
+  left: 85%;
+  animation-duration: 16s;
+  animation-delay: 6s;
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.bubble-8 {
+  left: 50%;
+  animation-duration: 19s;
+  animation-delay: 3s;
+  width: 65rpx;
+  height: 65rpx;
+}
+
+.bubble-9 {
+  left: 30%;
+  animation-duration: 21s;
+  animation-delay: 8s;
+  width: 55rpx;
+  height: 55rpx;
+}
+
+.bubble-10 {
+  left: 70%;
+  animation-duration: 13s;
+  animation-delay: 10s;
+  width: 25rpx;
+  height: 25rpx;
+}
+
+.bubble-11 {
+  left: 15%;
+  animation-duration: 22s;
+  animation-delay: 7s;
+  width: 80rpx;
+  height: 80rpx;
+}
+
+.bubble-12 {
+  left: 90%;
+  animation-duration: 16s;
+  animation-delay: 9s;
+  width: 45rpx;
+  height: 45rpx;
 } 
