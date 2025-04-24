@@ -65,13 +65,13 @@
             <!--7天预报-->
             <text style="margin-left: 10rpx;">7天预报</text>
             <view class="yubao7day">
-                <view class="yubao7day_scrollx">
+                <view class="yubao7day_container">
                     <block wx:for="{{daily7Weather}}" wx:key="index">
                         <view class="yubao7day_item">
                             <view class="yubao7day_item_info">
-                                <text>{{item.weekday}}</text> <!-- 星期几 -->
-                                <text>{{item.date}}</text> <!-- 日期 -->
-                                <text>{{item.textDay}}</text> <!-- 天气描述 -->
+                                <text>{{item.weekday}}</text>
+                                <text>{{item.date}}</text>
+                                <text>{{item.textDay}}</text>
                                 <image class="lifeimg" src="../../assets/icons/{{item.iconDay}}-fill.svg"></image>
                             </view>
                         </view>
@@ -81,13 +81,13 @@
                 <view>
                     <canvas canvas-id="weatherCanvas" class="weatherCanvas" />
                 </view>
-                <view class="yubao7day_scrollx">
+                <view class="yubao7day_container">
                     <block wx:for="{{daily7Weather}}" wx:key="index">
                         <view class="yubao7day_item">
                             <view class="yubao7day_item_info">
                                 <image class="lifeimg" src="../../assets/icons/{{item.iconNight}}-fill.svg"></image>
-                                <text>{{item.windDirDay}}</text> <!-- 风向 -->
-                                <text>{{item.windScaleDay}}级</text> <!-- 风力等级 -->
+                                <text>{{item.windDirDay}}</text>
+                                <text>{{item.windScaleDay}}级</text>
                             </view>
                         </view>
                     </block>

@@ -3,7 +3,21 @@ page {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    color: white;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .scrollarea {
@@ -22,6 +36,8 @@ page {
     height: 100vh;
     /* 确保背景图在最底层 */
     z-index: -1;
+    opacity: 0.5;
+    transition: opacity 0.5s ease;
 }
 
 // ---------------------------------------------------------标题
@@ -31,6 +47,19 @@ page {
     z-index: 1;
     padding: 100rpx 0rpx 20rpx 10rpx;
     align-items: center;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.5);
+    animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20rpx);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 //--------------------------------------------------------- header
@@ -42,7 +71,7 @@ page {
     justify-content: center;
     align-items: center;
     /* 10% 透明度 */
-    background-color: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
     /* 50% 透明度 */
     //background-color: rgba(0, 0, 0, 0.5);
     /* 90% 透明度 */
@@ -50,14 +79,39 @@ page {
     border-radius: 20rpx;
     margin: 10rpx;
     font-size: 35rpx;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    animation: slideUp 0.8s ease;
+
+    &:hover {
+        transform: translateY(-5rpx);
+        box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.3);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30rpx);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .temperature {
     font-size: 120rpx;
+    text-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.4);
+    color: #ffffff;
+    font-weight: bold;
 }
 
 .weather {
     font-weight: bold;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.4);
+    color: #ffffff;
 }
 
 //--------------------------------------------------------- 昨天今天明天
@@ -65,12 +119,16 @@ page {
     display: flex;
     justify-content: space-evenly;
     /* 10% 透明度 */
-    background-color: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
     border-radius: 20rpx;
     margin: 10rpx;
     padding: 20rpx;
     font-size: 35rpx;
     white-space: nowrap;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    animation: slideUp 0.8s ease 0.2s;
 }
 
 /* 单个天气卡片 */
@@ -80,18 +138,26 @@ page {
     text-align: center;
     margin-right: 20rpx;
     border-radius: 10rpx;
+    transition: all 0.3s ease;
+    color: #ffffff;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 
     &:first-child {
-        background-color: lightsalmon;
+        background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
     }
 
     &:nth-child(2) {
-        background-color: lightskyblue;
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     }
 
     &:last-child {
-        background-color: lightseagreen;
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
         margin-right: 0;
+    }
+
+    &:hover {
+        transform: translateY(-5rpx) scale(1.02);
+        box-shadow: 0 8rpx 16rpx rgba(0, 0, 0, 0.3);
     }
 }
 
@@ -115,90 +181,88 @@ page {
 .hourweather24 {
     display: flex;
     height: 200rpx;
-    /* 让子项在父容器内上下居中 */
     align-items: center;
-    /* 10% 透明度 */
-    background-color: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
     border-radius: 20rpx;
     margin: 10rpx;
     padding: 10rpx;
     font-size: 35rpx;
-    /* 图标变成白色 */
-    filter: brightness(0) invert(1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    animation: slideUp 0.8s ease 0.4s;
+    color: #ffffff;
 }
 
 .scroll-x {
     width: 100%;
     white-space: nowrap;
-
-    .lifeitem {
-        display: inline-block;
-        flex-wrap: nowrap;
-        margin-right: 16rpx;
-
-        &:last-child {
-            margin-right: 0;
-        }
-    }
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 10rpx 0;
 }
 
 .hourweather24_item {
     display: inline-block;
     flex-direction: column;
-    padding: 10rpx;
+    padding: 10rpx 20rpx;
     font-size: 30rpx;
-    &:last-child {
-        margin-right: 0;
-    }
+    color: #ffffff;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    text-align: center;
 
-    .hourweather24_item_info {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        /* 水平居中 */
+    &:hover {
+        transform: scale(1.05);
     }
+}
 
-    .hourweather24_item_img {
-        width: 50rpx;
-        height: 50rpx;
-        margin-bottom: 10rpx;
-    }
+.hourweather24_item_info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hourweather24_item_img {
+    width: 50rpx;
+    height: 50rpx;
+    margin-bottom: 10rpx;
+    filter: brightness(0) invert(1);
 }
 
 // ---------------------------------------------------------7天预报
 .yubao7day {
     display: flex;
     flex-direction: column;
-    height: 550rpx;
-    /* 10% 透明度 */
-    background-color: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
     border-radius: 20rpx;
     margin: 10rpx;
-    padding: 10rpx;
+    padding: 20rpx;
     font-size: 35rpx;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    animation: slideUp 0.8s ease 0.6s;
+    color: #ffffff;
+}
 
-    .yubao7day_scrollx {
-        width: 100%;
-        white-space: nowrap;
-        /* 防止换行 */
-    }
+.yubao7day_container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20rpx;
 }
 
 .yubao7day_item {
-    display: inline-block;
-    width: 14%;
-    /* 100% / 7 个 item */
+    flex: 1;
     text-align: center;
-    /* 内容居中 */
-    box-sizing: border-box;
-    /* 防止 padding 影响宽度 */
-    padding: 0 10rpx;
-    /* 可选，增加一些间距 */
-    margin-left: 5rpx;
+    padding: 10rpx;
+    color: #ffffff;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
 
-    &:last-child {
-        margin-left: 0rpx;
-        /* 可选，增加一些间距 */
+    &:hover {
+        transform: scale(1.05);
     }
 }
 
@@ -206,23 +270,26 @@ page {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* 内容居中 */
+    gap: 10rpx;
 }
 
 .yubao7day_item_info image {
     width: 40rpx;
-    /* 图标变成白色 */
+    height: 40rpx;
+    margin: 10rpx 0;
     filter: brightness(0) invert(1);
 }
 
 .yubao7day_item_info text {
     font-size: 25rpx;
+    margin: 5rpx 0;
 }
 
 // 折线图
 .weatherCanvas {
     width: 100%;
     height: 250rpx;
+    margin: 20rpx 0;
 }
 
 // ---------------------------------------------------------生活指数
@@ -231,12 +298,17 @@ page {
     flex-wrap: wrap;              /* 弹性盒子换行 */
     align-items: center;            /* 垂直居中对齐 */
     height: 540rpx;
-    background-color: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
     border-radius: 20rpx;
     margin: 10rpx;
     margin-bottom: 20rpx;
     padding: 10rpx;
     font-size: 28rpx;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    animation: slideUp 0.8s ease 0.8s;
+    color: #ffffff;
 }
 
 .life_item {
@@ -244,12 +316,19 @@ page {
     display: flex;
     justify-content: center;       /* 水平居中 */
     align-items: center;           /* 垂直居中 */
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: scale(1.05);
+    }
 }
 
 .life_item_info {
     display: flex;
     flex-direction: column;        /* 竖向排列图标和文字 */
     align-items: center;           /* 图标和文字居中 */
+    color: #ffffff;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 }
 
 .lifeimg {
