@@ -30,11 +30,11 @@
                 </view>
                 <!-- 贪吃蛇游戏入口 -->
                 <view class="snake-game-entry" bindtap="navigateToSnakeGame">
-                    <image class="snake-icon" src="../../assets/icons/snake-icon.svg" mode="aspectFit" />
+                    <image class="snake-icon" style="width: 20px;height: 20px;" src="../../assets/icons/snake-icon.svg" mode="aspectFit" />
                 </view>
                 <!-- 五子连珠游戏入口 -->
                 <view class="five-in-row-entry" bindtap="navigateToFiveInRow">
-                    <image class="five-in-row-icon" src="../../assets/icons/five-in-row-icon.svg" mode="aspectFit" />
+                    <image class="five-in-row-icon" style="width: 20px;height: 20px; margin-top: 10px;" src="../../assets/icons/five-in-row-icon.svg" mode="aspectFit" />
                 </view>
             </view>
             <!--头部-->

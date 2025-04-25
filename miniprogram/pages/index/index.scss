@@ -354,16 +354,19 @@ page {
 }
 
 .five-in-row-entry {
-    display: inline-flex;
-    align-items: center;
-    margin-left: 15rpx;
     position: relative;
-}
+    margin-left: 20rpx;
+    animation: iconFloat 3s ease-in-out infinite;
+    
+    .five-in-row-icon {
+        width: 60rpx;
+        height: 60rpx;
+        transition: transform 0.3s ease;
+    }
 
-.five-in-row-icon {
-    width: 40rpx;
-    height: 40rpx;
-    animation: pulse 2s ease-in-out infinite;
+    &:active .five-in-row-icon {
+        transform: scale(0.9);
+    }
 }
 
 @keyframes wiggle {
@@ -375,4 +378,13 @@ page {
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.1); }
+}
+
+@keyframes iconFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10rpx);
+    }
 }
