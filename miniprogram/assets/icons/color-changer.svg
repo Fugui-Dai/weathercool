@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 背景圆 -->
+    <circle cx="30" cy="30" r="28" fill="url(#colorChangerGradient)" />
+    
+    <!-- 变色器图案 -->
+    <path d="M20 30C20 25.5817 23.5817 22 28 22H32C36.4183 22 40 25.5817 40 30V38C40 38.5523 39.5523 39 39 39H21C20.4477 39 20 38.5523 20 38V30Z" fill="white"/>
+    <circle cx="24" cy="30" r="2" fill="#ff6b6b"/>
+    <circle cx="30" cy="30" r="2" fill="#4facfe"/>
+    <circle cx="36" cy="30" r="2" fill="#43e97b"/>
+    
+    <!-- 渐变定义 -->
+    <defs>
+        <linearGradient id="colorChangerGradient" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" style="stop-color:#4facfe"/>
+            <stop offset="100%" style="stop-color:#00f2fe"/>
+        </linearGradient>
+    </defs>
+</svg> 

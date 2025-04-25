@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 背景圆 -->
+    <circle cx="30" cy="30" r="28" fill="url(#refreshGradient)" />
+    
+    <!-- 刷新图案 -->
+    <path d="M38 30C38 34.4183 34.4183 38 30 38C25.5817 38 22 34.4183 22 30C22 25.5817 25.5817 22 30 22" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    <path d="M22 30C22 25.5817 25.5817 22 30 22C34.4183 22 38 25.5817 38 30" stroke="white" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 4"/>
+    <path d="M30 22L35 19M30 22L35 25" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- 渐变定义 -->
+    <defs>
+        <linearGradient id="refreshGradient" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" style="stop-color:#a18cd1"/>
+            <stop offset="100%" style="stop-color:#fbc2eb"/>
+        </linearGradient>
+    </defs>
+</svg> 

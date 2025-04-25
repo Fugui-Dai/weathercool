@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 背景圆 -->
+    <circle cx="30" cy="30" r="28" fill="url(#bombGradient)" />
+    
+    <!-- 炸弹图案 -->
+    <path d="M30 20C37.732 20 44 26.268 44 34C44 41.732 37.732 48 30 48C22.268 48 16 41.732 16 34C16 26.268 22.268 20 30 20Z" fill="#333333"/>
+    <path d="M35 15L38 12M38 12L41 15M38 12L38 18" stroke="#333333" stroke-width="2" stroke-linecap="round"/>
+    <path d="M30 28V40M24 34H36" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    
+    <!-- 渐变定义 -->
+    <defs>
+        <linearGradient id="bombGradient" x1="0" y1="0" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" style="stop-color:#ff6b6b"/>
+            <stop offset="100%" style="stop-color:#ff8e8e"/>
+        </linearGradient>
+    </defs>
+</svg> 

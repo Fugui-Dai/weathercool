@@ -416,7 +416,13 @@ Page({
     // 跳转到贪吃蛇小游戏
     navigateToSnakeGame() {
         wx.navigateTo({
-            url: '/pages/snake/snake',
+            url: '/pages/snake/snake'
+        })
+    },
+
+    navigateToFiveInRow() {
+        wx.navigateTo({
+            url: '/pages/five-in-row/five-in-row'
         })
     }
 })
