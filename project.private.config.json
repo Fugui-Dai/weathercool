@@ -8,8 +8,8 @@
         "miniprogram": {
             "list": [
                 {
-                    "name": "pages/five-in-row/five-in-row",
-                    "pathName": "pages/five-in-row/five-in-row",
+                    "name": "pages/index/index",
+                    "pathName": "pages/index/index",
                     "query": "",
                     "launchMode": "default",
                     "scene": null
