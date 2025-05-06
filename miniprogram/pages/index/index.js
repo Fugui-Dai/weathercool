@@ -412,17 +412,5 @@ Page({
             title:'太酷啦air',
             imageUrl:'../../assets/logo.jpg'
         }
-    },
-    // 跳转到贪吃蛇小游戏
-    navigateToSnakeGame() {
-        wx.navigateTo({
-            url: '/pages/snake/snake'
-        })
-    },
-
-    navigateToFiveInRow() {
-        wx.navigateTo({
-            url: '/pages/five-in-row/five-in-row'
-        })
     }
 })

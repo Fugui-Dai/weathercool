@@ -3,23 +3,6 @@
     <view class="scrollarea">
         <!-- 背景图 -->
         <image class="bg" src="../../assets/bg/bg.png" mode="heightFix" />
-        
-        <!-- Animated bubbles background -->
-        <view class="bubbles-container">
-            <view class="bubble bubble-1"></view>
-            <view class="bubble bubble-2"></view>
-            <view class="bubble bubble-3"></view>
-            <view class="bubble bubble-4"></view>
-            <view class="bubble bubble-5"></view>
-            <view class="bubble bubble-6"></view>
-            <view class="bubble bubble-7"></view>
-            <view class="bubble bubble-8"></view>
-            <view class="bubble bubble-9"></view>
-            <view class="bubble bubble-10"></view>
-            <view class="bubble bubble-11"></view>
-            <view class="bubble bubble-12"></view>
-        </view>
-        
         <scroll-view scroll-y>
             <!--标题-->
             <view class="title">
@@ -27,14 +10,6 @@
                     <van-icon name="plus" size="35rpx" />
                     <!--<image class="add" src="../../assets/title/icon_add.png" mode="heightFix" />-->
                     <text style="color: white;margin-inline-start: 5rpx;">{{ cityData.adm2 }} · {{ cityData.name }}</text>
-                </view>
-                <!-- 贪吃蛇游戏入口 -->
-                <view class="snake-game-entry" bindtap="navigateToSnakeGame">
-                    <image class="snake-icon" style="width: 20px;height: 20px;" src="../../assets/icons/snake-icon.svg" mode="aspectFit" />
-                </view>
-                <!-- 五子连珠游戏入口 -->
-                <view class="five-in-row-entry" bindtap="navigateToFiveInRow">
-                    <image class="five-in-row-icon" style="width: 20px;height: 20px; margin-top: 10px;" src="../../assets/icons/five-in-row-icon.svg" mode="aspectFit" />
                 </view>
             </view>
             <!--头部-->
