@@ -11,7 +11,7 @@
         <view>
             <view class="search-box">
                 <image src="../../assets/search/icon_search.png" class="search-icon" />
-                <input type="text" placeholder="输入城市名称" bindinput="onInput" value="{{searchValue}}" />
+                <input type="text" placeholder="输入城市名称" placeholder-style="color: white;" bindinput="onInput" value="{{searchValue}}" />
             </view>
             <!-- 城市列表（固定浮动） -->
             <view class="city-list" wx:if="{{cityList.length > 0}}">
