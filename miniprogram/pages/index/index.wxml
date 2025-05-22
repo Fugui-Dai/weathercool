@@ -80,7 +80,7 @@
                     </block>
                 </view>
                 <!--折线图-->
-                <view>
+                <view class="weatherCanvas-container">
                     <canvas canvas-id="weatherCanvas" class="weatherCanvas" />
                 </view>
                 <view class="yubao7day_container">

@@ -240,63 +240,75 @@ Page({
         const maxTemp = Math.max(...data1);  // 计算最大温度
         const minTemp = Math.min(...data2);  // 计算最小温度
 
-        const query = wx.createSelectorQuery();
-        query.select('.scroll-x').boundingClientRect(rect => {
-            const chartWidth = rect.width;  // 获取scroll-view的宽度
-            const chartHeight = 120; // 图表高度
-            const margin = 25;       // 边距
+        // 使用wx.createSelectorQuery()获取canvas的宽度和容器宽度
+        wx.createSelectorQuery()
+            .select('.weatherCanvas-container')
+            .boundingClientRect(containerRect => {
+                const containerWidth = containerRect.width;
+                
+                wx.createSelectorQuery()
+                    .select('.yubao7day_container')
+                    .boundingClientRect(itemsRect => {
+                        const chartWidth = containerWidth || 350;  // 获取容器宽度，默认350
+                        const chartHeight = 120; // 图表高度
+                        const margin = 25;       // 边距
+                        
+                        // 计算每个点的间隔，确保对齐
+                        const items = daily7Weather.length;
+                        // 确保分段数量与上下的元素对齐
+                        const stepX = (chartWidth - 2 * margin) / (items - 1);
+                        
+                        // 清空画布
+                        ctx.clearRect(0, 0, chartWidth, chartHeight);
+                        
+                        // 绘制折线方法
+                        const drawLine = (data, color) => {
+                            ctx.beginPath();
+                            ctx.moveTo(margin, chartHeight - margin - ((data[0] - minTemp) / (maxTemp - minTemp)) * (chartHeight - 2 * margin));
+                            for (let i = 1; i < data.length; i++) {
+                                const x = margin + (i * stepX);
+                                const y = chartHeight - margin - ((data[i] - minTemp) / (maxTemp - minTemp)) * (chartHeight - 2 * margin);
+                                ctx.lineTo(x, y);
+                            }
+                            ctx.setStrokeStyle(color);
+                            ctx.setLineWidth(2);
+                            ctx.stroke();
+                        };
 
-            // 计算 X 轴每个点的间隔
-            const stepX = (chartWidth - 2 * margin) / (data1.length - 1);
+                        // 绘制最高温度折线
+                        drawLine(data1, '#FF4500');
+                        // 绘制最低温度折线
+                        drawLine(data2, '#1E90FF');
 
-            // 绘制折线方法
-            const drawLine = (data, color) => {
-                ctx.beginPath();
-                ctx.moveTo(margin, chartHeight - margin - ((data[0] - minTemp) / (maxTemp - minTemp)) * (chartHeight - 2 * margin));
-                for (let i = 1; i < data.length; i++) {
-                    let x = margin + (i * stepX);
-                    let y = chartHeight - margin - ((data[i] - minTemp) / (maxTemp - minTemp)) * (chartHeight - 2 * margin);
-                    ctx.lineTo(x, y);
-                }
-                ctx.setStrokeStyle(color);
-                ctx.setLineWidth(2);
-                ctx.stroke();
-            };
+                        // 绘制点和文本
+                        for (let i = 0; i < data1.length; i++) {
+                            const x = margin + (i * stepX);
+                            const y1 = chartHeight - margin - ((data1[i] - minTemp) / (maxTemp - minTemp)) * (chartHeight - 2 * margin);
+                            const y2 = chartHeight - margin - ((data2[i] - minTemp) / (maxTemp - minTemp)) * (chartHeight - 2 * margin);
 
-            // 绘制最高温度折线
-            drawLine(data1, '#FF4500');
-            // 绘制最低温度折线
-            drawLine(data2, '#1E90FF');
+                            // 最高温点
+                            ctx.beginPath();
+                            ctx.arc(x, y1, 4, 0, 2 * Math.PI);
+                            ctx.setFillStyle('#FF4500');
+                            ctx.fill();
+                            ctx.setFillStyle('#FF4500');
+                            ctx.setFontSize(12);
+                            ctx.fillText(data1[i] + '°', x - 10, y1 - 10);
 
-            // 绘制点和文本
-            for (let i = 0; i < data1.length; i++) {
-                let x = margin + (i * stepX);
-                let y1 = chartHeight - margin - ((data1[i] - minTemp) / (maxTemp - minTemp)) * (chartHeight - 2 * margin);
-                let y2 = chartHeight - margin - ((data2[i] - minTemp) / (maxTemp - minTemp)) * (chartHeight - 2 * margin);
-
-                // 最高温点
-                ctx.beginPath();
-                ctx.arc(x, y1, 4, 0, 2 * Math.PI);
-                ctx.setFillStyle('#FF4500');
-                ctx.fill();
-                ctx.setFillStyle('#FF4500');
-                ctx.setFontSize(12);
-                ctx.fillText(data1[i] + '°', x - 10, y1 - 10);
-
-                // 最低温点
-                ctx.beginPath();
-                ctx.arc(x, y2, 4, 0, 2 * Math.PI);
-                ctx.setFillStyle('#1E90FF');
-                ctx.fill();
-                ctx.setFillStyle('#1E90FF');
-                ctx.setFontSize(12);
-                ctx.fillText(data2[i] + '°', x - 10, y2 + 15);
-
-                // X 轴星期标签
-                ctx.setFillStyle('#000');
-            }
-            ctx.draw();
-        }).exec();
+                            // 最低温点
+                            ctx.beginPath();
+                            ctx.arc(x, y2, 4, 0, 2 * Math.PI);
+                            ctx.setFillStyle('#1E90FF');
+                            ctx.fill();
+                            ctx.setFillStyle('#1E90FF');
+                            ctx.setFontSize(12);
+                            ctx.fillText(data2[i] + '°', x - 10, y2 + 15);
+                        }
+                        
+                        // 绘制并更新画布
+                        ctx.draw();
+                    }).exec();
+            }).exec();
     },
 
     /*点击生活指数，弹框显示 */
