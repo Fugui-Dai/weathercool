@@ -1,7 +1,7 @@
 <!--pages/address/address.wxml-->
 <view class="container" bindtouchstart="onTouchStart">
     <image class="bg" src="../../assets/bg/bg_address.png" mode="heightFix"></image>
-    <scroll-view class="scrollarea" scroll-y>
+    <view class="scrollarea">
         <!-- 标题 -->
         <view class="title" bind:tap="clickBack">
             <van-icon name="arrow-left" size="40rpx" />
@@ -31,5 +31,5 @@
                 </view>
             </view>
         </view>
-    </scroll-view>
+    </view>
 </view>
