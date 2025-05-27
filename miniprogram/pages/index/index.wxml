@@ -47,7 +47,7 @@
                     <view class="item">
                         <view class="temp">
                             <!--今天、明天、后天-->
-                            <text>{{item.dayLabel}}</text>
+                            <text style="margin-top: 5rpx;">{{item.dayLabel}}</text>
                             <!--最高温度和最低温度-->
                             <text>{{item.tempMax}}/{{item.tempMin}}℃</text>
                         </view>
@@ -90,10 +90,14 @@
                         </view>
                     </block>
                 </view>
-                <!--折线图-->
-                <view class="weatherCanvas-container">
-                    <canvas canvas-id="weatherCanvas" class="weatherCanvas" />
+                
+                <!-- 折线图固定容器 -->
+                <view class="chart-fixed-wrapper">
+                    <view class="weatherCanvas-container">
+                        <canvas canvas-id="weatherCanvas" class="weatherCanvas" style="transform: translateZ(0); position: relative;" />
+                    </view>
                 </view>
+                
                 <view class="yubao7day_container">
                     <block wx:for="{{daily7Weather}}" wx:key="index">
                         <view class="yubao7day_item">

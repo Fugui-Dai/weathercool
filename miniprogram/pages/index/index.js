@@ -338,9 +338,9 @@ Page({
                                 // 确保分段数量与上下的元素对齐
                                 const stepX = (chartWidth - 2 * margin) / (items - 1)-1.5;
                                 
-                                // 添加动画参数 - 减少动画帧数，使动画更快完成
+                                // 优化动画，减少闪烁
                                 let animationProgress = 0; // 动画进度，从0到1
-                                const animationDuration = 15; // 减少帧数（原为30）
+                                const animationDuration = 10; // 减少帧数，让动画更快完成
                                 let currentFrame = 0;
                                 
                                 // 预先计算点的坐标，避免重复计算
@@ -440,9 +440,10 @@ Page({
                                     const highPoints = drawCurve(points1);
                                     const lowPoints = drawCurve(points2);
                                     
-                                    // 绘制点和文本（简化显示逻辑）
-                                    if (animationProgress > 0.5) { // 当曲线达到50%高度时开始显示点和文本（原为70%）
-                                        const opacity = Math.min(1, (animationProgress - 0.5) / 0.5); // 0-1之间的不透明度
+                                    // 绘制点和文本（直接显示，不使用渐变出现效果，减少复杂度）
+                                    if (animationProgress >= 0.3) { // 当曲线达到30%高度时就显示点和文本
+                                        // 固定不透明度为1，不再使用渐变动画
+                                        const opacity = 1; 
                                         
                                         if (highPoints && lowPoints) {
                                             for (let i = 0; i < highPoints.length; i++) {
@@ -470,19 +471,21 @@ Page({
                                         }
                                     }
                                     
-                                    // 绘制并更新画布 - 优化draw调用
-                                    ctx.draw();
-                                    
-                                    // 继续动画
-                                    if (currentFrame < animationDuration) {
-                                        currentFrame++;
-                                        // 使用setTimeout代替requestAnimationFrame，更可控
-                                        setTimeout(drawAnimatedCurve, 17);
-                                    } else {
-                                        // 动画完成，标记图表已绘制
-                                        this.setData({ chartDrawn: true });
-                                        resolve(); // 完成Promise
-                                    }
+                                    // 绘制并更新画布 - 使用同步模式避免闪烁
+                                    ctx.draw(false, () => {
+                                        // 继续动画
+                                        if (currentFrame < animationDuration) {
+                                            currentFrame++;
+                                            // 使用requestAnimationFrame获得更好的性能
+                                            wx.nextTick(() => {
+                                                drawAnimatedCurve();
+                                            });
+                                        } else {
+                                            // 动画完成，标记图表已绘制
+                                            this.setData({ chartDrawn: true });
+                                            resolve(); // 完成Promise
+                                        }
+                                    });
                                 };
                                 
                                 // 辅助函数：将十六进制颜色转换为RGB格式

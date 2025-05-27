@@ -386,6 +386,21 @@ scroll-view > text {
   text-shadow: 0 0 10rpx rgba(255, 218, 193, 0.4);
 }
 
+/* 添加新的折线图固定容器样式 */
+.chart-fixed-wrapper {
+  position: relative;
+  height: 120px;
+  width: 100%;
+  overflow: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+  z-index: 60; /* 更高的z-index确保始终显示在最上层 */
+  contain: strict; /* 更强的隔离效果 */
+  isolation: isolate;
+  margin: 5rpx 0;
+}
+
 /* Weather Canvas Chart Styling */
 .weatherCanvas-container {
   display: flex;
@@ -394,9 +409,19 @@ scroll-view > text {
   width: 100%;
   padding: 0 10rpx;
   box-sizing: border-box;
-  margin: 5rpx 0;
   position: relative;
-  z-index: 5;
+  z-index: 50; /* 提高z-index确保在顶层 */
+  /* 添加样式使折线图固定不动 */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+  /* 防止跟随页面滚动的抖动 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* 添加强化固定效果 */
+  isolation: isolate;
+  contain: layout paint;
+  height: 100%;
 }
 
 .weatherCanvas {
@@ -406,7 +431,14 @@ scroll-view > text {
   justify-content: center;
   align-items: center;
   position: relative;
-  z-index: 5;
+  z-index: 50; /* 提高z-index确保在顶层 */
+  /* 添加样式使折线图内容固定不动 */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+  /* 添加强化固定效果 */
+  contain: layout paint style;
+  isolation: isolate;
 }
 
 /* Main content z-index adjustment to ensure it's above bubbles */
@@ -503,4 +535,20 @@ scroll-view > text {
   text-shadow: none !important;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* 添加新的样式确保7天预报容器稳定 */
+.yubao7day {
+  position: relative;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+  z-index: 5;
+}
+
+.yubao7day_container {
+  position: relative;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  z-index: 5;
 }
