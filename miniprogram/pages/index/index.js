@@ -310,11 +310,12 @@ Page({
                 // 获取最高温度和最低温度
                 const data1 = daily7Weather.map(day => parseInt(day.tempMax));
                 const data2 = daily7Weather.map(day => parseInt(day.tempMin));
+
                 const maxTemp = Math.max(...data1);  // 计算最大温度
                 const minTemp = Math.min(...data2);  // 计算最小温度
 
                 // 调整温度范围，使高温和低温曲线更靠近
-                const tempRangeExpansion = 0.4; // 温度范围调整系数（值越小，两条线越靠近）
+                const tempRangeExpansion = 1; // 温度范围调整系数（值越大，两条线间距越大）
                 const tempDiff = maxTemp - minTemp; // 原始温度差
                 const adjustedMaxTemp = maxTemp + tempDiff * (1 - tempRangeExpansion) / 2; // 向上扩展
                 const adjustedMinTemp = minTemp - tempDiff * (1 - tempRangeExpansion) / 2; // 向下扩展
@@ -330,12 +331,12 @@ Page({
                             .boundingClientRect(itemsRect => {
                                 const chartWidth = containerWidth || 350;  // 获取容器宽度，默认350
                                 const chartHeight = 120; // 图表高度
-                                const margin = 25;       // 边距
+                                const margin = 23;       // 边距
                                 
                                 // 计算每个点的间隔，确保对齐
                                 const items = daily7Weather.length;
                                 // 确保分段数量与上下的元素对齐
-                                const stepX = (chartWidth - 2 * margin) / (items - 1);
+                                const stepX = (chartWidth - 2 * margin) / (items - 1)-1.5;
                                 
                                 // 添加动画参数 - 减少动画帧数，使动画更快完成
                                 let animationProgress = 0; // 动画进度，从0到1
@@ -454,7 +455,7 @@ Page({
                                                 ctx.setFillStyle(`rgba(${hexToRgb(high.color)}, ${opacity})`);
                                                 ctx.fill();
                                                 ctx.setFillStyle(`rgba(${hexToRgb(high.color)}, ${opacity})`);
-                                                ctx.setFontSize(12);
+                                                ctx.setFontSize(15); // 调整字体大小
                                                 ctx.fillText(high.temp + '°', high.x - 10, high.y - 10);
                                                 
                                                 // 最低温点
@@ -463,8 +464,8 @@ Page({
                                                 ctx.setFillStyle(`rgba(${hexToRgb(low.color)}, ${opacity})`);
                                                 ctx.fill();
                                                 ctx.setFillStyle(`rgba(${hexToRgb(low.color)}, ${opacity})`);
-                                                ctx.setFontSize(12);
-                                                ctx.fillText(low.temp + '°', low.x - 10, low.y + 15);
+                                                ctx.setFontSize(15); // 调整字体大小
+                                                ctx.fillText(low.temp + '°', low.x - 10, low.y + 20);
                                             }
                                         }
                                     }

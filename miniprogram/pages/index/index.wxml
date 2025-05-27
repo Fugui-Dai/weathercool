@@ -17,7 +17,7 @@
                     <view wx:if="{{isOffline}}" class="offline-indicator">
                         <view class="offline-status">
                             <van-icon name="warn-o" size="28rpx" color="#FFD700" />
-                            <text class="{{textOverflow ? 'marquee-text' : ''}}">离线模式</text>
+                            <text class="{{textOverflow ? 'marquee-text' : ''}}">离线</text>
                             <text class="update-time {{textOverflow ? 'marquee-text' : ''}}">上次更新: {{lastUpdateTime}}</text>
                         </view>
                     </view>
@@ -46,7 +46,7 @@
                 <block wx:for="{{daily3Weather}}" wx:key="index">
                     <view class="item">
                         <view class="temp">
-                            <!--明天、明天、后天-->
+                            <!--今天、明天、后天-->
                             <text>{{item.dayLabel}}</text>
                             <!--最高温度和最低温度-->
                             <text>{{item.tempMax}}/{{item.tempMin}}℃</text>

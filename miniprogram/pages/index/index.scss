@@ -129,12 +129,13 @@ page {
     box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
     animation: slideUp 0.8s ease 0.2s;
+    align-items: center;
 }
 
 /* 单个天气卡片 */
 .item {
     width: 180rpx;
-    height: 160rpx;
+    height: 165rpx;
     padding: 20rpx;
     text-align: center;
     margin-right: 20rpx;
@@ -145,6 +146,7 @@ page {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 
     &:first-child {
         background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
@@ -170,6 +172,7 @@ page {
 .weather text {
     display: block;
     font-size: 28rpx;
+    margin: 4rpx 0;
 }
 
 /* 图标大小 */
@@ -285,15 +288,37 @@ page {
 }
 
 .yubao7day_item_info text {
-    font-size: 25rpx;
+    font-size: 27rpx;
     margin: 5rpx 0;
 }
 
 // 折线图
+.weatherCanvas-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0 10rpx;
+    box-sizing: border-box;
+    margin: 5rpx 0;
+    position: relative;
+    z-index: 5;
+    transform: translateZ(0); /* 启用硬件加速 */
+    will-change: transform; /* 提示浏览器该元素会有变换 */
+    backface-visibility: hidden; /* 防止3D变换时的闪烁 */
+}
+
 .weatherCanvas {
     width: 100%;
-    height: 220rpx;
-    margin-top: -10rpx;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 5;
+    transform: translateZ(0); /* 启用硬件加速 */
+    will-change: transform; /* 提示浏览器该元素会有变换 */
+    backface-visibility: hidden; /* 防止3D变换时的闪烁 */
 }
 
 // ---------------------------------------------------------生活指数
