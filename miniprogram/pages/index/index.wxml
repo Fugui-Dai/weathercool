@@ -6,10 +6,21 @@
         <scroll-view scroll-y>
             <!--标题-->
             <view class="title">
-                <view bindtap="clickAddress" style="display: flex; align-items: center;">
-                    <van-icon name="plus" size="35rpx" />
-                    <!--<image class="add" src="../../assets/title/icon_add.png" mode="heightFix" />-->
-                    <text style="color: white;margin-inline-start: 5rpx;">{{ cityData.adm2 }} · {{ cityData.name }}</text>
+                <view style="display: flex; align-items: center; width: 100%; justify-content: space-between;">
+                    <view style="display: flex; align-items: center;">
+                        <van-icon name="plus" size="35rpx" />
+                        <!--<image class="add" src="../../assets/title/icon_add.png" mode="heightFix" />-->
+                        <text bindtap="clickAddress" style="color: white;margin-inline-start: 5rpx;">{{ cityData.adm2 }} · {{ cityData.name }}</text>
+                    </view>
+                    
+                    <!-- 离线模式指示器 -->
+                    <view wx:if="{{isOffline}}" class="offline-indicator">
+                        <view class="offline-status">
+                            <van-icon name="warn-o" size="28rpx" color="#FFD700" />
+                            <text class="{{textOverflow ? 'marquee-text' : ''}}">离线模式</text>
+                            <text class="update-time {{textOverflow ? 'marquee-text' : ''}}">上次更新: {{lastUpdateTime}}</text>
+                        </view>
+                    </view>
                 </view>
             </view>
             <!--头部-->
@@ -24,7 +35,7 @@
                 <view>
                     <text>{{shishitianqi.windDir}}</text>
                     <text> | </text>
-                    <text>湿度{{shishitianqi.humidity}}℃</text>
+                    <text>湿度{{shishitianqi.humidity}}%</text>
                     <text> | </text>
                     <text>空气质量·{{zhiliang}}</text>
                 </view>

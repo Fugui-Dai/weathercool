@@ -343,6 +343,38 @@ scroll-view > text {
 }
 
 /* Life indices */
+.life {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10rpx;
+  padding: 10rpx;
+}
+
+.life_item {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 15rpx;
+  padding: 15rpx;
+  transition: all 0.3s ease;
+}
+
+.life_item:active {
+  transform: scale(0.98);
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.life_item_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5rpx;
+}
+
+.life_item_info .lifeimg {
+  width: 50rpx;
+  height: 50rpx;
+  margin-bottom: 5rpx;
+}
+
 .life_item_info text:first-child {
   color: #FFB7B2;
   font-weight: bold;
@@ -386,4 +418,89 @@ scroll-view > text {
 .title, .header, .ytt, .hourweather24, .life, .bg {
   position: relative;
   z-index: 5;
+}
+
+/* 点击城市名称样式 */
+.title text[bindtap] {
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  padding: 0 4rpx;
+  font-size: 32rpx;
+  letter-spacing: 1rpx;
+}
+
+/* 添加交互效果 */
+.title text[bindtap]:active {
+  opacity: 0.7;
+}
+
+.title {
+  margin: 15rpx 10rpx;
+  padding: 5rpx 0;
+  display: flex;
+  padding: 20rpx;
+}
+
+/* 离线模式指示器样式 */
+.offline-indicator {
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10rpx;
+  padding: 2rpx 10rpx;
+  margin-left: 10rpx;
+  max-width: 60%;
+  overflow: hidden;
+}
+
+.offline-status {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* 仅在文本有 marquee-text 类时应用动画 */
+.marquee-text {
+  display: inline-block;
+  animation: marquee 15s linear infinite;
+  animation-delay: 1s;
+}
+
+@keyframes marquee {
+  0%, 5% {
+    transform: translateX(0);
+  }
+  40% {
+    transform: translateX(-120%);
+  }
+  60% {
+    transform: translateX(-120%);
+  }
+  95%, 100% {
+    transform: translateX(0);
+  }
+}
+
+.offline-indicator text {
+  color: #FFD700;
+  font-size: 20rpx;
+  margin-left: 6rpx;
+  background: none;
+  -webkit-text-fill-color: #FFD700;
+  text-shadow: 0 0 10rpx rgba(255, 215, 0, 0.5);
+  white-space: nowrap;
+}
+
+.update-time {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 18rpx !important;
+  margin-left: 8rpx !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.8) !important;
+  text-shadow: none !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
