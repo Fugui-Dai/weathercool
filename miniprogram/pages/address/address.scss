@@ -8,6 +8,34 @@ page {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
 }
 
+// --------------------------------容器
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+// --------------------------------滚动区域
+.scrollarea {
+    flex: 1;
+    position: relative;
+    height: 100vh;
+    z-index: 0;
+}
+
+// --------------------------------scroll-view
+.scrollarea scroll-view {
+    height: 100%;
+    position: relative;
+}
+
+// --------------------------------刷新器样式
+.wx-pull-to-refresh {
+    color: white !important;
+}
+
 // --------------------------------背景图
 .bg {
     position: fixed;
@@ -69,7 +97,7 @@ input::placeholder {
 
 // --------------------------------城市列表
 .city-list {
-    position: fixed;
+    position: absolute;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -80,6 +108,7 @@ input::placeholder {
     overflow-y: auto;
     z-index: 100;
     backdrop-filter: blur(10px);
+    top: 185rpx;
 }
 
 // --------------------------------城市列表项

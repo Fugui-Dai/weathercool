@@ -199,7 +199,7 @@ page {
 .ytt {
     display: flex;
     justify-content: space-evenly;
-    height: 210rpx;
+    height: 220rpx;
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
     border-radius: 20rpx;
     margin: 10rpx;
@@ -216,7 +216,7 @@ page {
 // --------------------------------天气卡片样式
 .item {
     width: 180rpx;
-    height: 170rpx;
+    height: 180rpx;
     padding: 20rpx;
     text-align: center;
     margin-right: 20rpx;
@@ -248,14 +248,14 @@ page {
 .weather text {
     display: block;
     font-size: 28rpx;
-    margin: 4rpx 0;
+    margin: 1rpx 0;
 }
 
 // --------------------------------天气图标
 .weathericon {
     width: 60rpx;
     height: 60rpx;
-    margin-top: 10rpx;
+    margin-top: 4rpx;
     filter: brightness(0) invert(1);
 }
 

@@ -26,7 +26,42 @@ Page({
         // 城市搜索结果
         cityList: [],
         //热门城市的数据
-        hotCities: []
+        hotCities: [],
+        // 刷新状态
+        refreshing: false
+    },
+
+    // 下拉刷新处理函数
+    async onRefresh() {
+        // 设置刷新状态
+        this.setData({
+            refreshing: true
+        });
+        
+        try {
+            // 重新获取热门城市数据
+            await this.locationAndSearch();
+            
+            // 如果当前有搜索内容，重新搜索
+            if (this.data.searchValue) {
+                const simulatedEvent = {
+                    detail: {
+                        value: this.data.searchValue
+                    }
+                };
+                await this.onInput(simulatedEvent);
+            }
+            
+            // 不显示刷新成功提示
+        } catch (error) {
+            console.error("刷新失败:", error);
+            // 不显示刷新失败提示
+        } finally {
+            // 结束刷新状态
+            this.setData({
+                refreshing: false
+            });
+        }
     },
 
     // 定位和搜索

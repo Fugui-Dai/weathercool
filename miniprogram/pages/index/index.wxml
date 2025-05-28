@@ -45,9 +45,9 @@
             <view class="ytt">
                 <block wx:for="{{daily3Weather}}" wx:key="index">
                     <view class="item">
-                        <view class="temp">
+                        <view class="temp" style="display: flex; flex-direction: column;">
                             <!--今天、明天、后天-->
-                            <text style="margin-top: 5rpx;">{{item.dayLabel}}</text>
+                            <text>{{item.dayLabel}}</text>
                             <!--最高温度和最低温度-->
                             <text>{{item.tempMax}}/{{item.tempMin}}℃</text>
                         </view>
