@@ -1,4 +1,5 @@
 /**index.wxss**/
+// --------------------------------基础页面样式
 page {
     height: 100vh;
     display: flex;
@@ -7,7 +8,7 @@ page {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
 }
 
-/* 背景图铺满并置于底层 */
+// --------------------------------背景图
 .bg {
     position: fixed;
     top: 0;
@@ -18,7 +19,7 @@ page {
     opacity: 0.5;
 }
 
-// ---------------------------------------------------------标题
+// --------------------------------标题区域
 .title {
     display: flex;
     position: relative;
@@ -28,7 +29,7 @@ page {
     text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.5);
 }
 
-// ---------------------------------------------------------搜索
+// --------------------------------搜索框
 .search-box {
     position: relative;
     z-index: 10;
@@ -44,7 +45,7 @@ page {
     transition: all 0.3s ease;
 }
 
-/* 搜索图标 */
+// --------------------------------搜索图标
 .search-icon {
     width: 32rpx;
     height: 32rpx;
@@ -52,7 +53,7 @@ page {
     filter: brightness(0) invert(1);
 }
 
-/* 输入框 */
+// --------------------------------输入框
 input {
     flex: 1;
     border: none;
@@ -61,11 +62,12 @@ input {
     color: #ffffff;
 }
 
+// --------------------------------输入框占位符
 input::placeholder {
     color: rgba(255, 255, 255, 0.7);
 }
 
-/* 城市列表 */
+// --------------------------------城市列表
 .city-list {
     position: fixed;
     left: 50%;
@@ -80,7 +82,7 @@ input::placeholder {
     backdrop-filter: blur(10px);
 }
 
-/* 城市列表项 */
+// --------------------------------城市列表项
 .city-item {
     padding: 20rpx;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -88,18 +90,14 @@ input::placeholder {
     color: #ffffff;
     text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
 }
 
-/* 最后一个不显示底部边框 */
+// --------------------------------最后一个城市项
 .city-item:last-child {
     border-bottom: none;
 }
 
-// ---------------------------------------------------------热门城市下的item
+// --------------------------------热门城市区域
 .hotcity {
     display: flex;
     flex-wrap: wrap;
@@ -113,6 +111,7 @@ input::placeholder {
     transition: all 0.3s ease;
 }
 
+// --------------------------------城市盒子
 .city-box {
     width: 200rpx;
     height: 60rpx;
@@ -126,22 +125,16 @@ input::placeholder {
     box-sizing: border-box;
     transition: all 0.3s ease;
 
-    &:hover {
-        transform: translateY(-5rpx) scale(1.02);
-        box-shadow: 0 8rpx 16rpx rgba(0, 0, 0, 0.3);
-    }
-
-    /* 第3个去掉右边距 */
     &:nth-child(3n) {
         margin-right: 0;
     }
 
-    /* 最后一行的元素并去掉 margin-bottom */
     &:nth-last-child(-n + 3) {
         margin-bottom: 0;
     }
 }
 
+// --------------------------------城市盒子文本
 .city-box text {
     font-size: 28rpx;
     color: #ffffff;

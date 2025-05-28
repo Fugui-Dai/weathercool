@@ -224,7 +224,7 @@ Page({
                 daily7Weather: daily7Weather,
                 lifeIndices: lifeIndex.data.daily,
                 lastUpdateTime: lastUpdateTime,
-                isOffline: false
+                isOffline: false  // 明确设置为非离线模式
             };
             
             this.setData(weatherData);
@@ -680,7 +680,7 @@ Page({
                     isOffline: true
                 });
                 wx.showToast({
-                    title: '网络已断开，切换至离线模式',
+                    title: '无网络,切换至离线模式',
                     icon: 'none',
                     duration: 2000
                 });
@@ -733,6 +733,20 @@ Page({
         // 页面显示时检查是否有新的选中的城市
         const pages = getCurrentPages();
         const prevPage = pages[pages.length - 1]; // 获取当前页面
+        
+        // 首先检查网络状态，确保离线模式状态正确
+        this.checkNetworkStatus().then(networkType => {
+            if (networkType === 'none' && !this.data.isOffline) {
+                // 如果是离线状态但未显示离线指示器，则设置为离线模式
+                this.setData({ isOffline: true });
+            } else if (networkType !== 'none' && this.data.isOffline) {
+                // 有网络但显示了离线指示器，需要更新数据
+                this.requestNetWeatherData().catch(error => {
+                    console.error('网络恢复请求数据失败:', error);
+                });
+            }
+        });
+        
         if (prevPage.data.selectedCity && Object.keys(prevPage.data.selectedCity).length > 0) {
             const selectedCity = prevPage.data.selectedCity; // 获取完整的城市对象
             console.log('return selectedCity:')
@@ -783,11 +797,23 @@ Page({
         // 重置图表状态，允许重新绘制
         this.resetChartState();
         
-        // 请求新数据
-        this.requestNetWeatherData().finally(() => {
-            // 调用 wx.stopPullDownRefresh()可以停止当前页面的下拉刷新。
-            // 在下拉刷新以后，loading 效果有可能不会回弹回去
-            wx.stopPullDownRefresh();
+        // 先检查网络状态，再决定是否刷新数据
+        this.checkNetworkStatus().then(networkType => {
+            if (networkType === 'none') {
+                // 如果是离线状态，确保离线模式指示器保持显示
+                this.setData({ isOffline: true });
+                wx.showToast({
+                    title: '无网络,切换至离线模式',
+                    icon: 'none',
+                    duration: 2000
+                });
+                wx.stopPullDownRefresh();
+            } else {
+                // 有网络时，请求新数据
+                this.requestNetWeatherData().finally(() => {
+                    wx.stopPullDownRefresh();
+                });
+            }
         });
     },
 
@@ -1006,7 +1032,7 @@ Page({
                 daily7Weather: daily7Weather,
                 lifeIndices: lifeIndex.data.daily,
                 lastUpdateTime: lastUpdateTime,
-                isOffline: false
+                isOffline: false  // 明确设置为非离线模式
             };
             
             this.setData(weatherData);

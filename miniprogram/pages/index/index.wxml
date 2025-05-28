@@ -6,19 +6,19 @@
         <scroll-view scroll-y>
             <!--标题-->
             <view class="title">
-                <view style="display: flex; align-items: center; width: 100%; justify-content: space-between;">
-                    <view style="display: flex; align-items: center;">
+                <view style="display: flex; align-items: center; width: 100%; flex-wrap: wrap;">
+                    <view style="display: flex; align-items: center; flex-wrap: wrap;">
                         <van-icon name="plus" size="35rpx" />
                         <!--<image class="add" src="../../assets/title/icon_add.png" mode="heightFix" />-->
                         <text bindtap="clickAddress" style="color: white;margin-inline-start: 5rpx;">{{ cityData.adm2 }} · {{ cityData.name }}</text>
-                    </view>
-                    
-                    <!-- 离线模式指示器 -->
-                    <view wx:if="{{isOffline}}" class="offline-indicator">
-                        <view class="offline-status">
-                            <van-icon name="warn-o" size="28rpx" color="#FFD700" />
-                            <text class="{{textOverflow ? 'marquee-text' : ''}}">离线</text>
-                            <text class="update-time {{textOverflow ? 'marquee-text' : ''}}">上次更新: {{lastUpdateTime}}</text>
+                        
+                        <!-- 离线模式指示器 -->
+                        <view wx:if="{{isOffline}}" class="offline-indicator">
+                            <view class="offline-status">
+                                <van-icon name="warn-o" size="28rpx" color="#FFD700" />
+                                <text class="{{textOverflow ? 'marquee-text' : ''}}">离线</text>
+                                <text class="update-time {{textOverflow ? 'marquee-text' : ''}}">上次更新: {{lastUpdateTime}}</text>
+                            </view>
                         </view>
                     </view>
                 </view>
@@ -26,7 +26,7 @@
             <!--头部-->
             <view class="header">
                 <view class="temp-container">
-                    <text class="temperature">{{shishitianqi.temp}}<text style="font-size:35rpx; font-weight:normal; vertical-align:text-top; position:relative; top:0rpx; margin-left:2rpx;">℃</text></text>
+                    <text class="temperature">{{shishitianqi.temp}}<text style="font-size:35rpx; font-weight:normal; vertical-align:text-top; position:relative; top:0rpx; margin-left:-20rpx;">℃</text></text>
                 </view>
                 <view>
                     <text class="weather">天气：{{shishitianqi.text}} </text>
