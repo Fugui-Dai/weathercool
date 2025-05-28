@@ -210,6 +210,12 @@ text {
   100% { background-position: 0% 50%; }
 }
 
+/* Temperature container */
+.temp-container {
+  position: relative;
+  display: inline-block;
+}
+
 /* Temperature with glow effect */
 .temperature {
   color: #FF9AA2;
@@ -218,6 +224,21 @@ text {
   text-shadow: 0 0 20rpx rgba(255, 154, 162, 0.7);
   animation: temperaturePulse 4s ease infinite;
   letter-spacing: -2rpx;
+  display: inline-block;
+}
+
+/* Temperature unit style */
+.temp-unit {
+  color: #FF9AA2;
+  font-size: 30rpx;
+  font-weight: normal;
+  text-shadow: 0 0 15rpx rgba(255, 154, 162, 0.5);
+  animation: temperaturePulse 4s ease infinite;
+  position: absolute;
+  top: -10rpx;
+  right: -25rpx;
+  line-height: 1;
+  transform: translateY(-50%);
 }
 
 @keyframes temperaturePulse {

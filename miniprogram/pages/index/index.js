@@ -6,12 +6,12 @@ import WxRequest from 'mina-request'
 // 对 WxRequest 进行实例化
 const instance = new WxRequest({
     baseURL: 'https://devapi.qweather.com', // 使用时请换成真实接口
-    timeout: 1000, // 超时时长
+    timeout: 10000, // 超时时长
     isLoading: false // 是否使用默认的 loading 效果
 })
 const instanceGeoapi = new WxRequest({
     baseURL: 'https://geoapi.qweather.com', // 使用时请换成真实接口
-    timeout: 1000, // 超时时长
+    timeout: 10000, // 超时时长
     isLoading: false // 是否使用默认的 loading 效果
 })
 
@@ -108,23 +108,44 @@ Page({
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
 
+            // 验证城市搜索响应数据
+            if (!citySearch.data || !citySearch.data.location || !citySearch.data.location[0]) {
+                throw new Error('城市搜索API返回数据无效');
+            }
+
             // 获取实时天气
             const weatherNow = await instance.get('/v7/weather/now', {
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
+            
+            // 验证实时天气响应数据
+            if (!weatherNow.data || !weatherNow.data.now) {
+                throw new Error('实时天气API返回数据无效');
+            }
 
             // 获取空气质量
             const airQuality = await instance.get('/v7/air/now', {
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
+            
+            // 验证空气质量响应数据
+            if (!airQuality.data || !airQuality.data.now) {
+                throw new Error('空气质量API返回数据无效');
+            }
 
             // 获取3天的天气预报
             const weather3Day = await instance.get('/v7/weather/3d', {
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
+            
+            // 验证3天天气预报响应数据
+            if (!weather3Day.data || !weather3Day.data.daily || !weather3Day.data.daily.length) {
+                throw new Error('3天天气预报API返回数据无效');
+            }
+            
             const daily3Weather = weather3Day.data.daily.map((day, index) => ({
                 dayLabel: ["今天", "明天", "后天"][index],  // 今天、明天、后天
                 tempMax: day.tempMax,
@@ -138,6 +159,12 @@ Page({
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
+            
+            // 验证24小时天气预报响应数据
+            if (!hour24.data || !hour24.data.hourly || !hour24.data.hourly.length) {
+                throw new Error('24小时天气预报API返回数据无效');
+            }
+            
             const hourlyWeather = hour24.data.hourly.map(hour => ({
                 time: hour.fxTime.slice(11, 16),  // 提取 "15:00" 格式时间
                 temp: hour.temp,  // 温度
@@ -149,6 +176,11 @@ Page({
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
+            
+            // 验证7天天气预报响应数据
+            if (!weather7Day.data || !weather7Day.data.daily || !weather7Day.data.daily.length) {
+                throw new Error('7天天气预报API返回数据无效');
+            }
 
             const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
             const daily7Weather = weather7Day.data.daily.map((day, index) => ({
@@ -170,6 +202,11 @@ Page({
                 key: "2d57f1cc456d421c8bbdd925db34555a",
                 type: '1,2,3,4,5,6,8,9,12,13,14,16'
             });
+            
+            // 验证生活指数响应数据
+            if (!lifeIndex.data || !lifeIndex.data.daily || !lifeIndex.data.daily.length) {
+                throw new Error('生活指数API返回数据无效');
+            }
             
             // 获取当前时间作为更新时间
             const now = new Date();
@@ -208,9 +245,19 @@ Page({
         } catch (error) {
             console.error("请求失败：", error);
             
+            // 添加更详细的错误日志
+            console.error("请求失败详情：", {
+                errorName: error.name,
+                errorMessage: error.message,
+                errorStack: error.stack,
+                networkType: await this.checkNetworkStatus()
+            });
+            
             // 请求失败时，尝试读取缓存数据
             const success = this.loadCachedWeatherData();
             if (success) {
+                // 设置离线状态标志
+                this.setData({ isOffline: true });
                 wx.showToast({
                     title: '网络异常，正在使用缓存数据',
                     icon: 'none',
@@ -613,7 +660,20 @@ Page({
                     icon: 'none',
                     duration: 2000
                 });
-                this.requestNetWeatherData();
+                
+                // 重置图表状态，允许重新绘制
+                this.resetChartState();
+                
+                // 尝试请求新数据
+                this.requestNetWeatherData().catch(error => {
+                    console.error('网络恢复后请求数据失败:', error);
+                    // 请求失败时显示提示，但保持离线模式
+                    wx.showToast({
+                        title: '获取新数据失败，继续使用缓存',
+                        icon: 'none',
+                        duration: 2000
+                    });
+                });
             } else if (!res.isConnected && !this.data.isOffline) {
                 // 网络断开，显示离线提示
                 this.setData({
@@ -830,23 +890,44 @@ Page({
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
 
+            // 验证城市搜索响应数据
+            if (!citySearch.data || !citySearch.data.location || !citySearch.data.location[0]) {
+                throw new Error('城市搜索API返回数据无效');
+            }
+
             // 获取实时天气
             const weatherNow = await instance.get('/v7/weather/now', {
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
+            
+            // 验证实时天气响应数据
+            if (!weatherNow.data || !weatherNow.data.now) {
+                throw new Error('实时天气API返回数据无效');
+            }
 
             // 获取空气质量
             const airQuality = await instance.get('/v7/air/now', {
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
+            
+            // 验证空气质量响应数据
+            if (!airQuality.data || !airQuality.data.now) {
+                throw new Error('空气质量API返回数据无效');
+            }
 
             // 获取3天的天气预报
             const weather3Day = await instance.get('/v7/weather/3d', {
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
+            
+            // 验证3天天气预报响应数据
+            if (!weather3Day.data || !weather3Day.data.daily || !weather3Day.data.daily.length) {
+                throw new Error('3天天气预报API返回数据无效');
+            }
+            
             const daily3Weather = weather3Day.data.daily.map((day, index) => ({
                 dayLabel: ["今天", "明天", "后天"][index],  // 今天、明天、后天
                 tempMax: day.tempMax,
@@ -860,6 +941,12 @@ Page({
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
+            
+            // 验证24小时天气预报响应数据
+            if (!hour24.data || !hour24.data.hourly || !hour24.data.hourly.length) {
+                throw new Error('24小时天气预报API返回数据无效');
+            }
+            
             const hourlyWeather = hour24.data.hourly.map(hour => ({
                 time: hour.fxTime.slice(11, 16),  // 提取 "15:00" 格式时间
                 temp: hour.temp,  // 温度
@@ -871,6 +958,11 @@ Page({
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
+            
+            // 验证7天天气预报响应数据
+            if (!weather7Day.data || !weather7Day.data.daily || !weather7Day.data.daily.length) {
+                throw new Error('7天天气预报API返回数据无效');
+            }
 
             const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
             const daily7Weather = weather7Day.data.daily.map((day, index) => ({
@@ -892,6 +984,11 @@ Page({
                 key: "2d57f1cc456d421c8bbdd925db34555a",
                 type: '1,2,3,4,5,6,8,9,12,13,14,16'
             });
+            
+            // 验证生活指数响应数据
+            if (!lifeIndex.data || !lifeIndex.data.daily || !lifeIndex.data.daily.length) {
+                throw new Error('生活指数API返回数据无效');
+            }
             
             // 获取当前时间作为更新时间
             const now = new Date();
@@ -930,9 +1027,19 @@ Page({
         } catch (error) {
             console.error("请求失败：", error);
             
+            // 添加更详细的错误日志
+            console.error("请求网络天气数据失败详情：", {
+                errorName: error.name,
+                errorMessage: error.message,
+                errorStack: error.stack,
+                networkType: await this.checkNetworkStatus()
+            });
+            
             // 请求失败时，尝试读取缓存数据
             const success = this.loadCachedWeatherData();
             if (success) {
+                // 设置离线状态标志
+                this.setData({ isOffline: true });
                 wx.showToast({
                     title: '网络异常，正在使用缓存数据',
                     icon: 'none',
