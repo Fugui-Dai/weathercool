@@ -340,7 +340,7 @@ Page({
                                 
                                 // 优化动画，减少闪烁
                                 let animationProgress = 0; // 动画进度，从0到1
-                                const animationDuration = 10; // 减少帧数，让动画更快完成
+                                const animationDuration = 8; // 减少帧数，让动画更快完成
                                 let currentFrame = 0;
                                 
                                 // 预先计算点的坐标，避免重复计算
@@ -556,15 +556,11 @@ Page({
         // 标记是否已经加载了数据，避免重复绘制折线图
         let dataLoaded = false;
         
-        // 无论有无网络，都先尝试加载缓存数据确保页面有内容显示
-        const hasCachedData = this.loadCachedWeatherData();
-        if (hasCachedData) {
-            dataLoaded = true;
-        }
-        
         if (networkStatus === 'none') {
-            // 如果无网络，且有缓存数据，显示离线提示
+            // 如果无网络，尝试加载缓存数据
+            const hasCachedData = this.loadCachedWeatherData();
             if (hasCachedData) {
+                dataLoaded = true;
                 this.setData({ isOffline: true });
                 wx.showToast({
                     title: '无网络，进入离线模式',
@@ -579,14 +575,32 @@ Page({
                     duration: 2000
                 });
             }
-        } else if (!dataLoaded) {
-            // 有网络且没有加载过缓存数据时，尝试获取最新数据
-            // 确保在联网状态下不显示离线模式
-            this.setData({ isOffline: false });
-            this.requestLocation();
         } else {
-            // 有网络且已加载缓存数据，确保不显示离线模式
+            // 有网络时，优先请求最新数据
             this.setData({ isOffline: false });
+            try {
+                // 尝试请求最新的网络数据
+                await this.requestLocation();
+                dataLoaded = true;
+            } catch (error) {
+                console.error("获取网络数据失败，尝试加载缓存", error);
+                // 网络请求失败，尝试加载缓存数据
+                const hasCachedData = this.loadCachedWeatherData();
+                if (hasCachedData) {
+                    dataLoaded = true;
+                    wx.showToast({
+                        title: '网络请求失败，使用缓存数据',
+                        icon: 'none',
+                        duration: 2000
+                    });
+                } else {
+                    wx.showToast({
+                        title: '获取数据失败且无缓存数据',
+                        icon: 'error',
+                        duration: 2000
+                    });
+                }
+            }
         }
         
         // 监听网络状态变化
