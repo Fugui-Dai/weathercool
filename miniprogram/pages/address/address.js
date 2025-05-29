@@ -31,6 +31,12 @@ Page({
         refreshing: false
     },
 
+    // 阻止滚动穿透
+    catchTouchmove() {
+        // 这个函数不需要做任何事情，只需要捕获事件并阻止冒泡
+        return false;
+    },
+
     // 下拉刷新处理函数
     async onRefresh() {
         // 设置刷新状态
@@ -142,13 +148,18 @@ Page({
             searchValue: selectedCity.name, // 更新搜索框内容为所选热门城市名称
             cityList: [] // 隐藏城市列表
         });
-        // 创建一个模拟的事件对象
-        const simulatedEvent = {
-            detail: {
-                value: selectedCity.name // 模拟输入框的内容
-            }
-        };
-        this.onInput(simulatedEvent)
+        
+        // 获取页面栈
+        const pages = getCurrentPages();
+        const prevPage = pages[pages.length - 2]; // 上一个页面（index 页面）
+        
+        // 直接修改 index 页面的数据，传递整个对象
+        prevPage.setData({
+            selectedCity: selectedCity // 将选中的城市名称传递回 index 页面
+        });
+        
+        // 跳转回 index 页面
+        wx.navigateBack();
     },
     /**
      * 生命周期函数--监听页面加载

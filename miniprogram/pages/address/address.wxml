@@ -23,12 +23,14 @@
                     <input type="text" placeholder="输入城市名称" placeholder-style="color: white;" bindinput="onInput" value="{{searchValue}}" />
                 </view>
                 <!-- 城市列表（固定浮动） -->
-                <view class="city-list" wx:if="{{cityList.length > 0}}">
-                    <block wx:for="{{cityList}}" wx:key="index">
-                        <view class="city-item" bindtap="onSelectCity" data-city="{{item}}">
-                            <text>{{item.adm1}}·{{item.name}}</text>
-                        </view>
-                    </block>
+                <view class="city-list-container" wx:if="{{cityList.length > 0}}" catchtouchmove="catchTouchmove">
+                    <scroll-view scroll-y class="city-list" catchtouchmove="catchTouchmove">
+                        <block wx:for="{{cityList}}" wx:key="index">
+                            <view class="city-item" bindtap="onSelectCity" data-city="{{item}}">
+                                <text>{{item.adm1}}·{{item.name}}</text>
+                            </view>
+                        </block>
+                    </scroll-view>
                 </view>
             </view>
             <!-- 热门城市 -->

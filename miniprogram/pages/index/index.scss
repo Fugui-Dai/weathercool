@@ -1,7 +1,7 @@
 /**index.wxss**/
 // --------------------------------基础页面样式
 page {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     color: #ffffff;
@@ -22,7 +22,16 @@ page {
 }
 
 .scrollarea {
-    overflow-y: hidden;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+// 添加scroll-view的z-index样式
+scroll-view {
+    position: relative;
+    z-index: 1;
+    height: 100%;
 }
 
 // --------------------------------背景图
@@ -31,8 +40,9 @@ page {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
-    z-index: -1;
+    height: 100%;
+    min-height: 100vh;
+    z-index: -2;
     opacity: 0.5;
     transition: opacity 0.5s ease;
 }
@@ -247,7 +257,7 @@ page {
 .temp text,
 .weather text {
     display: block;
-    font-size: 28rpx;
+    font-size: 30rpx;
     margin: 1rpx 0;
 }
 
@@ -264,6 +274,7 @@ page {
     display: flex;
     height: 200rpx;
     align-items: center;
+    justify-content: center;
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
     border-radius: 20rpx;
     margin: 10rpx;
@@ -283,6 +294,7 @@ page {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     padding: 10rpx 0;
+    text-align: center;
 }
 
 // --------------------------------24小时天气项
@@ -295,6 +307,11 @@ page {
     text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
     text-align: center;
+    width: 120rpx; /* 固定宽度，使元素均匀分布 */
+    height: 180rpx; /* 添加固定高度 */
+    display: inline-flex; /* 改为 inline-flex 以便更好地控制子元素 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
 }
 
 // --------------------------------24小时天气项信息
@@ -302,31 +319,37 @@ page {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%; /* 占满父元素高度 */
+    gap: 10rpx; /* 添加间距使元素分布更均匀 */
 }
 
 // --------------------------------24小时天气图标
 .hourweather24_item_img {
     width: 50rpx;
     height: 50rpx;
-    margin-bottom: 10rpx;
+    margin: 10rpx 0;
     filter: brightness(0) invert(1);
 }
 
 // --------------------------------7天预报区域
 .yubao7day {
-    display: flex;
-    min-height: 260px;
-    flex-direction: column;
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
     border-radius: 20rpx;
     margin: 10rpx;
-    padding: 20rpx;
-    font-size: 35rpx;
+    padding: 10rpx;
+    font-size: 28rpx;
     backdrop-filter: blur(10px);
     box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
-    animation: slideUp 0.8s ease 0.6s;
+    animation: slideUp 0.8s ease 0.4s;
     color: #ffffff;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 // --------------------------------7天预报容器
@@ -334,6 +357,8 @@ page {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 // --------------------------------折线图固定容器
@@ -349,42 +374,40 @@ page {
     contain: strict;
     isolation: isolate;
     margin: 5rpx 0;
+    transform: translate3d(0, 0, 0); /* 强制GPU加速 */
 }
 
 // --------------------------------折线图容器
-.weatherCanvas-container {
+.chart-container {
+  width: 100%;
+  height: 120px;
+  position: relative;
+  overflow: hidden;
+  margin: 10px 0;
+  padding: 0;
+  z-index: 50;
+  transform: translate3d(0, 0, 0); /* 强制GPU加速 */
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  padding: 0 10rpx;
-  box-sizing: border-box;
-  position: relative;
-  z-index: 50;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  will-change: transform;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  isolation: isolate;
   contain: layout paint;
-  height: 100%;
+  touch-action: none; /* 防止触摸事件影响图表 */
 }
 
 // --------------------------------折线图画布
 .weatherCanvas {
   width: 100%;
   height: 120px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: block;
   position: relative;
   z-index: 50;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0); /* 强制GPU加速 */
   will-change: transform;
-  contain: layout paint style;
-  isolation: isolate;
+  backface-visibility: hidden;
 }
 
 // --------------------------------7天预报项
@@ -460,4 +483,685 @@ page {
 .lifeimg {
     width: 60rpx;
     height: 60rpx;
+}
+
+// --------------------------------雨天特效
+.rain-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+    will-change: transform;
+}
+
+// --------------------------------小雨效果容器
+.light-rain-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+    will-change: transform;
+}
+
+/* 三种不同的雨滴样式 - 大雨 */
+.rain-container .raindrop {
+    position: absolute;
+    width: 3rpx;
+    height: 60rpx;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.7));
+    border-radius: 0 0 5rpx 5rpx;
+    opacity: 0.7; /* 降低不透明度，从0.85降到0.7 */
+    z-index: -1;
+    animation: rain linear infinite;
+    filter: drop-shadow(0 0 3rpx rgba(255, 255, 255, 0.5)); /* 减弱阴影效果 */
+    box-shadow: 0 0 4rpx rgba(200, 220, 255, 0.6); /* 减弱阴影效果 */
+    top: -100rpx; /* 初始位置在屏幕上方 */
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* 每三个雨滴使用不同的颜色 - 大雨 */
+.rain-container .raindrop:nth-child(3n) {
+    background: linear-gradient(to bottom, rgba(200, 220, 255, 0), rgba(200, 220, 255, 0.8));
+    box-shadow: 0 0 4rpx rgba(200, 220, 255, 0.7);
+    width: 3.5rpx;
+}
+
+.rain-container .raindrop:nth-child(3n+1) {
+    background: linear-gradient(to bottom, rgba(220, 255, 255, 0), rgba(220, 255, 255, 0.8));
+    box-shadow: 0 0 4rpx rgba(220, 255, 255, 0.7);
+    width: 3.5rpx;
+}
+
+@keyframes rain {
+    0% {
+        transform: translateY(0) translateZ(0);
+    }
+    100% {
+        transform: translateY(calc(100vh + 150rpx)) translateZ(0);
+    }
+}
+
+// --------------------------------小雨特效
+/* 小雨滴样式 */
+.light-rain-container .raindrop {
+    position: absolute;
+    width: 1.5rpx;
+    height: 40rpx;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.65));
+    border-radius: 0 0 5rpx 5rpx;
+    opacity: 0.65; /* 适中的透明度，介于小雨和中雨之间 */
+    z-index: -1;
+    animation: lightRain linear infinite;
+    filter: drop-shadow(0 0 2rpx rgba(255, 255, 255, 0.45));
+    box-shadow: 0 0 3rpx rgba(200, 220, 255, 0.55);
+    animation-duration: 1.8s; /* 适中的速度，介于小雨和中雨之间 */
+    top: -100rpx; /* 初始位置在屏幕上方 */
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* 小雨滴使用不同的颜色 - 第一种变体 (小雨) */
+.light-rain-container .raindrop:nth-child(3n) {
+    background: linear-gradient(to bottom, rgba(200, 220, 255, 0), rgba(200, 220, 255, 0.7));
+    box-shadow: 0 0 3rpx rgba(200, 220, 255, 0.6);
+    width: 1.2rpx;
+    height: 35rpx;
+    animation-duration: 2s; /* 小雨滴下落更慢 */
+}
+
+/* 小雨滴使用不同的颜色 - 第二种变体 (小雨) */
+.light-rain-container .raindrop:nth-child(3n+1) {
+    background: linear-gradient(to bottom, rgba(220, 255, 255, 0), rgba(220, 255, 255, 0.7));
+    box-shadow: 0 0 3rpx rgba(220, 255, 255, 0.6);
+    width: 1rpx;
+    height: 30rpx;
+    animation-duration: 2.2s; /* 最小雨滴下落最慢 */
+}
+
+/* 中雨滴使用不同的颜色 - 第三种变体 (中雨) */
+.light-rain-container .raindrop:nth-child(5n+2) {
+    background: linear-gradient(to bottom, rgba(210, 235, 255, 0), rgba(210, 235, 255, 0.75));
+    box-shadow: 0 0 3.5rpx rgba(210, 235, 255, 0.65);
+    width: 2rpx;
+    height: 50rpx;
+    opacity: 0.7;
+    animation-duration: 1.5s; /* 中雨滴下落更快一些 */
+}
+
+@keyframes lightRain {
+    0% {
+        transform: translateY(0) translateZ(0);
+    }
+    100% {
+        transform: translateY(calc(100vh + 150rpx)) translateZ(0);
+    }
+}
+
+// --------------------------------雪天特效
+.snow-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.snowflake {
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    z-index: -1;
+    animation: snow linear infinite;
+    box-shadow: 0 0 10rpx rgba(255, 255, 255, 0.8);
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* 每三个雪花使用不同的样式 */
+.snowflake:nth-child(3n) {
+    box-shadow: 0 0 8rpx rgba(210, 235, 255, 0.9);
+    background-color: rgba(210, 235, 255, 0.9);
+}
+
+.snowflake:nth-child(3n+1) {
+    box-shadow: 0 0 12rpx rgba(220, 240, 255, 0.95);
+    background-color: rgba(220, 240, 255, 0.95);
+}
+
+@keyframes snow {
+    0% {
+        transform: translateY(0) rotate(0deg) translateZ(0);
+    }
+    25% {
+        transform: translateY(25vh) translateX(20rpx) rotate(90deg) translateZ(0);
+    }
+    50% {
+        transform: translateY(50vh) translateX(-20rpx) rotate(180deg) translateZ(0);
+    }
+    75% {
+        transform: translateY(75vh) translateX(20rpx) rotate(270deg) translateZ(0);
+    }
+    100% {
+        transform: translateY(calc(100vh + 50rpx)) translateX(-20rpx) rotate(360deg) translateZ(0);
+    }
+}
+
+// --------------------------------晴天特效
+.sunny-container {
+    position: fixed;
+    top: 50rpx;
+    right: 50rpx;
+    width: 120rpx;
+    height: 120rpx;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.sun {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 236, 173, 0.8) 0%, rgba(255, 215, 0, 0.6) 50%, rgba(255, 165, 0, 0) 70%);
+    border-radius: 50%;
+    box-shadow: 0 0 60rpx rgba(255, 215, 0, 0.4);
+    animation: pulse 4s ease-in-out infinite alternate;
+}
+
+.sunray {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 160rpx;
+    height: 2rpx;
+    background: linear-gradient(to right, rgba(255, 236, 173, 0.8), rgba(255, 215, 0, 0));
+    transform-origin: left center;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+}
+
+// --------------------------------多云特效
+.cloudy-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+    background: linear-gradient(to bottom, rgba(220, 240, 255, 0.1), transparent);
+}
+
+.cloud {
+    position: absolute;
+    width: 220rpx;
+    height: 80rpx;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 100rpx;
+    box-shadow: 
+        0 0 50rpx rgba(255, 255, 255, 0.6),
+        100rpx -25rpx 0 rgba(255, 255, 255, 0.85),
+        150rpx 15rpx 0 rgba(255, 255, 255, 0.75),
+        50rpx 20rpx 0 rgba(255, 255, 255, 0.8);
+    animation: float 180s linear infinite;
+    filter: drop-shadow(0 5rpx 15rpx rgba(0, 0, 0, 0.1));
+}
+
+.cloud:nth-child(2n) {
+    background: rgba(255, 255, 255, 0.9);
+    width: 280rpx;
+    height: 90rpx;
+    box-shadow: 
+        0 0 60rpx rgba(255, 255, 255, 0.7),
+        120rpx -30rpx 0 rgba(255, 255, 255, 0.9),
+        180rpx 20rpx 0 rgba(255, 255, 255, 0.8),
+        60rpx 25rpx 0 rgba(255, 255, 255, 0.85);
+    animation-duration: 220s;
+}
+
+.cloud:nth-child(3n) {
+    background: rgba(255, 255, 255, 0.95);
+    width: 320rpx;
+    height: 100rpx;
+    box-shadow: 
+        0 0 70rpx rgba(255, 255, 255, 0.8),
+        140rpx -35rpx 0 rgba(255, 255, 255, 0.95),
+        210rpx 25rpx 0 rgba(255, 255, 255, 0.85),
+        70rpx 30rpx 0 rgba(255, 255, 255, 0.9),
+        170rpx -15rpx 0 rgba(255, 255, 255, 0.8);
+    animation-duration: 150s;
+}
+
+.cloud::before,
+.cloud::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.cloud::before {
+    width: 100rpx;
+    height: 100rpx;
+    top: -50rpx;
+    left: 40rpx;
+}
+
+.cloud::after {
+    width: 80rpx;
+    height: 80rpx;
+    top: -40rpx;
+    left: 100rpx;
+}
+
+@keyframes float {
+    0% {
+        transform: translateX(-400rpx);
+    }
+    100% {
+        transform: translateX(calc(100vw + 400rpx));
+    }
+}
+
+// --------------------------------阴天特效
+.overcast-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+    background: linear-gradient(to bottom, rgba(70, 80, 100, 0.3), rgba(40, 50, 70, 0.1));
+}
+
+.overcast-cloud {
+    position: absolute;
+    width: 300rpx;
+    height: 100rpx;
+    background: rgba(90, 100, 120, 0.7);
+    border-radius: 50rpx;
+    box-shadow: 
+        0 0 50rpx rgba(80, 90, 110, 0.6),
+        120rpx -30rpx 0 rgba(90, 100, 120, 0.8),
+        180rpx 15rpx 0 rgba(80, 90, 110, 0.7),
+        60rpx 25rpx 0 rgba(70, 80, 100, 0.75);
+    animation: drift linear infinite;
+    filter: brightness(0.9) contrast(1.1);
+}
+
+.overcast-cloud:nth-child(2n) {
+    background: rgba(80, 90, 110, 0.75);
+    width: 350rpx;
+    height: 120rpx;
+    box-shadow: 
+        0 0 60rpx rgba(70, 80, 100, 0.65),
+        140rpx -25rpx 0 rgba(80, 90, 110, 0.85),
+        200rpx 20rpx 0 rgba(70, 80, 100, 0.75),
+        70rpx 30rpx 0 rgba(60, 70, 90, 0.8);
+}
+
+.overcast-cloud:nth-child(3n) {
+    background: rgba(70, 80, 100, 0.8);
+    width: 400rpx;
+    height: 130rpx;
+    box-shadow: 
+        0 0 70rpx rgba(60, 70, 90, 0.7),
+        160rpx -35rpx 0 rgba(70, 80, 100, 0.9),
+        220rpx 25rpx 0 rgba(60, 70, 90, 0.8),
+        80rpx 35rpx 0 rgba(50, 60, 80, 0.85);
+}
+
+@keyframes drift {
+    0% {
+        transform: translateX(-400rpx);
+    }
+    100% {
+        transform: translateX(calc(100vw + 400rpx));
+    }
+}
+
+// --------------------------------沙尘暴效果样式
+.sandstorm-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, rgba(210, 180, 140, 0.4) 0%, rgba(210, 180, 140, 0.2) 100%);
+    z-index: -1;
+    overflow: hidden;
+}
+
+.sand-particle {
+    position: absolute;
+    background-color: #d2b48c;
+    border-radius: 50%;
+    animation: sandLeft 3s linear infinite;
+    filter: blur(1px);
+    z-index: 0;
+}
+
+@keyframes sandLeft {
+    0% {
+        transform: translateX(100vw) translateY(0);
+    }
+    100% {
+        transform: translateX(-20vw) translateY(20vh);
+    }
+}
+
+@keyframes sandRight {
+    0% {
+        transform: translateX(-20vw) translateY(0);
+    }
+    100% {
+        transform: translateX(100vw) translateY(20vh);
+    }
+}
+
+// --------------------------------雾效果样式
+.fog-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    background: rgba(240, 240, 240, 0.1);
+    z-index: -1;
+    overflow: hidden;
+}
+
+.fog-layer {
+    position: absolute;
+    width: 200%;
+    left: -50%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.1));
+    animation: fogLeft 60s linear infinite;
+    filter: blur(8px);
+    z-index: 0;
+}
+
+@keyframes fogLeft {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes fogRight {
+    0% {
+        transform: translateX(-50%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+// --------------------------------霾效果样式
+.haze-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    background: rgba(210, 200, 170, 0.2);
+    z-index: -1;
+    overflow: hidden;
+}
+
+.haze-layer {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    background: linear-gradient(to right, rgba(210, 200, 170, 0.2), rgba(210, 200, 170, 0.4), rgba(210, 200, 170, 0.2));
+    animation: hazeFloat 100s linear infinite;
+    filter: blur(10px);
+    z-index: 0;
+}
+
+@keyframes hazeFloat {
+    0% {
+        transform: translateX(-20%);
+    }
+    50% {
+        transform: translateX(20%);
+    }
+    100% {
+        transform: translateX(-20%);
+    }
+}
+
+// --------------------------------打雷效果样式
+.thunder-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, rgba(20, 20, 40, 0.8) 0%, rgba(30, 30, 50, 0.6) 100%);
+    z-index: -1;
+    overflow: hidden;
+    animation: thunderBackground 12s ease-in-out infinite;
+}
+
+/* 添加雷雨效果中的雨滴样式 */
+.thunder-container .raindrop {
+    position: absolute;
+    width: 3rpx;
+    height: 60rpx;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.7));
+    border-radius: 0 0 5rpx 5rpx;
+    opacity: 0.7;
+    z-index: 0;
+    animation: thunderRain linear infinite;
+    filter: drop-shadow(0 0 3rpx rgba(255, 255, 255, 0.5));
+    box-shadow: 0 0 4rpx rgba(200, 220, 255, 0.6);
+    top: -100rpx; /* 初始位置在屏幕上方 */
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* 为雷雨效果中的雨滴添加变化 */
+.thunder-container .raindrop:nth-child(3n) {
+    background: linear-gradient(to bottom, rgba(200, 220, 255, 0), rgba(200, 220, 255, 0.8));
+    box-shadow: 0 0 4rpx rgba(200, 220, 255, 0.7);
+    width: 3.5rpx;
+}
+
+.thunder-container .raindrop:nth-child(3n+1) {
+    background: linear-gradient(to bottom, rgba(220, 255, 255, 0), rgba(220, 255, 255, 0.8));
+    box-shadow: 0 0 4rpx rgba(220, 255, 255, 0.7);
+    width: 3.5rpx;
+}
+
+/* 添加雷雨专用的下落动画 */
+@keyframes thunderRain {
+    0% {
+        transform: translateY(0) translateZ(0);
+    }
+    100% {
+        transform: translateY(calc(100vh + 150rpx)) translateZ(0);
+    }
+}
+
+@keyframes thunderBackground {
+    0%, 92%, 94%, 96%, 98%, 100% {
+        background: linear-gradient(to bottom, rgba(20, 20, 40, 0.8) 0%, rgba(30, 30, 50, 0.6) 100%);
+    }
+    93%, 95%, 97%, 99% {
+        background: linear-gradient(to bottom, rgba(40, 40, 60, 0.9) 0%, rgba(50, 50, 70, 0.7) 100%);
+    }
+}
+
+.lightning {
+    position: absolute;
+    top: 0;
+    background-color: rgba(255, 255, 255, 0);
+    animation: flash 12s ease-in-out infinite;
+    z-index: 1;
+    overflow: visible;
+}
+
+.lightning-branch {
+    position: absolute;
+    width: 60%;
+    height: 6rpx;
+    background: linear-gradient(to right, rgba(150, 220, 255, 0.95), rgba(180, 160, 255, 0.95));
+    box-shadow: 
+        0 0 20rpx 8rpx rgba(150, 220, 255, 0.9), 
+        0 0 40rpx 12rpx rgba(180, 160, 255, 0.8),
+        0 0 60rpx 16rpx rgba(120, 140, 255, 0.6);
+    transform-origin: left center;
+    border-radius: 8rpx;
+    position: relative;
+}
+
+/* 为每个闪电分支添加子分支，模拟树根状纹路 */
+.lightning-branch::before,
+.lightning-branch::after {
+    content: '';
+    position: absolute;
+    width: 40%;
+    height: 4rpx;
+    background: linear-gradient(to right, rgba(150, 220, 255, 0.9), rgba(180, 160, 255, 0.9));
+    box-shadow: 
+        0 0 15rpx 5rpx rgba(150, 220, 255, 0.8), 
+        0 0 30rpx 8rpx rgba(180, 160, 255, 0.7);
+    transform-origin: left center;
+    border-radius: 8rpx;
+}
+
+.lightning-branch::before {
+    left: 30%;
+    top: -10rpx;
+    transform: rotate(-30deg);
+}
+
+.lightning-branch::after {
+    left: 60%;
+    top: 10rpx;
+    transform: rotate(30deg);
+}
+
+.lightning-branch:nth-child(1) {
+    top: 10%;
+    left: 0;
+    transform: rotate(15deg);
+    width: 90%;
+    animation: branchGlow 12s ease-in-out infinite;
+}
+
+.lightning-branch:nth-child(2) {
+    top: 30%;
+    left: 0;
+    transform: rotate(-20deg);
+    width: 85%;
+    animation: branchGlow 12s ease-in-out infinite 0.1s;
+    background: linear-gradient(to right, rgba(150, 220, 255, 0.95), rgba(200, 150, 255, 0.95));
+}
+
+.lightning-branch:nth-child(3) {
+    top: 50%;
+    left: 0;
+    transform: rotate(-35deg);
+    width: 95%;
+    animation: branchGlow 12s ease-in-out infinite 0.2s;
+    background: linear-gradient(to right, rgba(150, 220, 255, 0.95), rgba(220, 140, 255, 0.95));
+}
+
+.lightning-branch:nth-child(4) {
+    top: 25%;
+    left: 0;
+    transform: rotate(35deg);
+    width: 80%;
+    animation: branchGlow 12s ease-in-out infinite 0.15s;
+    background: linear-gradient(to right, rgba(180, 210, 255, 0.95), rgba(190, 170, 255, 0.95));
+}
+
+.lightning-branch:nth-child(5) {
+    top: 45%;
+    left: 0;
+    transform: rotate(-40deg);
+    width: 85%;
+    animation: branchGlow 12s ease-in-out infinite 0.25s;
+    background: linear-gradient(to right, rgba(160, 220, 255, 0.95), rgba(210, 150, 255, 0.95));
+}
+
+.lightning-branch:nth-child(6) {
+    top: 65%;
+    left: 0;
+    transform: rotate(10deg);
+    width: 100%;
+    animation: branchGlow 12s ease-in-out infinite 0.3s;
+    background: linear-gradient(to right, rgba(140, 230, 255, 0.95), rgba(230, 140, 255, 0.95));
+}
+
+@keyframes flash {
+    0%, 90%, 92%, 94%, 96%, 98%, 100% {
+        background-color: rgba(255, 255, 255, 0);
+        box-shadow: none;
+    }
+    91%, 93%, 95%, 97%, 99% {
+        background-color: rgba(180, 200, 255, 0.4);
+        box-shadow: 
+            0 0 80rpx 15rpx rgba(150, 220, 255, 0.8), 
+            0 0 160rpx 30rpx rgba(180, 160, 255, 0.7),
+            0 0 240rpx 45rpx rgba(120, 140, 255, 0.6);
+    }
+}
+
+@keyframes branchGlow {
+    0%, 90%, 92%, 94%, 96%, 98%, 100% {
+        opacity: 0;
+    }
+    91% {
+        opacity: 0.7;
+    }
+    93% {
+        opacity: 1;
+    }
+    95% {
+        opacity: 0.5;
+    }
+    97% {
+        opacity: 0.9;
+    }
+    99% {
+        opacity: 0.6;
+    }
 }

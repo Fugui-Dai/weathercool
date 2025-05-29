@@ -1,8 +1,128 @@
 <!--index.wxml-->
 <view>
+    <!-- 背景图 -->
+    <image class="bg" src="../../assets/bg/bg.png" mode="heightFix" />
+    
+    <!-- 天气特效容器 -->
+    <view class="weather-effects-container">
+        <!-- 大雨效果 -->
+        <view class="rain-container" wx:if="{{weatherEffect === 'rain'}}">
+            <view 
+                class="raindrop" 
+                wx:for="{{raindrops}}" 
+                wx:key="id" 
+                style="left: {{item.left}}; top: {{item.top}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; width: {{item.width}}; height: {{item.height}}; opacity: {{item.opacity}};">
+            </view>
+        </view>
+        
+        <!-- 小雨效果 -->
+        <view class="light-rain-container" wx:if="{{weatherEffect === 'lightRain'}}">
+            <view 
+                class="raindrop light" 
+                wx:for="{{raindrops}}" 
+                wx:key="id" 
+                style="left: {{item.left}}; top: {{item.top}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; width: {{item.width}}; height: {{item.height}}; opacity: {{item.opacity}};">
+            </view>
+        </view>
+        
+        <!-- 打雷效果 -->
+        <view class="rain-container" wx:if="{{weatherEffect === 'thunder'}}">
+            <!-- 雨滴 (复用雨滴池) -->
+            <view 
+                class="raindrop" 
+                wx:for="{{raindrops}}" 
+                wx:key="id" 
+                style="left: {{item.left}}; top: {{item.top}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; width: {{item.width}}; height: {{item.height}}; opacity: {{item.opacity}};">
+            </view>
+            
+            <!-- 闪电 -->
+            <view 
+                class="lightning" 
+                wx:for="{{lightnings}}" 
+                wx:key="index" 
+                style="left: {{item.left}}; width: {{item.width}}; height: {{item.height}}; animation-duration: {{item.interval}}; opacity: {{item.brightness}};"
+                data-branches="{{item.branches}}">
+                <!-- 闪电分支 -->
+                <view class="lightning-branch" wx:for="{{[1, 2, 3, 4, 5, 6]}}" wx:key="*this" wx:if="{{index < item.branches}}"></view>
+            </view>
+        </view>
+
+        <!-- 雪效果 -->
+        <view class="snow-container" wx:if="{{weatherEffect === 'snow'}}">
+            <view 
+                class="snowflake" 
+                wx:for="{{snowflakes}}" 
+                wx:key="id" 
+                style="left: {{item.left}}; top: {{item.top}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; width: {{item.size}}; height: {{item.size}}; opacity: {{item.opacity}}; transform: rotate({{item.rotation}}deg);">
+            </view>
+        </view>
+
+        <!-- 晴天效果 -->
+        <view class="sunny-container" wx:if="{{weatherEffect === 'sunny'}}">
+            <view class="sun"></view>
+            <view 
+                class="sunray" 
+                wx:for="{{sunrays}}" 
+                wx:key="index" 
+                style="transform: rotate({{item.angle}}deg);">
+            </view>
+        </view>
+
+        <!-- 多云效果 -->
+       <view class="cloudy-container" wx:if="{{weatherEffect === 'cloudy'}}">
+            <view 
+                class="cloud" 
+                wx:for="{{clouds}}" 
+                wx:key="index" 
+                style="left: {{item.left}}; top: {{item.top}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; transform: scale({{item.scale}}); opacity: {{item.opacity}};">
+            </view>
+        </view>
+
+        <!-- 阴天效果 -->
+        <view class="overcast-container" wx:if="{{weatherEffect === 'overcast'}}">
+            <view 
+                class="overcast-cloud" 
+                wx:for="{{overcastClouds}}" 
+                wx:key="index" 
+                style="left: {{item.left}}; top: {{item.top}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; transform: scale({{item.scale}}); opacity: {{item.opacity}}; z-index: {{item.zIndex}};">
+            </view>
+        </view>
+        
+        <!-- 沙尘暴效果 -->
+        <view class="sandstorm-container" wx:if="{{weatherEffect === 'sandstorm'}}">
+            <!-- 沙尘粒子 -->
+            <view 
+                class="sand-particle" 
+                wx:for="{{sandParticles}}" 
+                wx:key="index" 
+                style="left: {{item.left}}; top: {{item.top}}; width: {{item.size}}; height: {{item.size}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; opacity: {{item.opacity}}; animation-name: {{item.direction === 'left' ? 'sandLeft' : 'sandRight'}};">
+            </view>
+        </view>
+        
+        <!-- 雾效果 -->
+        <view class="fog-container" wx:if="{{weatherEffect === 'fog'}}">
+            <!-- 雾层 -->
+            <view 
+                class="fog-layer" 
+                wx:for="{{fogParticles}}" 
+                wx:key="index" 
+                style="top: {{item.top}}; height: {{item.height}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; opacity: {{item.opacity}}; animation-name: {{item.direction === 'left' ? 'fogLeft' : 'fogRight'}};">
+            </view>
+        </view>
+        
+        <!-- 霾效果 -->
+        <view class="haze-container" wx:if="{{weatherEffect === 'haze'}}">
+            <!-- 霾层 -->
+            <view 
+                class="haze-layer" 
+                wx:for="{{hazeParticles}}" 
+                wx:key="index" 
+                style="top: {{item.top}}; height: {{item.height}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; opacity: {{item.opacity}}; background-color: rgba({{item.yellowness + 100}}, {{item.yellowness + 80}}, {{item.yellowness}}, {{item.opacity}});">
+            </view>
+        </view>
+    </view>
+    
     <view class="scrollarea">
-        <!-- 背景图 -->
-        <image class="bg" src="../../assets/bg/bg.png" mode="heightFix" />
         <scroll-view scroll-y>
             <!--标题-->
             <view class="title">
@@ -16,8 +136,8 @@
                         <view wx:if="{{isOffline}}" class="offline-indicator">
                             <view class="offline-status">
                                 <van-icon name="warn-o" size="28rpx" color="#FFD700" />
-                                <text class="{{textOverflow ? 'marquee-text' : ''}}">离线</text>
-                                <text class="update-time {{textOverflow ? 'marquee-text' : ''}}">上次更新: {{lastUpdateTime}}</text>
+                                <text>离线</text>
+                                <text class="update-time">上次更新: {{lastUpdateTime}}</text>
                             </view>
                         </view>
                     </view>
@@ -29,7 +149,7 @@
                     <text class="temperature">{{shishitianqi.temp}}<text style="font-size:35rpx; font-weight:normal; vertical-align:text-top; position:relative; top:0rpx; margin-left:-20rpx;">℃</text></text>
                 </view>
                 <view>
-                    <text class="weather">天气：{{shishitianqi.text}} </text>
+                    <text class="weather">实时天气：{{shishitianqi.text}} </text>
                     <text class="comfort"> 风速等级：{{shishitianqi.windScale}} 风速：{{shishitianqi.windSpeed}}公里/小时</text>
                 </view>
                 <view>
@@ -78,6 +198,7 @@
             <!--7天预报-->
             <text style="margin-left: 10rpx;">7天预报</text>
             <view class="yubao7day">
+                <!-- 上部分天气信息 -->
                 <view class="yubao7day_container">
                     <block wx:for="{{daily7Weather}}" wx:key="index">
                         <view class="yubao7day_item">
@@ -91,13 +212,12 @@
                     </block>
                 </view>
                 
-                <!-- 折线图固定容器 -->
-                <view class="chart-fixed-wrapper">
-                    <view class="weatherCanvas-container">
-                        <canvas canvas-id="weatherCanvas" class="weatherCanvas" style="transform: translateZ(0); position: relative;" />
-                    </view>
+                <!-- 折线图容器 - 使用固定高度和绝对定位 -->
+                <view class="chart-container">
+                    <canvas canvas-id="weatherCanvas" class="weatherCanvas" />
                 </view>
                 
+                <!-- 下部分天气信息 -->
                 <view class="yubao7day_container">
                     <block wx:for="{{daily7Weather}}" wx:key="index">
                         <view class="yubao7day_item">
