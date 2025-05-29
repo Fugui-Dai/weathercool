@@ -149,8 +149,9 @@
                     <text class="temperature">{{shishitianqi.temp}}<text style="font-size:35rpx; font-weight:normal; vertical-align:text-top; position:relative; top:0rpx; margin-left:-20rpx;">℃</text></text>
                 </view>
                 <view>
-                    <text class="weather">实时天气：{{shishitianqi.text}} </text>
-                    <text class="comfort"> 风速等级：{{shishitianqi.windScale}} 风速：{{shishitianqi.windSpeed}}公里/小时</text>
+                    <text class="weather">实时天气:{{shishitianqi.text}} </text>
+                    <text> | </text>
+                    <text class="comfort"> 风速:{{shishitianqi.windScale}}级{{shishitianqi.windSpeed}}公里/小时</text>
                 </view>
                 <view>
                     <text>{{shishitianqi.windDir}}</text>
