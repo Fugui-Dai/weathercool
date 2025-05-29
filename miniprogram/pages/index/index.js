@@ -1280,8 +1280,8 @@ Page({
     
     // 检查天气类型并设置相应特效
     checkWeatherType(weatherText) {
-        // 大雨相关关键词
-        const heavyRainKeywords = ['大雨', '暴雨', '大暴雨', '特大暴雨', '雷阵雨', '强降雨', '极端降雨', '大到暴雨', '暴雨到大暴雨', '大暴雨到特大暴雨', '强雷阵雨', '雷阵雨伴有冰雹'];
+        // 打雷和大雨相关关键词（已合并）
+        const thunderKeywords = ['雷', '雷阵雨', '雷电', '打雷', '雷暴', '雷雨', '强雷阵雨', '雷阵雨伴有冰雹', '大雨', '暴雨', '大暴雨', '特大暴雨', '强降雨', '极端降雨', '大到暴雨', '暴雨到大暴雨', '大暴雨到特大暴雨'];
         // 小雨相关关键词（包含原来的中雨关键词）
         const lightRainKeywords = ['雨', '小雨', '毛毛雨', '细雨', '微雨', '阵雨', '中雨', '强阵雨', '小到中雨', '中到大雨', '冻雨', '毛毛雨/细雨'];
         // 雪相关关键词
@@ -1298,14 +1298,10 @@ Page({
         const fogKeywords = ['雾', '大雾', '浓雾', '强浓雾', '特强浓雾', '雾霾', '薄雾', '大雾', '特强浓雾'];
         // 霾相关关键词
         const hazeKeywords = ['霾', '轻度霾', '中度霾', '重度霾', '严重霾'];
-        // 打雷相关关键词
-        const thunderKeywords = ['雷', '雷阵雨', '雷电', '打雷', '雷暴', '雷雨', '强雷阵雨', '雷阵雨伴有冰雹'];
         
         // 检查天气类型
         if (thunderKeywords.some(keyword => weatherText.includes(keyword))) {
             return 'thunder'; // 打雷优先级最高
-        } else if (heavyRainKeywords.some(keyword => weatherText.includes(keyword))) {
-            return 'rain'; // 大雨
         } else if (lightRainKeywords.some(keyword => weatherText.includes(keyword))) {
             return 'lightRain'; // 小雨（现在包含中雨）
         } else if (snowKeywords.some(keyword => weatherText.includes(keyword))) {
