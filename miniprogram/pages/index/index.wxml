@@ -59,32 +59,60 @@
 
         <!-- 晴天效果 -->
         <view class="sunny-container" wx:if="{{weatherEffect === 'sunny'}}">
+            <!-- 太阳中心 -->
             <view class="sun"></view>
+            
+            <!-- 特殊斜光射线 -->
+            <view class="sun-diagonal-ray" style="transform: rotate({{diagonalRayAngle}}deg);"></view>
+            
+            <!-- 阳光晕圈 -->
+            <view 
+                class="sun-glow" 
+                wx:for="{{sunGlows}}" 
+                wx:key="index" 
+                style="width: {{item.size}}; height: {{item.size}}; opacity: {{item.opacity}}; animation-delay: {{item.animationDelay}}; animation-duration: {{item.animationDuration}};">
+            </view>
+            
+            <!-- 阳光射线 -->
             <view 
                 class="sunray" 
                 wx:for="{{sunrays}}" 
                 wx:key="index" 
-                style="transform: rotate({{item.angle}}deg);">
+                style="transform: rotate({{item.angle}}deg); width: {{item.length}}; height: {{item.width}}; opacity: {{item.opacity}}; animation-delay: {{item.animationDelay}};">
             </view>
         </view>
 
-        <!-- 多云效果 -->
-       <view class="cloudy-container" wx:if="{{weatherEffect === 'cloudy'}}">
-            <view 
-                class="cloud" 
-                wx:for="{{clouds}}" 
-                wx:key="index" 
-                style="left: {{item.left}}; top: {{item.top}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; transform: scale({{item.scale}}); opacity: {{item.opacity}};">
+        <!-- 多云效果 - 修改后 -->
+        <view class="cloudy-container" wx:if="{{weatherEffect === 'cloudy'}}">
+            <!-- 背景渐变层 -->
+            <view class="cloudy-bg-layer"></view>
+            <!-- 静态云朵背景 -->
+            <view class="cloud-layer"></view>
+            <!-- 动态云朵 - 扩大显示区域 -->
+            <view class="header-clouds-container">
+                <view 
+                    class="cloud-header" 
+                    wx:for="{{clouds}}" 
+                    wx:key="index" 
+                    style="left: {{item.left}}; top: {{item.top}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; transform: scale({{item.scale}}); opacity: {{item.opacity}};">
+                </view>
             </view>
         </view>
 
-        <!-- 阴天效果 -->
+        <!-- 阴天效果 - 修改后 -->
         <view class="overcast-container" wx:if="{{weatherEffect === 'overcast'}}">
-            <view 
-                class="overcast-cloud" 
-                wx:for="{{overcastClouds}}" 
-                wx:key="index" 
-                style="left: {{item.left}}; top: {{item.top}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; transform: scale({{item.scale}}); opacity: {{item.opacity}}; z-index: {{item.zIndex}};">
+            <!-- 背景渐变层 -->
+            <view class="overcast-bg-layer"></view>
+            <!-- 静态云层 -->
+            <view class="overcast-static-layer"></view>
+            <!-- 动态云朵 - 扩大显示区域 -->
+            <view class="header-overcast-container">
+                <view 
+                    class="overcast-cloud-header" 
+                    wx:for="{{overcastClouds}}" 
+                    wx:key="index" 
+                    style="left: {{item.left}}; top: {{item.top}}; animation-delay: {{item.delay}}; animation-duration: {{item.duration}}; transform: scale({{item.scale}}); opacity: {{item.opacity}};">
+                </view>
             </view>
         </view>
         

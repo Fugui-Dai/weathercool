@@ -25,6 +25,10 @@ page {
     flex: 1;
     position: relative;
     z-index: 1;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 // 添加scroll-view的z-index样式
@@ -396,7 +400,8 @@ scroll-view {
   justify-content: center;
   align-items: center;
   contain: layout paint;
-  touch-action: none;
+  touch-action: auto;
+  pointer-events: auto;
 }
 
 // --------------------------------折线图画布
@@ -409,6 +414,7 @@ scroll-view {
   transform: translate3d(0, 0, 0);
   will-change: transform;
   backface-visibility: hidden;
+  pointer-events: none;
 }
 
 // --------------------------------7天预报项
@@ -668,40 +674,191 @@ scroll-view {
     position: fixed;
     top: 50rpx;
     right: 50rpx;
-    width: 120rpx;
-    height: 120rpx;
+    width: 180rpx;
+    height: 180rpx;
     z-index: -1;
     pointer-events: none;
+    overflow: visible;
+}
+
+// 新增 - 特殊斜光效果
+.sun-diagonal-ray {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 350rpx; // 比普通射线更长
+    height: 6rpx; // 减小宽度，从8rpx减到6rpx
+    background: linear-gradient(to right, 
+        rgba(255, 220, 130, 0.85) 0%, 
+        rgba(255, 210, 100, 0.8) 20%,
+        rgba(255, 190, 70, 0.7) 40%, 
+        rgba(255, 170, 50, 0.4) 70%,
+        rgba(255, 150, 0, 0) 100%);
+    transform-origin: left center;
+    transform: rotate(45deg) translateY(-1rpx); // 微调位置，使其与太阳中心更好地对齐
+    z-index: 15; // 确保在其他射线上方
+    box-shadow: 0 0 12rpx rgba(255, 190, 70, 0.7);
+    animation: diagonalRayFlicker 5s ease-in-out infinite;
 }
 
 .sun {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle, rgba(255, 236, 173, 0.8) 0%, rgba(255, 215, 0, 0.6) 50%, rgba(255, 165, 0, 0) 70%);
+    background: radial-gradient(circle, 
+        rgba(255, 245, 200, 0.9) 0%, 
+        rgba(255, 236, 173, 0.85) 15%,
+        rgba(255, 215, 0, 0.7) 40%, 
+        rgba(255, 165, 0, 0) 70%);
     border-radius: 50%;
-    box-shadow: 0 0 60rpx rgba(255, 215, 0, 0.4);
+    box-shadow: 
+        0 0 60rpx rgba(255, 215, 0, 0.6),
+        0 0 120rpx rgba(255, 165, 0, 0.4);
     animation: pulse 4s ease-in-out infinite alternate;
+    z-index: 10;
+}
+
+// 新增 - 斜光闪烁动画
+@keyframes diagonalRayFlicker {
+    0% {
+        opacity: 0.65;
+        width: 320rpx;
+        box-shadow: 0 0 10rpx rgba(255, 190, 70, 0.6);
+    }
+    25% {
+        opacity: 0.8;
+        width: 340rpx;
+        box-shadow: 0 0 15rpx rgba(255, 180, 60, 0.7);
+    }
+    50% {
+        opacity: 0.7;
+        width: 330rpx;
+        box-shadow: 0 0 12rpx rgba(255, 185, 65, 0.65);
+    }
+    75% {
+        opacity: 0.85;
+        width: 360rpx;
+        box-shadow: 0 0 18rpx rgba(255, 170, 50, 0.75);
+    }
+    100% {
+        opacity: 0.65;
+        width: 320rpx;
+        box-shadow: 0 0 10rpx rgba(255, 190, 70, 0.6);
+    }
+}
+
+// 新增 - 阳光晕圈样式
+.sun-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, 
+        rgba(255, 215, 0, 0.4) 0%, 
+        rgba(255, 165, 0, 0.2) 50%,
+        rgba(255, 140, 0, 0) 100%);
+    animation: pulseGlow 4s ease-in-out infinite alternate;
+    z-index: 5;
 }
 
 .sunray {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 160rpx;
     height: 2rpx;
-    background: linear-gradient(to right, rgba(255, 236, 173, 0.8), rgba(255, 215, 0, 0));
+    background: linear-gradient(to right, 
+        rgba(255, 245, 200, 0.9) 0%, 
+        rgba(255, 215, 0, 0.7) 40%, 
+        rgba(255, 165, 0, 0.3) 80%,
+        rgba(255, 140, 0, 0) 100%);
     transform-origin: left center;
+    z-index: 1;
+    animation: sunrayFlicker 3s ease-in-out infinite alternate;
+    box-shadow: 0 0 8rpx rgba(255, 215, 0, 0.6);
 }
 
+// 添加更多的阳光射线样式变体
+.sunray:nth-child(3n) {
+    background: linear-gradient(to right, 
+        rgba(255, 250, 220, 0.95) 0%, 
+        rgba(255, 225, 110, 0.75) 40%, 
+        rgba(255, 190, 60, 0.35) 80%,
+        rgba(255, 140, 0, 0) 100%);
+    box-shadow: 0 0 10rpx rgba(255, 225, 110, 0.7);
+}
+
+.sunray:nth-child(3n+1) {
+    background: linear-gradient(to right, 
+        rgba(255, 235, 180, 0.9) 0%, 
+        rgba(255, 200, 80, 0.7) 40%, 
+        rgba(255, 170, 50, 0.3) 80%,
+        rgba(255, 140, 0, 0) 100%);
+    box-shadow: 0 0 6rpx rgba(255, 200, 80, 0.6);
+}
+
+// 修改脉动动画，使其更加生动
 @keyframes pulse {
-    0%, 100% {
+    0% {
         transform: scale(1);
         opacity: 0.8;
+        box-shadow: 
+            0 0 60rpx rgba(255, 215, 0, 0.6),
+            0 0 120rpx rgba(255, 165, 0, 0.4);
     }
     50% {
+        transform: scale(1.05);
+        opacity: 0.9;
+        box-shadow: 
+            0 0 80rpx rgba(255, 225, 110, 0.7),
+            0 0 150rpx rgba(255, 190, 60, 0.5);
+    }
+    100% {
         transform: scale(1.1);
         opacity: 1;
+        box-shadow: 
+            0 0 100rpx rgba(255, 235, 180, 0.8),
+            0 0 180rpx rgba(255, 215, 110, 0.6);
+    }
+}
+
+// 新增 - 光晕脉动动画
+@keyframes pulseGlow {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.4;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 0.5;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.6;
+    }
+}
+
+// 新增 - 阳光射线闪烁动画
+@keyframes sunrayFlicker {
+    0% {
+        opacity: 0.7;
+        box-shadow: 0 0 6rpx rgba(255, 215, 0, 0.5);
+    }
+    25% {
+        opacity: 0.9;
+        box-shadow: 0 0 10rpx rgba(255, 225, 110, 0.7);
+    }
+    50% {
+        opacity: 0.8;
+        box-shadow: 0 0 8rpx rgba(255, 215, 0, 0.6);
+    }
+    75% {
+        opacity: 1;
+        box-shadow: 0 0 12rpx rgba(255, 235, 180, 0.8);
+    }
+    100% {
+        opacity: 0.85;
+        box-shadow: 0 0 9rpx rgba(255, 225, 110, 0.65);
     }
 }
 
@@ -716,46 +873,159 @@ scroll-view {
     z-index: -1;
     pointer-events: none;
     overflow: hidden;
-    background: linear-gradient(to bottom, rgba(220, 240, 255, 0.1), transparent);
+    transition: opacity 1.5s ease-in-out;
 }
 
+// 背景渐变层 - 新增
+.cloudy-bg-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(210, 230, 250, 0.15), rgba(200, 220, 240, 0.05));
+    opacity: 0.7;
+    transition: opacity 2s ease;
+}
+
+// 静态云层 - 新增
+.cloud-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 25%),
+        radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 30%),
+        radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 25%);
+    opacity: 0.6;
+    transition: opacity 2s ease;
+}
+
+// 新增 - header区域云朵容器
+.header-clouds-container {
+    position: absolute;
+    width: 110%;
+    height: 450rpx;
+    top: 120rpx;
+    left: -5%;
+    overflow: visible;
+    z-index: 0;
+}
+
+// 新增 - header区域云朵样式
+.cloud-header {
+    position: absolute;
+    width: 180rpx;
+    height: 60rpx;
+    background: rgba(255, 255, 255, 0.65);
+    border-radius: 60rpx;
+    box-shadow: 
+        0 0 30rpx rgba(255, 255, 255, 0.35),
+        80rpx -20rpx 0 rgba(255, 255, 255, 0.65),
+        120rpx 10rpx 0 rgba(255, 255, 255, 0.55),
+        40rpx 15rpx 0 rgba(255, 255, 255, 0.6);
+    animation: floatHeader 160s linear infinite;
+    filter: drop-shadow(0 5rpx 10rpx rgba(0, 0, 0, 0.08));
+    transition: all 1s ease;
+    transform-origin: center center;
+}
+
+.cloud-header:nth-child(2n) {
+    width: 150rpx;
+    height: 50rpx;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50rpx;
+    box-shadow: 
+        0 0 25rpx rgba(255, 255, 255, 0.4),
+        60rpx -15rpx 0 rgba(255, 255, 255, 0.7),
+        100rpx 8rpx 0 rgba(255, 255, 255, 0.6),
+        30rpx 12rpx 0 rgba(255, 255, 255, 0.65);
+    animation-duration: 190s;
+}
+
+.cloud-header:nth-child(3n) {
+    width: 200rpx;
+    height: 70rpx;
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 70rpx;
+    box-shadow: 
+        0 0 35rpx rgba(255, 255, 255, 0.45),
+        90rpx -25rpx 0 rgba(255, 255, 255, 0.75),
+        140rpx 12rpx 0 rgba(255, 255, 255, 0.65),
+        45rpx 18rpx 0 rgba(255, 255, 255, 0.7);
+    animation-duration: 140s;
+}
+
+.cloud-header::before,
+.cloud-header::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.75);
+    transition: all 1s ease;
+}
+
+.cloud-header::before {
+    width: 70rpx;
+    height: 70rpx;
+    top: -35rpx;
+    left: 35rpx;
+}
+
+.cloud-header::after {
+    width: 55rpx;
+    height: 55rpx;
+    top: -30rpx;
+    left: 85rpx;
+}
+
+@keyframes floatHeader {
+    0% {
+        transform: translateX(-400rpx);
+    }
+    100% {
+        transform: translateX(calc(110vw + 400rpx));
+    }
+}
+
+// 保留原来的云朵样式，但不使用
 .cloud {
     position: absolute;
     width: 220rpx;
     height: 80rpx;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.7);
     border-radius: 100rpx;
     box-shadow: 
-        0 0 50rpx rgba(255, 255, 255, 0.6),
-        100rpx -25rpx 0 rgba(255, 255, 255, 0.85),
-        150rpx 15rpx 0 rgba(255, 255, 255, 0.75),
-        50rpx 20rpx 0 rgba(255, 255, 255, 0.8);
+        0 0 50rpx rgba(255, 255, 255, 0.4),
+        100rpx -25rpx 0 rgba(255, 255, 255, 0.7),
+        150rpx 15rpx 0 rgba(255, 255, 255, 0.6),
+        50rpx 20rpx 0 rgba(255, 255, 255, 0.65);
     animation: float 180s linear infinite;
     filter: drop-shadow(0 5rpx 15rpx rgba(0, 0, 0, 0.1));
+    transition: all 1s ease;
+    transform-origin: center center;
 }
 
 .cloud:nth-child(2n) {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.75);
     width: 280rpx;
     height: 90rpx;
     box-shadow: 
-        0 0 60rpx rgba(255, 255, 255, 0.7),
-        120rpx -30rpx 0 rgba(255, 255, 255, 0.9),
-        180rpx 20rpx 0 rgba(255, 255, 255, 0.8),
-        60rpx 25rpx 0 rgba(255, 255, 255, 0.85);
+        0 0 60rpx rgba(255, 255, 255, 0.5),
+        120rpx -30rpx 0 rgba(255, 255, 255, 0.75),
+        180rpx 20rpx 0 rgba(255, 255, 255, 0.65),
+        60rpx 25rpx 0 rgba(255, 255, 255, 0.7);
     animation-duration: 220s;
 }
 
 .cloud:nth-child(3n) {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.8);
     width: 320rpx;
     height: 100rpx;
     box-shadow: 
-        0 0 70rpx rgba(255, 255, 255, 0.8),
-        140rpx -35rpx 0 rgba(255, 255, 255, 0.95),
-        210rpx 25rpx 0 rgba(255, 255, 255, 0.85),
-        70rpx 30rpx 0 rgba(255, 255, 255, 0.9),
-        170rpx -15rpx 0 rgba(255, 255, 255, 0.8);
+        0 0 70rpx rgba(255, 255, 255, 0.6),
+        140rpx -35rpx 0 rgba(255, 255, 255, 0.8),
+        210rpx 25rpx 0 rgba(255, 255, 255, 0.7),
+        70rpx 30rpx 0 rgba(255, 255, 255, 0.75),
+        170rpx -15rpx 0 rgba(255, 255, 255, 0.65);
     animation-duration: 150s;
 }
 
@@ -764,7 +1034,8 @@ scroll-view {
     content: '';
     position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.8);
+    transition: all 1s ease;
 }
 
 .cloud::before {
@@ -801,44 +1072,158 @@ scroll-view {
     z-index: -1;
     pointer-events: none;
     overflow: hidden;
-    background: linear-gradient(to bottom, rgba(70, 80, 100, 0.3), rgba(40, 50, 70, 0.1));
+    transition: opacity 1.5s ease-in-out;
 }
 
+// 背景渐变层 - 新增
+.overcast-bg-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(60, 70, 90, 0.2), rgba(50, 60, 80, 0.1));
+    opacity: 0.8;
+    transition: opacity 2s ease;
+}
+
+// 静态云层 - 新增
+.overcast-static-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(100, 110, 130, 0.4) 0%, rgba(100, 110, 130, 0) 35%),
+        radial-gradient(circle at 75% 35%, rgba(90, 100, 120, 0.5) 0%, rgba(90, 100, 120, 0) 40%),
+        radial-gradient(circle at 45% 75%, rgba(80, 90, 110, 0.4) 0%, rgba(80, 90, 110, 0) 35%);
+    opacity: 0.7;
+    transition: opacity 2s ease;
+}
+
+// 新增 - header区域阴天云朵容器
+.header-overcast-container {
+    position: absolute;
+    width: 110%;
+    height: 450rpx;
+    top: 120rpx;
+    left: -5%;
+    overflow: visible;
+    z-index: 0;
+}
+
+// 新增 - header区域阴天云朵样式
+.overcast-cloud-header {
+    position: absolute;
+    width: 220rpx;
+    height: 80rpx;
+    background: rgba(75, 85, 105, 0.55);
+    border-radius: 40rpx;
+    box-shadow: 
+        0 0 40rpx rgba(65, 75, 95, 0.45),
+        90rpx -25rpx 0 rgba(75, 85, 105, 0.65),
+        140rpx 12rpx 0 rgba(65, 75, 95, 0.55),
+        45rpx 20rpx 0 rgba(55, 65, 85, 0.6);
+    animation: driftHeader linear infinite;
+    filter: brightness(0.92) contrast(1.05);
+    transition: all 1s ease;
+    transform-origin: center center;
+}
+
+.overcast-cloud-header:nth-child(2n) {
+    background: rgba(65, 75, 95, 0.6);
+    width: 250rpx;
+    height: 90rpx;
+    border-radius: 45rpx;
+    box-shadow: 
+        0 0 45rpx rgba(55, 65, 85, 0.5),
+        100rpx -20rpx 0 rgba(65, 75, 95, 0.7),
+        160rpx 15rpx 0 rgba(55, 65, 85, 0.6),
+        50rpx 22rpx 0 rgba(45, 55, 75, 0.65);
+    animation-duration: 200s;
+}
+
+.overcast-cloud-header:nth-child(3n) {
+    background: rgba(55, 65, 85, 0.65);
+    width: 280rpx;
+    height: 100rpx;
+    border-radius: 50rpx;
+    box-shadow: 
+        0 0 50rpx rgba(45, 55, 75, 0.55),
+        110rpx -30rpx 0 rgba(55, 65, 85, 0.75),
+        180rpx 18rpx 0 rgba(45, 55, 75, 0.65),
+        55rpx 25rpx 0 rgba(35, 45, 65, 0.7);
+    animation-duration: 170s;
+}
+
+.overcast-cloud-header::before,
+.overcast-cloud-header::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    transition: all 1s ease;
+}
+
+.overcast-cloud-header::before {
+    width: 90rpx;
+    height: 90rpx;
+    background: rgba(75, 85, 105, 0.65);
+    top: -45rpx;
+    left: 40rpx;
+}
+
+.overcast-cloud-header::after {
+    width: 70rpx;
+    height: 70rpx;
+    background: rgba(65, 75, 95, 0.7);
+    top: -35rpx;
+    left: 100rpx;
+}
+
+@keyframes driftHeader {
+    0% {
+        transform: translateX(-400rpx);
+    }
+    100% {
+        transform: translateX(calc(110vw + 400rpx));
+    }
+}
+
+// 保留原来的阴天云朵样式，但不使用
 .overcast-cloud {
     position: absolute;
     width: 300rpx;
     height: 100rpx;
-    background: rgba(90, 100, 120, 0.7);
+    background: rgba(80, 90, 110, 0.6);
     border-radius: 50rpx;
     box-shadow: 
-        0 0 50rpx rgba(80, 90, 110, 0.6),
-        120rpx -30rpx 0 rgba(90, 100, 120, 0.8),
-        180rpx 15rpx 0 rgba(80, 90, 110, 0.7),
-        60rpx 25rpx 0 rgba(70, 80, 100, 0.75);
+        0 0 50rpx rgba(70, 80, 100, 0.5),
+        120rpx -30rpx 0 rgba(80, 90, 110, 0.7),
+        180rpx 15rpx 0 rgba(70, 80, 100, 0.6),
+        60rpx 25rpx 0 rgba(60, 70, 90, 0.65);
     animation: drift linear infinite;
     filter: brightness(0.9) contrast(1.1);
+    transition: all 1s ease;
+    transform-origin: center center;
 }
 
 .overcast-cloud:nth-child(2n) {
-    background: rgba(80, 90, 110, 0.75);
+    background: rgba(70, 80, 100, 0.65);
     width: 350rpx;
     height: 120rpx;
     box-shadow: 
-        0 0 60rpx rgba(70, 80, 100, 0.65),
-        140rpx -25rpx 0 rgba(80, 90, 110, 0.85),
-        200rpx 20rpx 0 rgba(70, 80, 100, 0.75),
-        70rpx 30rpx 0 rgba(60, 70, 90, 0.8);
+        0 0 60rpx rgba(60, 70, 90, 0.55),
+        140rpx -25rpx 0 rgba(70, 80, 100, 0.75),
+        200rpx 20rpx 0 rgba(60, 70, 90, 0.65),
+        70rpx 30rpx 0 rgba(50, 60, 80, 0.7);
 }
 
 .overcast-cloud:nth-child(3n) {
-    background: rgba(70, 80, 100, 0.8);
+    background: rgba(60, 70, 90, 0.7);
     width: 400rpx;
     height: 130rpx;
     box-shadow: 
-        0 0 70rpx rgba(60, 70, 90, 0.7),
-        160rpx -35rpx 0 rgba(70, 80, 100, 0.9),
-        220rpx 25rpx 0 rgba(60, 70, 90, 0.8),
-        80rpx 35rpx 0 rgba(50, 60, 80, 0.85);
+        0 0 70rpx rgba(50, 60, 80, 0.6),
+        160rpx -35rpx 0 rgba(60, 70, 90, 0.8),
+        220rpx 25rpx 0 rgba(50, 60, 80, 0.7),
+        80rpx 35rpx 0 rgba(40, 50, 70, 0.75);
 }
 
 @keyframes drift {

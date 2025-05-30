@@ -84,6 +84,8 @@ Page({
         isOffline: false, // 是否处于离线模式
         chartDrawn: false, // 图表是否已绘制
         statusBarHeight: 0, // 状态栏高度
+        diagonalRayAngle: 45, // 新增斜光角度
+        diagonalRayTimer: null, // 新增斜光角度更新定时器
     },
     // 地理定位
     // 地理定位
@@ -1628,95 +1630,198 @@ Page({
     
     // 生成晴天效果
     generateSunnyEffect() {
-        const sunrayCount = 12; // 阳光射线数量
+        const sunrayCount = 24; // 增加阳光射线数量，从12增加到24
         const sunrays = [];
         
-        // 生成均匀分布的阳光射线
+        // 生成均匀分布的阳光射线，添加更多变化
         for (let i = 0; i < sunrayCount; i++) {
             const angle = (i * 360 / sunrayCount);
             
+            // 添加光线长度变化
+            const length = 160 + (i % 3) * 50; // 基础长度160rpx，每隔3条变化一次，增加50rpx
+            
+            // 添加光线宽度变化
+            const width = 2 + (i % 4); // 基础宽度2rpx，每隔4条变化一次，最大达到5rpx
+            
+            // 添加光线亮度变化
+            const opacity = 0.6 + (i % 3) * 0.15; // 基础亮度0.6，每隔3条变化一次，最大达到0.9
+            
+            // 添加光线动画延迟，使光线闪烁错开
+            const animationDelay = (i % 5) * 0.5; // 每隔5条错开0.5秒
+            
             sunrays.push({
-                angle: angle
+                angle: angle,
+                length: length + 'rpx',
+                width: width + 'rpx',
+                opacity: opacity,
+                animationDelay: animationDelay + 's'
             });
+        }
+        
+        // 添加辅助光晕数据
+        const glowCount = 3; // 添加3层光晕
+        const glows = [];
+        
+        for (let i = 0; i < glowCount; i++) {
+            glows.push({
+                size: (160 + i * 80) + 'rpx', // 从160rpx开始，每层增加80rpx
+                opacity: 0.5 - (i * 0.15), // 从0.5开始，每层减少0.15透明度
+                animationDelay: (i * 0.8) + 's', // 错开动画延迟
+                animationDuration: (4 + i) + 's' // 动画时长从4秒开始递增
+            });
+        }
+        
+        // 计算斜光角度 - 新增
+        // 使用当前时间来计算角度，使其随时间变化
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        
+        // 根据时间计算角度，早上向东(45°)，中午向下(135°)，傍晚向西(225°)
+        // 6点-18点的角度变化：45° -> 135° -> 225°
+        let diagonalRayAngle = 45;
+        
+        if (hours >= 6 && hours <= 18) {
+            // 将6点-18点映射到45°-225°
+            const timeProgress = (hours - 6 + minutes / 60) / 12; // 0到1之间的进度
+            diagonalRayAngle = 45 + timeProgress * 180;
+        } else if (hours > 18) {
+            // 晚上到凌晨保持在225°-45°之间
+            const timeProgress = (hours - 18 + minutes / 60) / 12; // 0到1之间的进度
+            diagonalRayAngle = 225 + timeProgress * 180;
+        } else {
+            // 凌晨到早上保持在225°-45°之间
+            const timeProgress = (hours + minutes / 60) / 6; // 0到1之间的进度
+            diagonalRayAngle = 225 + timeProgress * 180;
         }
         
         this.setData({ 
             sunrays,
+            sunGlows: glows,
+            diagonalRayAngle: diagonalRayAngle, // 新增斜光角度
             weatherEffect: 'sunny'
         });
+        
+        // 启动斜光角度更新定时器 - 每分钟更新一次角度
+        if (this.diagonalRayTimer) {
+            clearInterval(this.diagonalRayTimer);
+        }
+        
+        this.diagonalRayTimer = setInterval(() => {
+            // 只有在晴天效果激活时才更新
+            if (this.data.weatherEffect === 'sunny') {
+                const now = new Date();
+                const hours = now.getHours();
+                const minutes = now.getMinutes();
+                
+                let newAngle = 45;
+                if (hours >= 6 && hours <= 18) {
+                    const timeProgress = (hours - 6 + minutes / 60) / 12;
+                    newAngle = 45 + timeProgress * 180;
+                } else if (hours > 18) {
+                    const timeProgress = (hours - 18 + minutes / 60) / 12;
+                    newAngle = 225 + timeProgress * 180;
+                } else {
+                    const timeProgress = (hours + minutes / 60) / 6;
+                    newAngle = 225 + timeProgress * 180;
+                }
+                
+                this.setData({ diagonalRayAngle: newAngle });
+            } else {
+                // 如果不是晴天效果，则停止定时器
+                clearInterval(this.diagonalRayTimer);
+                this.diagonalRayTimer = null;
+            }
+        }, 60000); // 每分钟更新一次
     },
     
     // 生成多云效果
     generateCloudyEffect() {
-        const cloudCount = 6; // 减少云朵数量，从10个减少到6个
+        const cloudCount = 4; // 增加云朵数量，更好地填充扩大的区域
         const clouds = [];
         
         for (let i = 0; i < cloudCount; i++) {
-            // 随机位置
-            const left = Math.random() * 100;
-            const top = Math.random() * 40; // 保持垂直分布范围
+            // 随机位置，适应更大的显示区域
+            const left = (i * 25) + (Math.random() * 15); // 均匀分布云朵，覆盖整个宽度
+            const top = (Math.random() * 30) + (i % 3) * 12; // 扩大垂直分布范围
             
-            // 随机大小 - 稍微增大以弥补数量减少
-            const scale = (Math.random() * 0.7 + 0.8); // 增加基础大小
+            // 随机大小 - 适合扩大后的区域
+            const scale = (Math.random() * 0.5 + 0.9); // 稍微增大云朵
             
-            // 随机速度 (云朵移动缓慢)
-            const duration = (Math.random() * 80 + 140) + 's'; // 保持速度变化范围
+            // 随机速度 (云朵移动缓慢且更均匀)
+            const speedBase = 160 + (i * 15); // 基础速度随索引递增
+            const duration = (Math.random() * 30 + speedBase) + 's'; // 保持速度变化较小
             
-            // 随机透明度
-            const opacity = (Math.random() * 0.3 + 0.7); // 保持透明度变化
+            // 随机透明度 - 更柔和
+            const opacity = (Math.random() * 0.15 + 0.7); // 增加透明度
+            
+            // 随机延迟 - 确保不会同时开始移动
+            const delay = (i * 15) + (Math.random() * 20) + 's';
             
             clouds.push({
                 left: left + 'vw', // 随机水平位置
                 top: top + 'vh', // 随机垂直位置
-                delay: Math.random() * 100 + 's', // 保持延迟变化范围
+                delay: delay, // 错开的延迟时间
                 scale: scale, // 随机大小
                 duration: duration, // 随机移动速度
                 opacity: opacity // 随机透明度
             });
         }
         
+        // 使用setData时添加渐变淡入效果
         this.setData({ 
-            clouds,
+            clouds: [], // 先清空云朵
             weatherEffect: 'cloudy'
+        }, () => {
+            // 短暂延迟后添加云朵，实现平滑过渡
+            setTimeout(() => {
+                this.setData({ clouds });
+            }, 100);
         });
     },
     
     // 生成阴天效果
     generateOvercastEffect() {
-        const cloudCount = 6; // 减少阴天云朵数量，从15个减少到6个
+        const cloudCount = 4; // 增加云朵数量，更好地填充扩大的区域
         const overcastClouds = [];
         
         for (let i = 0; i < cloudCount; i++) {
-            // 随机位置
-            const left = Math.random() * 100;
-            const top = Math.random() * 70; // 保持垂直分布范围
+            // 随机位置，适应更大的显示区域
+            const left = (i * 25) + (Math.random() * 15); // 均匀分布云朵，覆盖整个宽度
+            const top = (Math.random() * 30) + (i % 3) * 12; // 扩大垂直分布范围
             
-            // 随机大小 - 稍微增大以弥补数量减少
-            const scale = (Math.random() * 0.8 + 1.0); // 增加基础大小
+            // 随机大小 - 适合扩大后的区域
+            const scale = (Math.random() * 0.5 + 1.0); // 稍微增大云朵
             
             // 随机不透明度 (阴天云朵较暗)
-            const opacity = (Math.random() * 0.4 + 0.5); // 保持不透明度变化范围
+            const opacity = (Math.random() * 0.25 + 0.6); // 增加透明度
             
-            // 随机速度 (阴天云朵移动更缓慢)
-            const duration = (Math.random() * 100 + 180) + 's'; // 保持速度变化范围
+            // 随机速度 (阴天云朵移动更缓慢且更均匀)
+            const speedBase = 190 + (i * 20); // 基础速度随索引递增
+            const duration = (Math.random() * 40 + speedBase) + 's'; // 保持速度变化较小
             
-            // 随机层级，让一些云朵在前面，一些在后面
-            const zIndex = Math.random() > 0.5 ? -1 : -2;
+            // 随机延迟 - 确保不会同时开始移动
+            const delay = (i * 20) + (Math.random() * 30) + 's';
             
             overcastClouds.push({
                 left: left + 'vw', // 随机水平位置
                 top: top + 'vh', // 随机垂直位置
-                delay: Math.random() * 120 + 's', // 保持延迟变化范围
+                delay: delay, // 错开的延迟时间
                 scale: scale, // 随机大小
                 opacity: opacity, // 随机不透明度
-                duration: duration, // 随机移动速度
-                zIndex: zIndex // 随机层级
+                duration: duration // 随机移动速度
             });
         }
         
+        // 使用setData时添加渐变淡入效果
         this.setData({ 
-            overcastClouds,
+            overcastClouds: [], // 先清空云朵
             weatherEffect: 'overcast'
+        }, () => {
+            // 短暂延迟后添加云朵，实现平滑过渡
+            setTimeout(() => {
+                this.setData({ overcastClouds });
+            }, 100);
         });
     },
     
@@ -2493,8 +2598,14 @@ Page({
     
     // 页面卸载时清理资源
     onUnload() {
-        // 停止所有心跳机制
+        // 停止雨滴心跳
         this.stopRaindropHeartbeat();
+        // 停止雪花心跳
         this.stopSnowflakeHeartbeat();
-    },
+        // 清理斜光角度更新定时器
+        if (this.diagonalRayTimer) {
+            clearInterval(this.diagonalRayTimer);
+            this.diagonalRayTimer = null;
+        }
+    }
 })
