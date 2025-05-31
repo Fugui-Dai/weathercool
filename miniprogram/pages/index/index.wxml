@@ -190,7 +190,7 @@
                 </view>
             </view>
             <!--今天、明天、后天-->
-            <text style="margin-left: 10rpx;">今天、明天、后天</text>
+            <text style="margin-left: 10rpx;">3天预报</text>
             <view class="ytt">
                 <block wx:for="{{daily3Weather}}" wx:key="index">
                     <view class="item">
