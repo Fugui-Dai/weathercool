@@ -128,6 +128,7 @@ Page({
         statusBarHeight: 0, // 状态栏高度
         diagonalRayAngle: 45, // 新增斜光角度
         diagonalRayTimer: null, // 新增斜光角度更新定时器
+        dataLoaded: false, // 新增：标记是否已加载过数据
     },
     // 地理定位
     // 地理定位
@@ -762,7 +763,8 @@ Page({
             forceFogEffect: false, // 是否强制显示雾效果
             forceHazeEffect: false, // 是否强制显示霾效果
             forceThunderEffect: false, // 是否强制显示打雷效果
-            chartDrawn: false
+            chartDrawn: false,
+            dataLoaded: false // 初始标记为未加载数据
         });
 
         // 获取系统信息设置顶部状态栏高度
@@ -827,15 +829,11 @@ Page({
         // 首先检查网络状态
         const networkStatus = await this.checkNetworkStatus();
         
-        // 标记是否已经加载了数据，避免重复绘制折线图
-        let dataLoaded = false;
-        
         if (networkStatus === 'none') {
             // 如果无网络，尝试加载缓存数据
             const hasCachedData = this.loadCachedWeatherData();
             if (hasCachedData) {
-                dataLoaded = true;
-                this.setData({ isOffline: true });
+                this.setData({ isOffline: true, dataLoaded: true });
                 wx.showToast({
                     title: '无网络连接',
                     icon: 'none',
@@ -857,13 +855,13 @@ Page({
             try {
                 // 尝试请求最新的网络数据
                 await this.requestNetWeatherData();
-                dataLoaded = true;
+                this.setData({ dataLoaded: true });
             } catch (error) {
                 console.error("获取网络数据失败，尝试加载缓存", error);
                 // 网络请求失败，尝试加载缓存数据
                 const hasCachedData = this.loadCachedWeatherData();
                 if (hasCachedData) {
-                    dataLoaded = true;
+                    this.setData({ dataLoaded: true });
                     wx.showToast({
                         title: '网络请求失败，使用缓存数据',
                         icon: 'none',
@@ -922,186 +920,108 @@ Page({
         this.ensureForcedWeatherEffects();
     },
     
-    // 新增方法：确保强制显示的天气效果生效
-    ensureForcedWeatherEffects() {
-        // 如果强制显示雨效果，则在页面加载后强制显示
-        if (this.data.forceRainEffect) {
-            this.forceRainEffect();
-            
-            // 设置延迟定时器，确保雨效果持续显示
-            setTimeout(() => {
-                this.ensureRainEffect();
-            }, 2000);
-        }
-        
-        // 如果强制显示小雨效果，则在页面加载后强制显示
-        else if (this.data.forceLightRainEffect) {
-            this.forceLightRainEffect();
-            
-            // 设置延迟定时器，确保小雨效果持续显示
-            setTimeout(() => {
-                this.ensureLightRainEffect();
-            }, 2000);
-        }
-        
-        // 如果强制显示雪效果，则在页面加载后强制显示
-        else if (this.data.forceSnowEffect) {
-            this.forceSnowEffect();
-            
-            // 设置延迟定时器，确保雪效果持续显示
-            setTimeout(() => {
-                this.ensureSnowEffect();
-            }, 2000);
-        }
-        
-        // 如果强制显示晴天效果，则在页面加载后强制显示
-        else if (this.data.forceSunnyEffect) {
-            this.forceSunnyEffect();
-            
-            // 设置延迟定时器，确保晴天效果持续显示
-            setTimeout(() => {
-                this.ensureSunnyEffect();
-            }, 2000);
-        }
-        
-        // 如果强制显示多云效果，则在页面加载后强制显示
-        else if (this.data.forceCloudyEffect) {
-            this.forceCloudyEffect();
-            
-            // 设置延迟定时器，确保多云效果持续显示
-            setTimeout(() => {
-                this.ensureCloudyEffect();
-            }, 2000);
-        }
-        
-        // 如果强制显示阴天效果，则在页面加载后强制显示
-        else if (this.data.forceOvercastEffect) {
-            this.forceOvercastEffect();
-            
-            // 设置延迟定时器，确保阴天效果持续显示
-            setTimeout(() => {
-                this.ensureOvercastEffect();
-            }, 2000);
-        }
-        
-        // 确保沙尘暴效果显示
-        else if (this.data.forceSandstormEffect) {
-            this.ensureSandstormEffect();
-        }
-        
-        // 确保雾效果显示
-        else if (this.data.forceFogEffect) {
-            this.ensureFogEffect();
-        }
-        
-        // 确保霾效果显示
-        else if (this.data.forceHazeEffect) {
-            this.ensureHazeEffect();
-        }
-        
-        // 确保打雷效果显示
-        else if (this.data.forceThunderEffect) {
-            this.forceThunderEffect();
-            
-            // 设置延迟定时器，确保打雷效果持续显示
-            setTimeout(() => {
-                this.ensureThunderEffect();
-            }, 2000);
-        }
-    },
-
     /**
      * 生命周期函数--监听页面初次渲染完成
      */
     onReady: function () {
         console.log("页面初次渲染完成");
         
-        // 请求天气数据
-        this.requestNetWeatherData().then(() => {
-            console.log("天气数据请求成功");
-            
-            // 如果强制显示雨效果，则在数据加载后确保雨效果显示
+        // 确保天气效果显示（但不再重复请求API）
+        if (this.data.dataLoaded) {
+            // 如果已经加载过数据，只需确保天气效果显示
             if (this.data.forceRainEffect) {
-                // 延迟执行，确保在天气数据加载后仍然显示雨效果
                 setTimeout(() => {
                     this.ensureRainEffect();
                 }, 500);
-            }
-            
-            // 如果强制显示小雨效果，则在数据加载后确保小雨效果显示
-            if (this.data.forceLightRainEffect) {
-                // 延迟执行，确保在天气数据加载后仍然显示小雨效果
+            } else if (this.data.forceLightRainEffect) {
                 setTimeout(() => {
                     this.ensureLightRainEffect();
                 }, 500);
-            }
-            
-            // 如果强制显示雪效果，则在数据加载后确保雪效果显示
-            if (this.data.forceSnowEffect) {
-                // 延迟执行，确保在天气数据加载后仍然显示雪效果
+            } else if (this.data.forceSnowEffect) {
                 setTimeout(() => {
                     this.ensureSnowEffect();
                 }, 500);
-            }
-            
-            // 如果强制显示晴天效果，则在数据加载后确保晴天效果显示
-            if (this.data.forceSunnyEffect) {
-                // 延迟执行，确保在天气数据加载后仍然显示晴天效果
+            } else if (this.data.forceSunnyEffect) {
                 setTimeout(() => {
                     this.ensureSunnyEffect();
                 }, 500);
-            }
-            
-            // 如果强制显示多云效果，则在数据加载后确保多云效果显示
-            if (this.data.forceCloudyEffect) {
-                // 延迟执行，确保在天气数据加载后仍然显示多云效果
+            } else if (this.data.forceCloudyEffect) {
                 setTimeout(() => {
                     this.ensureCloudyEffect();
                 }, 500);
-            }
-            
-            // 如果强制显示阴天效果，则在数据加载后确保阴天效果显示
-            if (this.data.forceOvercastEffect) {
-                // 延迟执行，确保在天气数据加载后仍然显示阴天效果
+            } else if (this.data.forceOvercastEffect) {
                 setTimeout(() => {
                     this.ensureOvercastEffect();
                 }, 500);
-            }
-            
-            // 如果强制显示沙尘暴效果，则在数据加载后确保沙尘暴效果显示
-            if (this.data.forceSandstormEffect) {
-                // 延迟执行，确保在天气数据加载后仍然显示沙尘暴效果
+            } else if (this.data.forceSandstormEffect) {
                 setTimeout(() => {
                     this.ensureSandstormEffect();
                 }, 500);
-            }
-            
-            // 如果强制显示雾效果，则在数据加载后确保雾效果显示
-            if (this.data.forceFogEffect) {
-                // 延迟执行，确保在天气数据加载后仍然显示雾效果
+            } else if (this.data.forceFogEffect) {
                 setTimeout(() => {
                     this.ensureFogEffect();
                 }, 500);
-            }
-            
-            // 如果强制显示霾效果，则在数据加载后确保霾效果显示
-            if (this.data.forceHazeEffect) {
-                // 延迟执行，确保在天气数据加载后仍然显示霾效果
+            } else if (this.data.forceHazeEffect) {
                 setTimeout(() => {
                     this.ensureHazeEffect();
                 }, 500);
-            }
-            
-            // 如果强制显示打雷效果，则在数据加载后确保打雷效果显示
-            if (this.data.forceThunderEffect) {
-                // 延迟执行，确保在天气数据加载后仍然显示打雷效果
+            } else if (this.data.forceThunderEffect) {
                 setTimeout(() => {
                     this.ensureThunderEffect();
                 }, 500);
             }
-        }).catch(error => {
-            console.error("天气数据请求失败：", error);
-        });
+        } else {
+            // 如果还没有加载过数据，则请求数据
+            this.requestNetWeatherData().then(() => {
+                console.log("天气数据请求成功");
+                this.setData({ dataLoaded: true });
+                
+                // 确保天气效果显示
+                if (this.data.forceRainEffect) {
+                    setTimeout(() => {
+                        this.ensureRainEffect();
+                    }, 500);
+                } else if (this.data.forceLightRainEffect) {
+                    setTimeout(() => {
+                        this.ensureLightRainEffect();
+                    }, 500);
+                } else if (this.data.forceSnowEffect) {
+                    setTimeout(() => {
+                        this.ensureSnowEffect();
+                    }, 500);
+                } else if (this.data.forceSunnyEffect) {
+                    setTimeout(() => {
+                        this.ensureSunnyEffect();
+                    }, 500);
+                } else if (this.data.forceCloudyEffect) {
+                    setTimeout(() => {
+                        this.ensureCloudyEffect();
+                    }, 500);
+                } else if (this.data.forceOvercastEffect) {
+                    setTimeout(() => {
+                        this.ensureOvercastEffect();
+                    }, 500);
+                } else if (this.data.forceSandstormEffect) {
+                    setTimeout(() => {
+                        this.ensureSandstormEffect();
+                    }, 500);
+                } else if (this.data.forceFogEffect) {
+                    setTimeout(() => {
+                        this.ensureFogEffect();
+                    }, 500);
+                } else if (this.data.forceHazeEffect) {
+                    setTimeout(() => {
+                        this.ensureHazeEffect();
+                    }, 500);
+                } else if (this.data.forceThunderEffect) {
+                    setTimeout(() => {
+                        this.ensureThunderEffect();
+                    }, 500);
+                }
+            }).catch(error => {
+                console.error("天气数据请求失败：", error);
+            });
+        }
     },
 
     /**
@@ -1123,6 +1043,7 @@ Page({
             // 使用选中城市的经纬度请求天气数据
             this.requestNetWeatherData().then(() => {
                 console.log("已更新选中城市的天气数据");
+                this.setData({ dataLoaded: true });
                 
                 // 清除selectedCity数据，防止再次进入页面时重复处理
                 this.setData({
@@ -1136,75 +1057,53 @@ Page({
             return;
         }
         
-        // 确保雨效果显示
+        // 确保天气效果显示
         if (this.data.forceRainEffect) {
             this.ensureRainEffect();
-        }
-        
-        // 确保小雨效果显示
-        if (this.data.forceLightRainEffect) {
+        } else if (this.data.forceLightRainEffect) {
             this.ensureLightRainEffect();
-        }
-        
-        // 确保雪效果显示
-        if (this.data.forceSnowEffect) {
+        } else if (this.data.forceSnowEffect) {
             this.ensureSnowEffect();
-        }
-        
-        // 确保晴天效果显示
-        if (this.data.forceSunnyEffect) {
-          this.ensureSunnyEffect();
-        }
-
-        // 确保多云效果显示
-        if (this.data.forceCloudyEffect) {
-          this.ensureCloudyEffect();
-        }
-
-        // 确保阴天效果显示
-        if (this.data.forceOvercastEffect) {
-          this.ensureOvercastEffect();
-        }
-        
-        // 确保沙尘暴效果显示
-        if (this.data.forceSandstormEffect) {
-          this.ensureSandstormEffect();
-        }
-        
-        // 确保雾效果显示
-        if (this.data.forceFogEffect) {
-          this.ensureFogEffect();
-        }
-        
-        // 确保霾效果显示
-        if (this.data.forceHazeEffect) {
-          this.ensureHazeEffect();
-        }
-        
-        // 确保打雷效果显示
-        if (this.data.forceThunderEffect) {
-          this.ensureThunderEffect();
+        } else if (this.data.forceSunnyEffect) {
+            this.ensureSunnyEffect();
+        } else if (this.data.forceCloudyEffect) {
+            this.ensureCloudyEffect();
+        } else if (this.data.forceOvercastEffect) {
+            this.ensureOvercastEffect();
+        } else if (this.data.forceSandstormEffect) {
+            this.ensureSandstormEffect();
+        } else if (this.data.forceFogEffect) {
+            this.ensureFogEffect();
+        } else if (this.data.forceHazeEffect) {
+            this.ensureHazeEffect();
+        } else if (this.data.forceThunderEffect) {
+            this.ensureThunderEffect();
         }
 
-        // 检查网络状态
-        this.checkNetworkStatus()
-          .then(isOnline => {
-            if (!isOnline) {
-              wx.showToast({
-                title: '网络不可用',
-                icon: 'none',
-                duration: 2000
+        // 只有在数据未加载过的情况下才请求新数据
+        if (!this.data.dataLoaded) {
+            // 检查网络状态
+            this.checkNetworkStatus()
+              .then(networkType => {
+                if (networkType === 'none') {
+                  wx.showToast({
+                    title: '网络不可用',
+                    icon: 'none',
+                    duration: 2000
+                  });
+                  wx.stopPullDownRefresh();
+                  return;
+                }
+                // 请求新的天气数据
+                this.requestNetWeatherData().then(() => {
+                    this.setData({ dataLoaded: true });
+                });
+              })
+              .catch(error => {
+                console.error('检查网络状态失败:', error);
+                wx.stopPullDownRefresh();
               });
-              wx.stopPullDownRefresh();
-              return;
-            }
-            // 请求新的天气数据
-            this.requestNetWeatherData();
-          })
-          .catch(error => {
-            console.error('检查网络状态失败:', error);
-            wx.stopPullDownRefresh();
-          });
+        }
     },
 
     /**
@@ -1256,7 +1155,7 @@ Page({
                 return;
             }
             
-            // 请求新的天气数据
+            // 下拉刷新时一定要请求新的天气数据
             this.requestNetWeatherData().then(() => {
                 // 确保天气效果显示
                 if (this.data.forceRainEffect) {
@@ -1281,12 +1180,8 @@ Page({
                     this.ensureThunderEffect();
                 }
                 
-                // 移除刷新成功的弹框提示
-                // wx.showToast({
-                //     title: '刷新成功',
-                //     icon: 'success',
-                //     duration: 1500
-                // });
+                // 设置数据已加载标志
+                this.setData({ dataLoaded: true });
                 
                 wx.stopPullDownRefresh();
             }).catch(error => {
@@ -2655,6 +2550,94 @@ Page({
         if (this.diagonalRayTimer) {
             clearInterval(this.diagonalRayTimer);
             this.diagonalRayTimer = null;
+        }
+    },
+    
+    // 新增方法：确保强制显示的天气效果生效
+    ensureForcedWeatherEffects() {
+        // 如果强制显示雨效果，则在页面加载后强制显示
+        if (this.data.forceRainEffect) {
+            this.forceRainEffect();
+            
+            // 设置延迟定时器，确保雨效果持续显示
+            setTimeout(() => {
+                this.ensureRainEffect();
+            }, 2000);
+        }
+        
+        // 如果强制显示小雨效果，则在页面加载后强制显示
+        else if (this.data.forceLightRainEffect) {
+            this.forceLightRainEffect();
+            
+            // 设置延迟定时器，确保小雨效果持续显示
+            setTimeout(() => {
+                this.ensureLightRainEffect();
+            }, 2000);
+        }
+        
+        // 如果强制显示雪效果，则在页面加载后强制显示
+        else if (this.data.forceSnowEffect) {
+            this.forceSnowEffect();
+            
+            // 设置延迟定时器，确保雪效果持续显示
+            setTimeout(() => {
+                this.ensureSnowEffect();
+            }, 2000);
+        }
+        
+        // 如果强制显示晴天效果，则在页面加载后强制显示
+        else if (this.data.forceSunnyEffect) {
+            this.forceSunnyEffect();
+            
+            // 设置延迟定时器，确保晴天效果持续显示
+            setTimeout(() => {
+                this.ensureSunnyEffect();
+            }, 2000);
+        }
+        
+        // 如果强制显示多云效果，则在页面加载后强制显示
+        else if (this.data.forceCloudyEffect) {
+            this.forceCloudyEffect();
+            
+            // 设置延迟定时器，确保多云效果持续显示
+            setTimeout(() => {
+                this.ensureCloudyEffect();
+            }, 2000);
+        }
+        
+        // 如果强制显示阴天效果，则在页面加载后强制显示
+        else if (this.data.forceOvercastEffect) {
+            this.forceOvercastEffect();
+            
+            // 设置延迟定时器，确保阴天效果持续显示
+            setTimeout(() => {
+                this.ensureOvercastEffect();
+            }, 2000);
+        }
+        
+        // 确保沙尘暴效果显示
+        else if (this.data.forceSandstormEffect) {
+            this.ensureSandstormEffect();
+        }
+        
+        // 确保雾效果显示
+        else if (this.data.forceFogEffect) {
+            this.ensureFogEffect();
+        }
+        
+        // 确保霾效果显示
+        else if (this.data.forceHazeEffect) {
+            this.ensureHazeEffect();
+        }
+        
+        // 确保打雷效果显示
+        else if (this.data.forceThunderEffect) {
+            this.forceThunderEffect();
+            
+            // 设置延迟定时器，确保打雷效果持续显示
+            setTimeout(() => {
+                this.ensureThunderEffect();
+            }, 2000);
         }
     }
 })
