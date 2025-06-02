@@ -15,6 +15,48 @@ const instanceGeoapi = new WxRequest({
     isLoading: false // 是否使用默认的 loading 效果
 })
 
+// 繁体字到简体字的映射表（只包含真正的繁体字）
+const traditionalToSimplified = {
+    '雲': '云',
+    '陣': '阵',
+    '風': '风',
+    '強': '强',
+    '後': '后',
+    '時': '时',
+    '當': '当',
+    '點': '点',
+    '氣': '气',
+    '體': '体',
+    '溫': '温',
+    '濕': '湿',
+    '實': '实',
+    '質': '质',
+    '陰': '阴',
+    '塵': '尘',
+    '揚': '扬',
+    '煙': '烟',
+    '無': '无',
+    '細': '细',
+    '夾': '夹',
+    '電': '电',
+    '閃': '闪',
+    '間': '间',
+    '輕': '轻',
+    '嚴': '严'
+};
+
+// 添加繁体字转简体字的函数
+function traditionalToSimplifiedText(text) {
+    if (!text) return '';
+    let result = text;
+    for (const [traditional, simplified] of Object.entries(traditionalToSimplified)) {
+        // 使用全局替换所有匹配的繁体字
+        const regex = new RegExp(traditional, 'g');
+        result = result.replace(regex, simplified);
+    }
+    return result;
+}
+
 Page({
     /**
      * 页面的初始数据
@@ -1268,11 +1310,14 @@ Page({
 
     // 检查天气是否为雨天
     checkIfRaining(weatherText) {
+        // 先转换繁体字为简体字
+        const simplifiedText = traditionalToSimplifiedText(weatherText);
+        
         // 扩大包含雨的天气描述关键词
         const rainKeywords = ['雨', '阵雨', '小雨', '中雨', '大雨', '暴雨', '雷阵雨', '毛毛雨', '雨夹雪', '雷', '雪'];
         
         // 检查是否包含任何雨相关关键词
-        const isRain = rainKeywords.some(keyword => weatherText.includes(keyword));
+        const isRain = rainKeywords.some(keyword => simplifiedText.includes(keyword));
         
         // 为了测试，强制启用雨效果
         return true; // 强制显示雨效果
@@ -1282,6 +1327,10 @@ Page({
     
     // 检查天气类型并设置相应特效
     checkWeatherType(weatherText) {
+        // 先转换繁体字为简体字
+        const simplifiedText = traditionalToSimplifiedText(weatherText);
+        console.log("原始天气文本:", weatherText, "转换后简体文本:", simplifiedText);
+        
         // 打雷和大雨相关关键词（已合并）
         const thunderKeywords = ['雷', '雷阵雨', '雷电', '打雷', '雷暴', '雷雨', '强雷阵雨', '雷阵雨伴有冰雹', '大雨', '暴雨', '大暴雨', '特大暴雨', '强降雨', '极端降雨', '大到暴雨', '暴雨到大暴雨', '大暴雨到特大暴雨'];
         // 小雨相关关键词（包含原来的中雨关键词）
@@ -1302,23 +1351,23 @@ Page({
         const hazeKeywords = ['霾', '轻度霾', '中度霾', '重度霾', '严重霾'];
         
         // 检查天气类型
-        if (thunderKeywords.some(keyword => weatherText.includes(keyword))) {
+        if (thunderKeywords.some(keyword => simplifiedText.includes(keyword))) {
             return 'thunder'; // 打雷优先级最高
-        } else if (lightRainKeywords.some(keyword => weatherText.includes(keyword))) {
+        } else if (lightRainKeywords.some(keyword => simplifiedText.includes(keyword))) {
             return 'lightRain'; // 小雨（现在包含中雨）
-        } else if (snowKeywords.some(keyword => weatherText.includes(keyword))) {
+        } else if (snowKeywords.some(keyword => simplifiedText.includes(keyword))) {
             return 'snow';
-        } else if (sandstormKeywords.some(keyword => weatherText.includes(keyword))) {
+        } else if (sandstormKeywords.some(keyword => simplifiedText.includes(keyword))) {
             return 'sandstorm';
-        } else if (hazeKeywords.some(keyword => weatherText.includes(keyword))) {
+        } else if (hazeKeywords.some(keyword => simplifiedText.includes(keyword))) {
             return 'haze';
-        } else if (fogKeywords.some(keyword => weatherText.includes(keyword))) {
+        } else if (fogKeywords.some(keyword => simplifiedText.includes(keyword))) {
             return 'fog';
-        } else if (overcastKeywords.some(keyword => weatherText.includes(keyword))) {
+        } else if (overcastKeywords.some(keyword => simplifiedText.includes(keyword))) {
             return 'overcast';
-        } else if (cloudyKeywords.some(keyword => weatherText.includes(keyword))) {
+        } else if (cloudyKeywords.some(keyword => simplifiedText.includes(keyword))) {
             return 'cloudy';
-        } else if (sunnyKeywords.some(keyword => weatherText.includes(keyword))) {
+        } else if (sunnyKeywords.some(keyword => simplifiedText.includes(keyword))) {
             return 'sunny';
         }
         
