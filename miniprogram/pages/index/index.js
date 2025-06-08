@@ -515,14 +515,16 @@ Page({
                         wx.createSelectorQuery()
                             .select('.yubao7day_container')
                             .boundingClientRect(itemsRect => {
-                                const chartWidth = containerWidth || 350;  // 获取容器宽度，默认350
+                                const chartWidth = containerWidth || 360;  // 获取容器宽度，默认350
                                 const chartHeight = 120; // 图表高度
                                 const margin = 23;       // 边距
                                 
                                 // 计算每个点的间隔，确保对齐
                                 const items = daily7Weather.length;
-                                // 确保分段数量与上下的元素对齐
-                                const stepX = (chartWidth - 2 * margin) / (items - 1)-1.5;
+                                
+                                // 修改：确保分段数量与上面的图标对齐
+                                // 计算每个点的水平位置，使其与上方图标中心对齐
+                                const stepX = (chartWidth - 2 * margin) / (items - 1);
                                 
                                 // 优化动画，减少闪烁
                                 let animationProgress = 0; // 动画进度，从0到1
@@ -534,6 +536,7 @@ Page({
                                 const points2 = [];
                                 
                                 for (let i = 0; i < data1.length; i++) {
+                                    // 修改：计算x坐标，使点与上方图标中心对齐
                                     const x = margin + (i * stepX);
                                     
                                     // 计算原始y坐标 - 高温
@@ -565,10 +568,14 @@ Page({
                                     
                                     // 绘制曲线方法 - 使用贝塞尔曲线代替折线
                                     const drawCurve = (points, color) => {
+                                        ctx.save(); // 保存当前上下文状态
                                         ctx.beginPath();
                                         
                                         // 如果点数不足，直接返回
-                                        if (points.length < 2) return;
+                                        if (points.length < 2) {
+                                            ctx.restore();
+                                            return;
+                                        }
                                         
                                         // 计算动画中的当前点坐标
                                         const animatedPoints = points.map(point => {
@@ -619,6 +626,7 @@ Page({
                                         ctx.setLineJoin('round');
                                         ctx.stroke();
                                         
+                                        ctx.restore(); // 恢复上下文状态，防止影响后续绘制
                                         return animatedPoints;
                                     };
 
@@ -636,7 +644,47 @@ Page({
                                                 const high = highPoints[i];
                                                 const low = lowPoints[i];
                                                 
+                                                // 绘制高温点和低温点之间的辅助虚线
+                                                ctx.beginPath();
+                                                // 不使用setLineDash，改用自定义方法绘制虚线
+                                                const dashLen = 3; // 虚线段长度
+                                                const gapLen = 3;  // 虚线间隔长度
+                                                const startX = high.x;
+                                                const startY = high.y;
+                                                const endX = low.x;
+                                                const endY = low.y;
+                                                
+                                                // 计算线条总长度
+                                                const lineLength = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+                                                // 计算线条角度
+                                                const angle = Math.atan2(endY - startY, endX - startX);
+                                                // 计算虚线段数量
+                                                const dashCount = Math.floor(lineLength / (dashLen + gapLen));
+                                                
+                                                // 使用点绘制而不是线段 - 完全避免线条颜色问题
+                                                ctx.save(); // 保存当前上下文状态
+                                                
+                                                // 计算点的数量和间距
+                                                const dotCount = Math.floor(lineLength / 6); // 每6个像素一个点
+                                                const dotSize = 1; // 点的大小
+                                                
+                                                // 使用点代替线段
+                                                for (let j = 0; j < dotCount; j++) {
+                                                    // 计算点的位置
+                                                    const dotX = startX + Math.cos(angle) * (j * 6);
+                                                    const dotY = startY + Math.sin(angle) * (j * 6);
+                                                    
+                                                    // 绘制点
+                                                    ctx.beginPath();
+                                                    ctx.arc(dotX, dotY, dotSize, 0, 2 * Math.PI);
+                                                    ctx.setFillStyle('#999999'); // 使用更浅的灰色，更加柔和
+                                                    ctx.fill();
+                                                }
+                                                
+                                                ctx.restore(); // 恢复之前的上下文状态
+                                                
                                                 // 最高温点
+                                                ctx.save(); // 保存当前上下文状态
                                                 ctx.beginPath();
                                                 ctx.arc(high.x, high.y, 4, 0, 2 * Math.PI);
                                                 ctx.setFillStyle(`rgba(${hexToRgb(high.color)}, ${opacity})`);
@@ -644,8 +692,10 @@ Page({
                                                 ctx.setFillStyle(`rgba(${hexToRgb(high.color)}, ${opacity})`);
                                                 ctx.setFontSize(15); // 调整字体大小
                                                 ctx.fillText(high.temp + '°', high.x - 10, high.y - 10);
+                                                ctx.restore(); // 恢复上下文状态
                                                 
                                                 // 最低温点
+                                                ctx.save(); // 保存当前上下文状态
                                                 ctx.beginPath();
                                                 ctx.arc(low.x, low.y, 4, 0, 2 * Math.PI);
                                                 ctx.setFillStyle(`rgba(${hexToRgb(low.color)}, ${opacity})`);
@@ -653,6 +703,7 @@ Page({
                                                 ctx.setFillStyle(`rgba(${hexToRgb(low.color)}, ${opacity})`);
                                                 ctx.setFontSize(15); // 调整字体大小
                                                 ctx.fillText(low.temp + '°', low.x - 10, low.y + 20);
+                                                ctx.restore(); // 恢复上下文状态
                                             }
                                         }
                                     }
@@ -1057,6 +1108,9 @@ Page({
             return;
         }
         
+        // 重置图表状态，确保重新绘制带有虚线的折线图
+        this.resetChartState();
+        
         // 确保天气效果显示
         if (this.data.forceRainEffect) {
             this.ensureRainEffect();
@@ -1103,6 +1157,13 @@ Page({
                 console.error('检查网络状态失败:', error);
                 wx.stopPullDownRefresh();
               });
+        } else {
+            // 如果数据已加载，但图表未绘制，则绘制图表
+            if (!this.data.chartDrawn && this.data.daily7Weather && this.data.daily7Weather.length > 0) {
+                setTimeout(() => {
+                    this.zhexiantu();
+                }, 300);
+            }
         }
     },
 

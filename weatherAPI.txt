@@ -24,6 +24,11 @@ https://geoapi.qweather.com/v2/city/top?number=12&range=cn&key=2d57f1cc456d421c8
 城市搜索
 https://geoapi.qweather.com/v2/city/lookup?location=北京&number=20&range=cn&key=2d57f1cc456d421c8bbdd925db34555a
 
+日出日落：
+https://devapi.qweather.com/v7/astronomy/sun?location=101010100&date=20250608&key=2d57f1cc456d421c8bbdd925db34555a
+月升月落：
+https://devapi.qweather.com/v7/astronomy/moon?location=101010100&date=20250607&key=2d57f1cc456d421c8bbdd925db34555a
+
 
 
 
