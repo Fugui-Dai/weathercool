@@ -474,7 +474,7 @@ Page({
         })
     },
     // 折线图
-    // 修改 zhexiantu 方法，使其动态绘制 7 天的气温折线图
+    // 修改 zhexiantu 方法，使其直接绘制 7 天的气温折线图，无动画
     zhexiantu() {
         // 如果图表已经绘制过，则不再重复绘制
         if (this.data.chartDrawn) {
@@ -526,207 +526,154 @@ Page({
                                 // 计算每个点的水平位置，使其与上方图标中心对齐
                                 const stepX = (chartWidth - 2 * margin) / (items - 1);
                                 
-                                // 优化动画，减少闪烁
-                                let animationProgress = 0; // 动画进度，从0到1
-                                const animationDuration = 8; // 减少帧数，让动画更快完成
-                                let currentFrame = 0;
-                                
-                                // 预先计算点的坐标，避免重复计算
+                                // 预先计算点的坐标
                                 const points1 = [];
                                 const points2 = [];
                                 
                                 for (let i = 0; i < data1.length; i++) {
-                                    // 修改：计算x坐标，使点与上方图标中心对齐
+                                    // 计算x坐标，使点与上方图标中心对齐
                                     const x = margin + (i * stepX);
                                     
-                                    // 计算原始y坐标 - 高温
-                                    const originalY1 = chartHeight - margin - ((data1[i] - adjustedMinTemp) / (adjustedMaxTemp - adjustedMinTemp)) * (chartHeight - 2 * margin);
+                                    // 计算y坐标 - 高温
+                                    const y1 = chartHeight - margin - ((data1[i] - adjustedMinTemp) / (adjustedMaxTemp - adjustedMinTemp)) * (chartHeight - 2 * margin);
                                     points1.push({ 
                                         x, 
-                                        originalY: originalY1, 
+                                        y: y1, 
                                         temp: data1[i],
                                         color: getColorByTemperature(data1[i])
                                     });
                                     
-                                    // 计算原始y坐标 - 低温
-                                    const originalY2 = chartHeight - margin - ((data2[i] - adjustedMinTemp) / (adjustedMaxTemp - adjustedMinTemp)) * (chartHeight - 2 * margin);
+                                    // 计算y坐标 - 低温
+                                    const y2 = chartHeight - margin - ((data2[i] - adjustedMinTemp) / (adjustedMaxTemp - adjustedMinTemp)) * (chartHeight - 2 * margin);
                                     points2.push({ 
                                         x, 
-                                        originalY: originalY2, 
+                                        y: y2, 
                                         temp: data2[i],
                                         color: getColorByTemperature(data2[i])
                                     });
                                 }
                                 
-                                // 绘制曲线方法（包含动画）
-                                const drawAnimatedCurve = () => {
-                                    // 清空画布
-                                    ctx.clearRect(0, 0, chartWidth, chartHeight);
+                                // 绘制曲线方法
+                                const drawCurve = (points) => {
+                                    ctx.save(); // 保存当前上下文状态
+                                    ctx.beginPath();
                                     
-                                    // 计算当前动画进度 (0到1之间)
-                                    animationProgress = currentFrame / animationDuration;
-                                    
-                                    // 绘制曲线方法 - 使用贝塞尔曲线代替折线
-                                    const drawCurve = (points, color) => {
-                                        ctx.save(); // 保存当前上下文状态
-                                        ctx.beginPath();
-                                        
-                                        // 如果点数不足，直接返回
-                                        if (points.length < 2) {
-                                            ctx.restore();
-                                            return;
-                                        }
-                                        
-                                        // 计算动画中的当前点坐标
-                                        const animatedPoints = points.map(point => {
-                                            const animatedY = chartHeight - margin - ((chartHeight - margin - point.originalY) * animationProgress);
-                                            return { 
-                                                x: point.x, 
-                                                y: animatedY, 
-                                                temp: point.temp,
-                                                color: point.color
-                                            };
-                                        });
-                                        
-                                        // 起始点
-                                        const startX = animatedPoints[0].x;
-                                        const startY = animatedPoints[0].y;
-                                        ctx.moveTo(startX, startY);
-                                        
-                                        // 使用贝塞尔曲线连接点，创建平滑的曲线效果
-                                        for (let i = 0; i < animatedPoints.length - 1; i++) {
-                                            // 当前点和下一个点
-                                            const p0 = animatedPoints[i];
-                                            const p1 = animatedPoints[i + 1];
-                                            
-                                            // 计算控制点 - 使用简单的方式计算控制点来创建平滑曲线
-                                            const cp1x = p0.x + (p1.x - p0.x) / 3;
-                                            const cp1y = p0.y;
-                                            const cp2x = p0.x + 2 * (p1.x - p0.x) / 3;
-                                            const cp2y = p1.y;
-                                            
-                                            // 绘制贝塞尔曲线
-                                            ctx.bezierCurveTo(
-                                                cp1x, cp1y,
-                                                cp2x, cp2y,
-                                                p1.x, p1.y
-                                            );
-                                        }
-                                        
-                                        // 创建渐变色
-                                        const gradient = ctx.createLinearGradient(0, 0, chartWidth, 0);
-                                        for (let i = 0; i < points.length; i++) {
-                                            const position = i / (points.length - 1);
-                                            gradient.addColorStop(position, points[i].color);
-                                        }
-                                        
-                                        ctx.setStrokeStyle(gradient);
-                                        ctx.setLineWidth(2.5);
-                                        ctx.setLineCap('round');
-                                        ctx.setLineJoin('round');
-                                        ctx.stroke();
-                                        
-                                        ctx.restore(); // 恢复上下文状态，防止影响后续绘制
-                                        return animatedPoints;
-                                    };
-
-                                    // 绘制最高温度曲线和最低温度曲线
-                                    const highPoints = drawCurve(points1);
-                                    const lowPoints = drawCurve(points2);
-                                    
-                                    // 绘制点和文本（直接显示，不使用渐变出现效果，减少复杂度）
-                                    if (animationProgress >= 0.3) { // 当曲线达到30%高度时就显示点和文本
-                                        // 固定不透明度为1，不再使用渐变动画
-                                        const opacity = 1; 
-                                        
-                                        if (highPoints && lowPoints) {
-                                            for (let i = 0; i < highPoints.length; i++) {
-                                                const high = highPoints[i];
-                                                const low = lowPoints[i];
-                                                
-                                                // 绘制高温点和低温点之间的辅助虚线
-                                                ctx.beginPath();
-                                                // 不使用setLineDash，改用自定义方法绘制虚线
-                                                const dashLen = 3; // 虚线段长度
-                                                const gapLen = 3;  // 虚线间隔长度
-                                                const startX = high.x;
-                                                const startY = high.y;
-                                                const endX = low.x;
-                                                const endY = low.y;
-                                                
-                                                // 计算线条总长度
-                                                const lineLength = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-                                                // 计算线条角度
-                                                const angle = Math.atan2(endY - startY, endX - startX);
-                                                // 计算虚线段数量
-                                                const dashCount = Math.floor(lineLength / (dashLen + gapLen));
-                                                
-                                                // 使用点绘制而不是线段 - 完全避免线条颜色问题
-                                                ctx.save(); // 保存当前上下文状态
-                                                
-                                                // 计算点的数量和间距
-                                                const dotCount = Math.floor(lineLength / 6); // 每6个像素一个点
-                                                const dotSize = 1; // 点的大小
-                                                
-                                                // 使用点代替线段
-                                                for (let j = 0; j < dotCount; j++) {
-                                                    // 计算点的位置
-                                                    const dotX = startX + Math.cos(angle) * (j * 6);
-                                                    const dotY = startY + Math.sin(angle) * (j * 6);
-                                                    
-                                                    // 绘制点
-                                                    ctx.beginPath();
-                                                    ctx.arc(dotX, dotY, dotSize, 0, 2 * Math.PI);
-                                                    ctx.setFillStyle('#999999'); // 使用更浅的灰色，更加柔和
-                                                    ctx.fill();
-                                                }
-                                                
-                                                ctx.restore(); // 恢复之前的上下文状态
-                                                
-                                                // 最高温点
-                                                ctx.save(); // 保存当前上下文状态
-                                                ctx.beginPath();
-                                                ctx.arc(high.x, high.y, 4, 0, 2 * Math.PI);
-                                                ctx.setFillStyle(`rgba(${hexToRgb(high.color)}, ${opacity})`);
-                                                ctx.fill();
-                                                ctx.setFillStyle(`rgba(${hexToRgb(high.color)}, ${opacity})`);
-                                                ctx.setFontSize(15); // 调整字体大小
-                                                ctx.fillText(high.temp + '°', high.x - 10, high.y - 10);
-                                                ctx.restore(); // 恢复上下文状态
-                                                
-                                                // 最低温点
-                                                ctx.save(); // 保存当前上下文状态
-                                                ctx.beginPath();
-                                                ctx.arc(low.x, low.y, 4, 0, 2 * Math.PI);
-                                                ctx.setFillStyle(`rgba(${hexToRgb(low.color)}, ${opacity})`);
-                                                ctx.fill();
-                                                ctx.setFillStyle(`rgba(${hexToRgb(low.color)}, ${opacity})`);
-                                                ctx.setFontSize(15); // 调整字体大小
-                                                ctx.fillText(low.temp + '°', low.x - 10, low.y + 20);
-                                                ctx.restore(); // 恢复上下文状态
-                                            }
-                                        }
+                                    // 如果点数不足，直接返回
+                                    if (points.length < 2) {
+                                        ctx.restore();
+                                        return;
                                     }
                                     
-                                    // 绘制并更新画布 - 使用同步模式避免闪烁
-                                    ctx.draw(false, () => {
-                                        // 继续动画
-                                        if (currentFrame < animationDuration) {
-                                            currentFrame++;
-                                            // 使用requestAnimationFrame获得更好的性能
-                                            wx.nextTick(() => {
-                                                drawAnimatedCurve();
-                                            });
-                                        } else {
-                                            // 动画完成，标记图表已绘制
-                                            this.setData({ chartDrawn: true });
-                                            resolve(); // 完成Promise
-                                        }
-                                    });
+                                    // 起始点
+                                    const startX = points[0].x;
+                                    const startY = points[0].y;
+                                    ctx.moveTo(startX, startY);
+                                    
+                                    // 使用贝塞尔曲线连接点，创建平滑的曲线效果
+                                    for (let i = 0; i < points.length - 1; i++) {
+                                        // 当前点和下一个点
+                                        const p0 = points[i];
+                                        const p1 = points[i + 1];
+                                        
+                                        // 计算控制点 - 使用简单的方式计算控制点来创建平滑曲线
+                                        const cp1x = p0.x + (p1.x - p0.x) / 3;
+                                        const cp1y = p0.y;
+                                        const cp2x = p0.x + 2 * (p1.x - p0.x) / 3;
+                                        const cp2y = p1.y;
+                                        
+                                        // 绘制贝塞尔曲线
+                                        ctx.bezierCurveTo(
+                                            cp1x, cp1y,
+                                            cp2x, cp2y,
+                                            p1.x, p1.y
+                                        );
+                                    }
+                                    
+                                    // 创建渐变色
+                                    const gradient = ctx.createLinearGradient(0, 0, chartWidth, 0);
+                                    for (let i = 0; i < points.length; i++) {
+                                        const position = i / (points.length - 1);
+                                        gradient.addColorStop(position, points[i].color);
+                                    }
+                                    
+                                    ctx.setStrokeStyle(gradient);
+                                    ctx.setLineWidth(2.5);
+                                    ctx.setLineCap('round');
+                                    ctx.setLineJoin('round');
+                                    ctx.stroke();
+                                    
+                                    ctx.restore(); // 恢复上下文状态，防止影响后续绘制
+                                    return points;
                                 };
+
+                                // 清空画布
+                                ctx.clearRect(0, 0, chartWidth, chartHeight);
+                                
+                                // 绘制最高温度曲线和最低温度曲线
+                                const highPoints = drawCurve(points1);
+                                const lowPoints = drawCurve(points2);
+                                
+                                // 绘制点和文本
+                                if (highPoints && lowPoints) {
+                                    for (let i = 0; i < highPoints.length; i++) {
+                                        const high = highPoints[i];
+                                        const low = lowPoints[i];
+                                        
+                                        // 绘制高温点和低温点之间的辅助虚线
+                                        ctx.beginPath();
+                                        // 计算点的数量和间距
+                                        const dotCount = Math.floor(Math.sqrt(Math.pow(low.y - high.y, 2)) / 6); // 每6个像素一个点
+                                        const dotSize = 1; // 点的大小
+                                        
+                                        // 计算线条角度
+                                        const angle = Math.atan2(low.y - high.y, low.x - high.x);
+                                        
+                                        // 使用点代替线段
+                                        for (let j = 0; j < dotCount; j++) {
+                                            // 计算点的位置
+                                            const dotX = high.x + Math.cos(angle) * (j * 6);
+                                            const dotY = high.y + Math.sin(angle) * (j * 6);
+                                            
+                                            // 绘制点
+                                            ctx.beginPath();
+                                            ctx.arc(dotX, dotY, dotSize, 0, 2 * Math.PI);
+                                            ctx.setFillStyle('#999999'); // 使用更浅的灰色，更加柔和
+                                            ctx.fill();
+                                        }
+                                        
+                                        // 最高温点
+                                        ctx.save(); // 保存当前上下文状态
+                                        ctx.beginPath();
+                                        ctx.arc(high.x, high.y, 4, 0, 2 * Math.PI);
+                                        ctx.setFillStyle(high.color);
+                                        ctx.fill();
+                                        ctx.setFillStyle(high.color);
+                                        ctx.setFontSize(15); // 调整字体大小
+                                        ctx.fillText(high.temp + '°', high.x - 10, high.y - 10);
+                                        ctx.restore(); // 恢复上下文状态
+                                        
+                                        // 最低温点
+                                        ctx.save(); // 保存当前上下文状态
+                                        ctx.beginPath();
+                                        ctx.arc(low.x, low.y, 4, 0, 2 * Math.PI);
+                                        ctx.setFillStyle(low.color);
+                                        ctx.fill();
+                                        ctx.setFillStyle(low.color);
+                                        ctx.setFontSize(15); // 调整字体大小
+                                        ctx.fillText(low.temp + '°', low.x - 10, low.y + 20);
+                                        ctx.restore(); // 恢复上下文状态
+                                    }
+                                }
+                                
+                                // 绘制并更新画布
+                                ctx.draw(false, () => {
+                                    // 标记图表已绘制
+                                    this.setData({ chartDrawn: true });
+                                    resolve(); // 完成Promise
+                                });
                                 
                                 // 辅助函数：将十六进制颜色转换为RGB格式
-                                const hexToRgb = (hex) => {
+                                function hexToRgb(hex) {
                                     // 移除#符号如果存在
                                     hex = hex.replace('#', '');
                                     
@@ -737,7 +684,7 @@ Page({
                                     
                                     // 返回RGB格式字符串
                                     return `${r}, ${g}, ${b}`;
-                                };
+                                }
                                 
                                 // 根据温度获取对应颜色
                                 function getColorByTemperature(temp) {
@@ -755,9 +702,6 @@ Page({
                                     if (temp >= -10) return '#1E90FF'; // 低温（-10°C ~ 0°C）：亮蓝色
                                     return '#00008B'; // 极低温（< -10°C）：深蓝色
                                 }
-                                
-                                // 开始动画
-                                drawAnimatedCurve();
                             }).exec();
                     }).exec();
             }, 500); // 延迟500毫秒再绘制折线图，让页面先完成渲染
