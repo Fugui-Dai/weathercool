@@ -184,8 +184,6 @@
                 <view>
                     <text>{{shishitianqi.windDir}}</text>
                     <text> | </text>
-                    <text>湿度{{shishitianqi.humidity}}%</text>
-                    <text> | </text>
                     <text>空气质量·{{zhiliang}}</text>
                 </view>
             </view>
@@ -257,6 +255,193 @@
                             </view>
                         </view>
                     </block>
+                </view>
+            </view>
+            <!--生活指标-->
+            <text style="margin-left: 10rpx;">生活指标</text>
+            <view class="lifezhibiao">
+                <!-- 第一行 -->
+                <view class="lifezhibiao-row">
+                    <!--湿度-->
+                    <view class="lifezhibiao-item">
+                        <!-- 调整布局为水平排列 -->
+                        <view style="display: flex; align-items: center; justify-content: space-between;">
+                            <!-- 湿度文本放在右边 -->
+                            <view style="display: flex; flex-direction: column; align-items: center;">
+                                <text style="font-size: 40rpx;">湿度</text>
+                                <view></view>
+                                <text style="font-size: 30rpx;">{{shishitianqi.humidity}}%</text>
+                            </view>
+                            <!-- 湿度圆环指示器 -->
+                            <view class="humidity-circle-container">
+                                <!-- 灰色底层圆圈 -->
+                                <view class="humidity-circle-bg"></view>
+                                <!-- 蓝色动态覆盖圆圈，根据湿度百分比调整 -->
+                                <view class="humidity-circle-fill" style="clip-path: inset({{100 - shishitianqi.humidity}}% 0 0 0);"></view>
+                                <!-- 显示湿度数值 -->
+                                <view class="humidity-text">
+                                    <block wx:if="{{shishitianqi.humidity <= 30}}">干燥</block>
+                                    <block wx:elif="{{shishitianqi.humidity <= 50}}">干燥</block>
+                                    <block wx:elif="{{shishitianqi.humidity <= 70}}">舒适</block>
+                                    <block wx:elif="{{shishitianqi.humidity <= 90}}">潮湿</block>
+                                    <block wx:else>潮湿</block>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                    <!--紫外线-->
+                    <view class="lifezhibiao-item">
+                        <!-- 调整布局为水平排列 -->
+                        <view style="display: flex; align-items: center; justify-content: space-between;">
+                            <!-- 紫外线文本放在右边 -->
+                            <view style=" display: flex; flex-direction: column; align-items: center;">
+                                <text style="font-size: 40rpx;">紫外线</text>
+                                <view></view>
+                                <view bindtap="showLifeDetail" data-text="{{lifeIndices[4].text}}">
+                                    <view>
+                                        <text>{{lifeIndices[4].level ? (lifeIndices[4].level <= 1 ? '最弱' : lifeIndices[4].level <=2 ? '弱' : lifeIndices[4].level <=3 ? '中等' : lifeIndices[4].level <=4 ? '强' : '很强' ) : '弱' }}</text>
+                                    </view>
+                                </view>
+                            </view>
+                            <!-- 紫外线圆环指示器 -->
+                            <view class="uv-circle-container">
+                                <!-- 渐变色圆环 -->
+                                <view class="uv-circle-gradient"></view>
+                                <!-- 指针指示器 -->
+                                <view class="uv-dot" style="transform: rotate({{uvAngle}}deg)"></view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+                
+                <!-- 第一行 -->
+                <view class="lifezhibiao-row">
+                <!-- 风向 -->
+                    <view class="lifezhibiao-item">
+                        <!-- 调整布局为水平排列 -->
+                        <view style="display: flex; align-items: center; justify-content: space-between;">
+                            <!-- 风向文本放在左边 -->
+                            <view style="display: flex; flex-direction: column; align-items: center;">
+                                <text style="font-size: 40rpx;">{{shishitianqi.windDir}}</text>
+                                <view></view>
+                                <text style="font-size: 30rpx;">{{shishitianqi.windScale}}级</text>
+                            </view>
+                            
+                            <!-- 风向指南针容器 -->
+                            <view class="wind-compass-container">
+                                <!-- 指南针背景圆圈 -->
+                                <view class="compass-bg">
+                                    <!-- 刻度线 -->
+                                    <view class="compass-ticks"></view>
+                                    
+                                    <!-- 方向标记 -->
+                                    <text class="compass-direction north">北</text>
+                                    <text class="compass-direction east">东</text>
+                                    <text class="compass-direction south">南</text>
+                                    <text class="compass-direction west">西</text>
+                                    <!-- 添加四个斜方向 -->
+                                    <text class="compass-direction northeast">东北</text>
+                                    <text class="compass-direction southeast">东南</text>
+                                    <text class="compass-direction southwest">西南</text>
+                                    <text class="compass-direction northwest">西北</text>
+                                    
+                                    <!-- 方向指示线 -->
+                                    <view class="direction-line north"></view>
+                                    <view class="direction-line south"></view>
+                                    <view class="direction-line east"></view>
+                                    <view class="direction-line west"></view>
+                                    <!-- 添加四个斜方向指示线 -->
+                                    <view class="direction-line northeast"></view>
+                                    <view class="direction-line southeast"></view>
+                                    <view class="direction-line southwest"></view>
+                                    <view class="direction-line northwest"></view>
+                                    
+                                    <!-- 中心圆点 -->
+                                    <view class="compass-center">
+                                        <!-- 风向图标 -->
+                                        <view class="wind-icon">
+                                            <!-- 风向箭头 -->
+                                            <view class="wind-arrow" style="transform: rotate({{windDirectionAngle}}deg)"></view>
+                                        </view>
+                                    </view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="lifezhibiao-item">
+                        <!-- 调整布局为水平排列 -->
+                        <view style="display: flex; align-items: center; justify-content: space-between;">
+                            <!-- 空气质量文本放在左边 -->
+                            <view style="display: flex; flex-direction: column; align-items: center;">
+                                <text style="font-size: 40rpx;">空气质量</text>
+                                <view></view>
+                                <text style="font-size: 30rpx;">{{zhiliang}}</text>
+                            </view>
+                            
+                            <!-- 空气质量指示器 -->
+                            <view class="aqi-container">
+                                <!-- 空气质量指示器背景 -->
+                                <view class="aqi-bg"></view>
+                                <!-- 空气质量指示器刻度 -->
+                                <view class="aqi-scale">
+                                    <view class="aqi-level aqi-level-1"></view>
+                                    <view class="aqi-level aqi-level-2"></view>
+                                    <view class="aqi-level aqi-level-3"></view>
+                                    <view class="aqi-level aqi-level-4"></view>
+                                    <view class="aqi-level aqi-level-5"></view>
+                                    <view class="aqi-level aqi-level-6"></view>
+                                </view>
+                                <!-- 空气质量指示器指针 -->
+                                <view class="aqi-pointer" style="transform: rotate({{aqiAngle}}deg)"></view>
+                                <!-- 空气质量指示器中心点 -->
+                                <view class="aqi-center"></view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+                
+                <!-- 第三行 -->
+                <view class="lifezhibiao-row">
+                    <view class="lifezhibiao-item">
+                        <!-- 日出日落信息 -->
+                        <view style="display: flex; align-items: center; justify-content: space-between;">
+                            <!-- 日出日落文本 -->
+                            <view style="display: flex; flex-direction: column; align-items: center;">
+                                <text style="font-size: 40rpx;">日出日落</text>
+                                <view></view>
+                                <text style="font-size: 26rpx;">日出: {{sunInfo.sunriseTime}}</text>
+                                <text style="font-size: 26rpx;">日落: {{sunInfo.sunsetTime}}</text>
+                            </view>
+                            
+                            <!-- 日出日落图标 -->
+                            <view class="sun-cycle-container">
+                                <view class="sun-cycle-bg">
+                                    <view class="sun-icon sunrise"></view>
+                                    <view class="sun-path"></view>
+                                    <view class="sun-icon sunset"></view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="lifezhibiao-item">
+                        <!-- 月升月落信息 -->
+                        <view style="display: flex; align-items: center; justify-content: space-between;">
+                            <!-- 月升月落文本 -->
+                            <view style="display: flex; flex-direction: column; align-items: center;">
+                                <text style="font-size: 40rpx;">月升月落</text>
+                                <view></view>
+                                <text style="font-size: 26rpx;">月升: {{moonInfo.moonriseTime}}</text>
+                                <text style="font-size: 26rpx;">月落: {{moonInfo.moonsetTime}}</text>
+                            </view>
+                            
+                            <!-- 月相图标 -->
+                            <view class="moon-phase-container">
+                                <view class="moon-phase-bg">
+                                    <view class="moon-phase-icon"></view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
                 </view>
             </view>
             <!--生活指数-->

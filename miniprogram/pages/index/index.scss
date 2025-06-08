@@ -448,6 +448,260 @@ scroll-view {
     font-size: 27rpx;
     margin: 5rpx 0;
 }
+// -------------------------------- 生活指标
+.lifezhibiao {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    height: 600rpx;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
+    border-radius: 20rpx;
+    margin: 10rpx;
+    padding: 10rpx;
+    font-size: 28rpx;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    animation: slideUp 0.8s ease 0.8s;
+    color: #ffffff;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+// -------------------------------- 生活指标行
+.lifezhibiao-row {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10rpx 0;
+}
+
+// -------------------------------- 生活指标项
+.lifezhibiao-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45%;
+    height: 150rpx;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
+    border-radius: 20rpx;
+    padding: 10rpx;
+    font-size: 32rpx;
+    color: #ffffff;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    flex-direction: column;
+}
+
+// -------------------------------- 湿度圆环容器
+.humidity-circle-container {
+    position: relative;
+    width: 140rpx;
+    height: 140rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// -------------------------------- 湿度灰色底层圆圈
+.humidity-circle-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(200, 200, 200, 0.3);
+    box-shadow: inset 0 0 10rpx rgba(0, 0, 0, 0.2);
+    animation: centerPulse 3s ease-in-out infinite alternate;  // 添加脉冲动画
+}
+
+// -------------------------------- 湿度蓝色填充圆圈
+.humidity-circle-fill {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #36D1DC 0%, #5B86E5 100%);
+    box-shadow: 0 0 15rpx rgba(91, 134, 229, 0.5);
+    
+}
+
+// -------------------------------- 湿度数值文本
+.humidity-text {
+    position: relative;
+    font-size: 24rpx;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+// -------------------------------- 紫外线圆环容器
+.uv-circle-container {
+    position: relative;
+    width: 140rpx;
+    height: 140rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* 添加容器平滑处理 */
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+}
+
+// -------------------------------- 紫外线渐变色圆环
+.uv-circle-gradient {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    animation: centerPulse 3s ease-in-out infinite alternate;  // 添加脉冲动画
+    background: conic-gradient(
+        #2196F3 0%, /* 最弱 - 蓝色 */
+        #1EB5D4 12.5%, 
+        #00BCD4 25%, /* 弱 - 青色 */
+        #26B590 37.5%, 
+        #4CAF50 50%, /* 中等 - 绿色 */
+        #8DC24A 62.5%, 
+        #FF9800 75%, /* 强 - 橙色 */
+        #FF7043 87.5%, 
+        #F44336 100% /* 很强 - 红色 */
+    );
+    /* 移除外部阴影发光效果 */
+    box-shadow: none;
+    /* 添加遮罩，在中心形成一个更大的圆形透明区域 */
+    mask: radial-gradient(
+        circle at center,
+        transparent 0%,
+        transparent 45%,
+        white 46%,
+        white 100%
+    );
+    -webkit-mask: radial-gradient(
+        circle at center,
+        transparent 0%,
+        transparent 45%,
+        white 46%,
+        white 100%
+    );
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    animation: centerPulse 3s ease-in-out infinite alternate;  // 添加脉冲动画
+}
+
+// -------------------------------- 紫外线中心圆
+.uv-circle-center {
+    display: block;
+    position: absolute;
+    width: 100rpx;
+    height: 100rpx;
+    border-radius: 50%;
+    /* 增加不透明度，确保完全覆盖内部 */
+    background: rgba(0, 0, 0, 0.7);
+    /* 添加边框使边缘更清晰 */
+    border: 2rpx solid rgba(0, 0, 0, 0.8);
+    /* 添加内阴影增强立体感 */
+    box-shadow: inset 0 0 10rpx rgba(0, 0, 0, 0.5);
+    top: 50%;
+    left: 50%;
+    margin-left: -50rpx;
+    margin-top: -50rpx;
+    z-index: 2;
+    /* 隐藏这个元素，因为我们现在直接在渐变圆环中处理中心区域 */
+    display: none;
+}
+
+// -------------------------------- 紫外线指示器
+.uv-dot {
+    position: absolute;
+    width: 4rpx;
+    height: 50rpx;
+    background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0.7));
+    box-shadow: 0 0 8rpx rgba(255, 255, 255, 0.9);
+    top: 50%;
+    left: 50%;
+    transform-origin: center bottom;
+    margin-left: -2rpx;
+    margin-top: -50rpx;
+    z-index: 3;
+    border-radius: 3rpx;
+    animation: pointerPulse 2s ease-in-out infinite alternate;
+}
+
+// 添加紫外线指针箭头
+.uv-dot::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8rpx solid transparent;
+    border-right: 8rpx solid transparent;
+    border-bottom: 14rpx solid #ffffff;
+    margin-top: -14rpx;
+    filter: drop-shadow(0 0 5rpx rgba(255, 255, 255, 1));
+}
+
+// 根据不同级别设置不同颜色 - 保留原有功能但调整样式
+.uv-dot[style*="rotate(-45deg)"] {
+    background: linear-gradient(to bottom, #ffffff, #2196F3); /* 最弱 - 蓝色 */
+    box-shadow: 0 0 8rpx rgba(33, 150, 243, 0.8);
+}
+.uv-dot[style*="rotate(-45deg)"]::before {
+    border-bottom-color: #2196F3;
+}
+
+.uv-dot[style*="rotate(0deg)"] {
+    background: linear-gradient(to bottom, #ffffff, #00BCD4); /* 弱 - 青色 */
+    box-shadow: 0 0 8rpx rgba(0, 188, 212, 0.8);
+}
+.uv-dot[style*="rotate(0deg)"]::before {
+    border-bottom-color: #00BCD4;
+}
+
+.uv-dot[style*="rotate(45deg)"] {
+    background: linear-gradient(to bottom, #ffffff, #4CAF50); /* 中等 - 绿色 */
+    box-shadow: 0 0 8rpx rgba(76, 175, 80, 0.8);
+}
+.uv-dot[style*="rotate(45deg)"]::before {
+    border-bottom-color: #4CAF50;
+}
+
+.uv-dot[style*="rotate(135deg)"] {
+    background: linear-gradient(to bottom, #ffffff, #FF9800); /* 强 - 橙色 */
+    box-shadow: 0 0 8rpx rgba(255, 152, 0, 0.8);
+}
+.uv-dot[style*="rotate(135deg)"]::before {
+    border-bottom-color: #FF9800;
+}
+
+.uv-dot[style*="rotate(225deg)"] {
+    background: linear-gradient(to bottom, #ffffff, #F44336); /* 很强 - 红色 */
+    box-shadow: 0 0 8rpx rgba(244, 67, 54, 0.8);
+}
+.uv-dot[style*="rotate(225deg)"]::before {
+    border-bottom-color: #F44336;
+}
+
+// -------------------------------- UV标签
+.uv-label {
+    font-size: 18rpx;
+    color: #ffffff; /* 修改为白色 */
+    margin-top: 2rpx;
+}
+
+.lifezhibiao-item:active {
+    transform: scale(0.98);
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+}
 
 // --------------------------------生活指数区域
 .life {
@@ -1550,4 +1804,510 @@ scroll-view {
     99% {
         opacity: 0.6;
     }
+}
+
+// -------------------------------- 风向指南针容器
+.wind-compass-container {
+    position: relative;
+    width: 140rpx;
+    height: 140rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+// -------------------------------- 指南针背景圆圈
+.compass-bg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: transparent; // 透明背景
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+    border: 1rpx solid rgba(255, 255, 255, 0.3); // 添加细边框
+    animation: centerPulse 3s ease-in-out infinite alternate;  // 添加脉冲动画
+}
+
+// -------------------------------- 指南针刻度线
+.compass-ticks {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    
+    &::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: none; // 移除原有的环形刻度线
+        border: 1rpx solid rgba(255, 255, 255, 0.5); // 添加外圈边框
+    }
+    
+    // 添加刻度线
+    &::after {
+        content: '';
+        position: absolute;
+        width: 90%;
+        height: 90%;
+        top: 5%;
+        left: 5%;
+        border-radius: 50%;
+        box-sizing: border-box;
+        border: 1px dashed rgba(255, 255, 255, 0.3); // 添加内圈虚线
+    }
+}
+
+// -------------------------------- 指南针方向标记
+.compass-direction {
+    position: absolute;
+    font-size: 20rpx; // 稍微减小字体
+    color: #ffffff;
+    font-weight: bold;
+    z-index: 2;
+}
+
+.compass-direction.north {
+    top: 10rpx; // 调整位置，靠近中心
+    left: 50%; // 水平居中
+    transform: translateX(-50%); // 确保水平居中
+}
+
+.compass-direction.south {
+    bottom: 10rpx; // 调整位置，靠近中心
+    left: 50%; // 水平居中
+    transform: translateX(-50%); // 确保水平居中
+}
+
+.compass-direction.east {
+    right: 10rpx; // 调整位置，靠近中心
+    top: 50%; // 垂直居中
+    transform: translateY(-50%); // 确保垂直居中
+}
+
+.compass-direction.west {
+    left: 10rpx; // 调整位置，靠近中心
+    top: 50%; // 垂直居中
+    transform: translateY(-50%); // 确保垂直居中
+}
+
+// 添加四个斜方向的样式
+.compass-direction.northeast {
+    top: 20rpx;
+    right: 20rpx;
+    font-size: 18rpx; // 斜方向字体稍小
+}
+
+.compass-direction.southeast {
+    bottom: 20rpx;
+    right: 20rpx;
+    font-size: 18rpx;
+}
+
+.compass-direction.southwest {
+    bottom: 20rpx;
+    left: 20rpx;
+    font-size: 18rpx;
+}
+
+.compass-direction.northwest {
+    top: 20rpx;
+    left: 20rpx;
+    font-size: 18rpx;
+}
+
+// -------------------------------- 方向指示线
+.direction-line {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 1;
+}
+
+// 主方向线
+.direction-line.north, 
+.direction-line.south {
+    width: 2rpx;
+    height: 10rpx;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.direction-line.north {
+    top: 0;
+}
+
+.direction-line.south {
+    bottom: 0;
+}
+
+.direction-line.east, 
+.direction-line.west {
+    height: 2rpx;
+    width: 10rpx;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.direction-line.east {
+    right: 0;
+}
+
+.direction-line.west {
+    left: 0;
+}
+
+// 斜方向线
+.direction-line.northeast, 
+.direction-line.southwest,
+.direction-line.northwest,
+.direction-line.southeast {
+    width: 8rpx;
+    height: 2rpx;
+}
+
+.direction-line.northeast {
+    top: 20%;
+    right: 20%;
+    transform: rotate(-45deg);
+}
+
+.direction-line.southeast {
+    bottom: 20%;
+    right: 20%;
+    transform: rotate(45deg);
+}
+
+.direction-line.southwest {
+    bottom: 20%;
+    left: 20%;
+    transform: rotate(-45deg);
+}
+
+.direction-line.northwest {
+    top: 20%;
+    left: 20%;
+    transform: rotate(45deg);
+}
+
+// -------------------------------- 指南针中心
+.compass-center {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); // 确保完全居中
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible; // 修改为visible，允许内容溢出
+}
+
+// -------------------------------- 风向图标
+.wind-icon {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+}
+
+// -------------------------------- 风向图案（隐藏）
+.wind-pattern {
+    display: none;
+}
+
+// -------------------------------- 风向箭头（显示）
+.wind-arrow {
+    display: block;
+    position: absolute;
+    width: 6rpx;
+    height: 30%; // 增加箭头长度
+    background: linear-gradient(to bottom,  #36D1DC,  #36D1DC); // 蓝色箭头
+    box-shadow: 0 0 5rpx  #36D1DC;
+    border-radius: 3rpx;
+    transform-origin: bottom center; // 确保旋转点在箭头底部中心
+    bottom: 50%; // 箭头底部位于中心点
+    left: 50%; // 水平居中
+    margin-left: -3rpx; // 修正水平居中位置（宽度的一半）
+    z-index: 5; // 确保箭头在最上层
+    
+}
+
+.wind-arrow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10rpx solid transparent;
+    border-right: 10rpx solid transparent;
+    border-bottom: 15rpx solid  #36D1DC; // 蓝色箭头头部
+    margin-top: -15rpx;
+}
+
+// -------------------------------- 空气质量指示器容器
+.aqi-container {
+    position: relative;
+    width: 160rpx;  // 增加尺寸
+    height: 160rpx;  // 增加尺寸
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    perspective: 1000rpx;
+    margin: 0 auto;  // 居中显示
+}
+
+// -------------------------------- 空气质量指示器背景
+.aqi-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(30, 30, 40, 0.6);  // 更深的背景色
+    border: 2rpx solid rgba(255, 255, 255, 0.4);  // 更明显的边框
+    box-shadow: 
+        inset 0 0 20rpx rgba(0, 0, 0, 0.6),
+        0 0 20rpx rgba(255, 255, 255, 0.3);  // 增强阴影效果
+    transition: all 0.3s ease;  // 添加过渡效果
+}
+
+// -------------------------------- 空气质量指示器刻度
+.aqi-scale {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+        #00E400 0%, /* 优 - 绿色 */
+        #00E400 15%, 
+        #FFFF00 16%, /* 良 - 黄色 */
+        #FFFF00 32%, 
+        #FF7E00 33%, /* 轻度污染 - 橙色 */
+        #FF7E00 49%, 
+        #FF0000 50%, /* 中度污染 - 红色 */
+        #FF0000 66%, 
+        #99004C 67%, /* 重度污染 - 紫色 */
+        #99004C 83%, 
+        #7E0023 84%, /* 严重污染 - 深红色 */
+        #7E0023 100%
+    );
+    /* 添加遮罩，在中心形成一个更大的圆形透明区域 */
+    mask: radial-gradient(
+        circle at center,
+        transparent 0%,
+        transparent 45%,
+        white 46%,
+        white 100%
+    );
+    -webkit-mask: radial-gradient(
+        circle at center,
+        transparent 0%,
+        transparent 45%,
+        white 46%,
+        white 100%
+    );
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    
+    // 移除原来的内圆样式，因为我们现在使用mask来实现
+    &::before {
+        display: none;
+    }
+}
+
+// -------------------------------- 空气质量等级 (隐藏原来的等级样式)
+.aqi-level {
+    display: none;
+}
+
+// -------------------------------- 空气质量指示器指针
+.aqi-pointer {
+    position: absolute;
+    width: 4rpx;
+    height: 50rpx; // 缩短长度
+    background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0.7));
+    box-shadow: 0 0 8rpx rgba(255, 255, 255, 0.9);
+    border-radius: 3rpx;
+    transform-origin: center bottom; // 确保从中心底部旋转
+    z-index: 20;
+    top: 50%;
+    left: 50%;
+    margin-left: -2rpx; // 水平居中
+    margin-top: -50rpx; // 垂直居中，值应该是高度的负值
+    animation: pointerPulse 2s ease-in-out infinite alternate;
+}
+
+// -------------------------------- 空气质量指示器指针箭头
+.aqi-pointer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8rpx solid transparent;
+    border-right: 8rpx solid transparent;
+    border-bottom: 14rpx solid #ffffff;
+    margin-top: -14rpx;
+    filter: drop-shadow(0 0 5rpx rgba(255, 255, 255, 1));
+}
+
+// 指针脉冲动画
+@keyframes pointerPulse {
+    0% {
+        box-shadow: 0 0 10rpx rgba(255, 255, 255, 0.9);
+    }
+    100% {
+        box-shadow: 0 0 20rpx rgba(255, 255, 255, 1);
+    }
+}
+
+// -------------------------------- 空气质量指示器中心点
+.aqi-center {
+    position: absolute;
+}
+
+// 中心点脉冲动画
+@keyframes centerPulse {
+    0% {
+        box-shadow: 0 0 15rpx rgba(255, 255, 255, 0.9), inset 0 0 8rpx rgba(0, 0, 0, 0.9);
+    }
+    100% {
+        box-shadow: 0 0 25rpx rgba(255, 255, 255, 1), inset 0 0 10rpx rgba(0, 0, 0, 1);
+    }
+}
+
+// -------------------------------- 日出日落容器
+.sun-cycle-container {
+    position: relative;
+    width: 140rpx;
+    height: 140rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+// -------------------------------- 日出日落背景
+.sun-cycle-bg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(to bottom, rgba(135, 206, 250, 0.5) 0%, rgba(30, 144, 255, 0.5) 100%);
+    box-shadow: 0 0 15rpx rgba(30, 144, 255, 0.4),
+                inset 0 0 20rpx rgba(255, 255, 255, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+}
+
+// -------------------------------- 日出日落路径
+.sun-path {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    border-top: 3rpx dashed rgba(255, 255, 255, 0.8);
+    border-radius: 50% 50% 0 0;
+    top: 10%;
+}
+
+// -------------------------------- 太阳图标
+.sun-icon {
+    position: absolute;
+    width: 24rpx;
+    height: 24rpx;
+    border-radius: 50%;
+    background: #FFD700;
+    box-shadow: 0 0 10rpx rgba(255, 215, 0, 0.8);
+}
+
+// -------------------------------- 日出位置
+.sun-icon.sunrise {
+    bottom: 20%;
+    left: 20%;
+}
+
+// -------------------------------- 日落位置
+.sun-icon.sunset {
+    bottom: 20%;
+    right: 20%;
+}
+
+// -------------------------------- 月相容器
+.moon-phase-container {
+    position: relative;
+    width: 140rpx;
+    height: 140rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+// -------------------------------- 月相背景
+.moon-phase-bg {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(to bottom, rgba(25, 25, 112, 0.6) 0%, rgba(0, 0, 50, 0.6) 100%);
+    box-shadow: 0 0 15rpx rgba(25, 25, 112, 0.5),
+                inset 0 0 20rpx rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+// -------------------------------- 月相图标
+.moon-phase-icon {
+    position: relative;
+    width: 60%;
+    height: 60%;
+    border-radius: 50%;
+    background: #F5F5F5;
+    box-shadow: 0 0 15rpx rgba(255, 255, 255, 0.8);
+    /* 使用径向渐变模拟月相 */
+    background: radial-gradient(circle at 70% center, #F5F5F5 0%, #F5F5F5 60%, rgba(245, 245, 245, 0.3) 61%, rgba(245, 245, 245, 0) 100%);
+}
+
+// --------------------------------日期显示
+.date-display {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10rpx;
+    padding: 2rpx 10rpx;
+    margin-left: 15rpx;
+}
+
+.date-display text {
+    color: #FFFFFF;
+    font-size: 24rpx;
+    margin-left: 6rpx;
+    text-shadow: 0 0 10rpx rgba(255, 255, 255, 0.3);
 }

@@ -129,6 +129,9 @@ Page({
         diagonalRayAngle: 45, // 新增斜光角度
         diagonalRayTimer: null, // 新增斜光角度更新定时器
         dataLoaded: false, // 新增：标记是否已加载过数据
+        windDirectionAngle: 0, // 风向角度
+        aqiAngle: 0, // 空气质量指示器角度
+        uvAngle: 0, // 紫外线指示器角度
     },
     // 地理定位
     // 地理定位
@@ -278,7 +281,23 @@ Page({
                 windDirDay: day.windDirDay,  // 白天风向
                 windScaleDay: day.windScaleDay  // 白天风力等级
             }));
-
+            console.log("asfadasdasdasdasdasdasda:");
+            // 获取当前日期用于日出日落和月升月落API
+            const currentDate = this.getCurrentDate();
+            const richuriluo = await instance.get('/v7/astronomy/sun', {
+                location: longitude + "," + latitude,
+                key: "2d57f1cc456d421c8bbdd925db34555a",
+                date: currentDate
+            });
+            console.log("日落日出数据 weatherNow:", JSON.stringify(richuriluo, null, 2));
+            // 月升月落
+            const yueshengyueluo = await instance.get('/v7/astronomy/moon', {
+                location: longitude + "," + latitude,
+                key: "2d57f1cc456d421c8bbdd925db34555a",
+                date: currentDate
+            });
+            console.log("月升月落数据 weatherNow:", JSON.stringify(yueshengyueluo, null, 2));
+            
             // 获取生活指数
             const lifeIndex = await instance.get('/v7/indices/1d', {
                 location: longitude + "," + latitude,
@@ -317,7 +336,22 @@ Page({
                 lifeIndices: lifeIndex.data.daily,
                 lastUpdateTime: lastUpdateTime,
                 isOffline: false,  // 明确设置为非离线模式
-                isRaining: shouldRain  // 设置是否下雨，保留之前的雨天状态
+                isRaining: shouldRain,  // 设置是否下雨，保留之前的雨天状态
+                windDirectionAngle: this.calculateWindDirectionAngle(weatherNow.data.now.windDir), // 计算风向角度
+                aqiAngle: this.calculateAQIAngle(airQuality.data.now.category), // 计算空气质量指示器角度
+                currentDate: currentDate, // 添加当前日期
+                formattedDate: this.getFormattedDate(), // 添加格式化的日期
+                sunInfo: {
+                    ...richuriluo.data,
+                    sunriseTime: this.extractTimeFromISO(richuriluo.data.sunrise),
+                    sunsetTime: this.extractTimeFromISO(richuriluo.data.sunset)
+                }, // 添加日出日落信息
+                moonInfo: {
+                    ...yueshengyueluo.data,
+                    moonriseTime: this.extractTimeFromISO(yueshengyueluo.data.moonrise),
+                    moonsetTime: this.extractTimeFromISO(yueshengyueluo.data.moonset)
+                }, // 添加月升月落信息
+                uvAngle: this.calculateUVAngle(lifeIndex.data.daily[4].level)
             };
             
             this.setData(weatherData, () => {
@@ -432,11 +466,52 @@ Page({
                     return false;
                 }
                 
+                // 计算风向角度
+                let windDirectionAngle = 0;
+                if (cachedData.shishitianqi && cachedData.shishitianqi.windDir) {
+                    windDirectionAngle = this.calculateWindDirectionAngle(cachedData.shishitianqi.windDir);
+                }
+                
+                // 计算空气质量指示器角度
+                let aqiAngle = 0;
+                if (cachedData.zhiliang) {
+                    aqiAngle = this.calculateAQIAngle(cachedData.zhiliang);
+                }
+                
+                // 获取当前日期
+                const currentDate = this.getCurrentDate();
+                const formattedDate = this.getFormattedDate();
+                
+                // 处理日出日落和月升月落时间格式
+                let sunInfo = cachedData.sunInfo || {};
+                let moonInfo = cachedData.moonInfo || {};
+                
+                // 如果缓存数据中没有提取的时间格式，则从原始数据中提取
+                if (sunInfo && !sunInfo.sunriseTime && sunInfo.sunrise) {
+                    sunInfo.sunriseTime = this.extractTimeFromISO(sunInfo.sunrise);
+                }
+                if (sunInfo && !sunInfo.sunsetTime && sunInfo.sunset) {
+                    sunInfo.sunsetTime = this.extractTimeFromISO(sunInfo.sunset);
+                }
+                if (moonInfo && !moonInfo.moonriseTime && moonInfo.moonrise) {
+                    moonInfo.moonriseTime = this.extractTimeFromISO(moonInfo.moonrise);
+                }
+                if (moonInfo && !moonInfo.moonsetTime && moonInfo.moonset) {
+                    moonInfo.moonsetTime = this.extractTimeFromISO(moonInfo.moonset);
+                }
+                
                 // 设置数据，包括离线模式标志和上次更新时间
                 this.setData({
                     ...cachedData,
                     isOffline: true,
-                    lastUpdateTime: formattedCacheTime
+                    lastUpdateTime: formattedCacheTime,
+                    windDirectionAngle: windDirectionAngle,
+                    aqiAngle: aqiAngle,
+                    currentDate: cachedData.currentDate || currentDate, // 使用缓存的日期或当前日期
+                    formattedDate: cachedData.formattedDate || formattedDate, // 使用缓存的格式化日期或当前格式化日期
+                    sunInfo: sunInfo,
+                    moonInfo: moonInfo,
+                    uvAngle: this.calculateUVAngle(cachedData.lifeIndices[4].level)
                 });
                 
                 console.log("已加载缓存的天气数据，上次更新时间:", formattedCacheTime);
@@ -454,10 +529,8 @@ Page({
                         this.zhexiantu();
                     }, 500);
                 }
-                
                 return true;
             }
-            
             console.log("没有找到缓存的天气数据");
             return false;
         } catch (e) {
@@ -2328,7 +2401,7 @@ Page({
             });
             
             // 打印完整的weatherNow数据，方便查看实时天气数据结构
-            console.log("实时天气数据 weatherNow:", JSON.stringify(weatherNow.data, null, 2));
+            //console.log("实时天气数据 weatherNow:", JSON.stringify(weatherNow.data, null, 2));
             
             // 验证实时天气响应数据
             if (!weatherNow.data || !weatherNow.data.now) {
@@ -2423,6 +2496,24 @@ Page({
             const now = new Date();
             const lastUpdateTime = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
             
+            // 获取当前日期用于日出日落和月升月落API
+            const currentDate = this.getCurrentDate();
+            const formattedDate = this.getFormattedDate();
+            
+            // 获取日出日落数据
+            const richuriluo = await instance.get('/v7/astronomy/sun', {
+                location: longitude + "," + latitude,
+                key: "2d57f1cc456d421c8bbdd925db34555a",
+                date: currentDate
+            });
+            
+            // 获取月升月落数据
+            const yueshengyueluo = await instance.get('/v7/astronomy/moon', {
+                location: longitude + "," + latitude,
+                key: "2d57f1cc456d421c8bbdd925db34555a",
+                date: currentDate
+            });
+            
             // 检查天气类型并获取对应的天气效果类型
             const weatherText = weatherNow.data.now.text;
             const weatherType = this.checkWeatherType(weatherText);
@@ -2493,7 +2584,22 @@ Page({
                 daily7Weather: daily7Weather,
                 lifeIndices: lifeIndex.data.daily,
                 lastUpdateTime: lastUpdateTime,
-                isOffline: false  // 明确设置为非离线模式
+                isOffline: false,  // 明确设置为非离线模式
+                windDirectionAngle: this.calculateWindDirectionAngle(weatherNow.data.now.windDir), // 计算风向角度
+                aqiAngle: this.calculateAQIAngle(airQuality.data.now.category), // 计算空气质量指示器角度
+                currentDate: currentDate, // 添加当前日期
+                formattedDate: formattedDate, // 添加格式化的日期
+                sunInfo: {
+                    ...richuriluo.data,
+                    sunriseTime: this.extractTimeFromISO(richuriluo.data.sunrise),
+                    sunsetTime: this.extractTimeFromISO(richuriluo.data.sunset)
+                }, // 添加日出日落信息
+                moonInfo: {
+                    ...yueshengyueluo.data,
+                    moonriseTime: this.extractTimeFromISO(yueshengyueluo.data.moonrise),
+                    moonsetTime: this.extractTimeFromISO(yueshengyueluo.data.moonset)
+                }, // 添加月升月落信息
+                uvAngle: this.calculateUVAngle(lifeIndex.data.daily[4].level)
             };
             
             this.setData(weatherData);
@@ -2644,5 +2750,113 @@ Page({
                 this.ensureThunderEffect();
             }, 2000);
         }
+    },
+
+    // 计算风向角度
+    calculateWindDirectionAngle(windDir) {
+        // 默认角度，北风为0度
+        let angle = 0;
+        
+        // 根据风向字符串判断角度
+        if (!windDir) return angle;
+        
+        // 先判断组合风向，避免"东北风"被误判为"北风"
+        if (windDir.includes('东北风')) angle = 45; // 东北风箭头指向东北方
+        else if (windDir.includes('东南风')) angle = 135; // 东南风箭头指向东南方
+        else if (windDir.includes('西南风')) angle = 225; // 西南风箭头指向西南方
+        else if (windDir.includes('西北风')) angle = 315; // 西北风箭头指向西北方
+        // 再判断主风向
+        else if (windDir.includes('北风')) angle = 0; // 北风箭头指向北方
+        else if (windDir.includes('东风')) angle = 90; // 东风箭头指向东方
+        else if (windDir.includes('南风')) angle = 180; // 南风箭头指向南方
+        else if (windDir.includes('西风')) angle = 270; // 西风箭头指向西方
+        
+        // 打印检查风向和计算的角度
+        console.log("风向:", windDir, "计算角度:", angle);
+        
+        return angle;
+    },
+
+    // 计算空气质量指示器角度
+    calculateAQIAngle(aqiLevel) {
+        // 默认角度为0度（优）
+        let angle = 0;
+        
+        // 根据空气质量等级计算角度
+        switch(aqiLevel) {
+            case '优':
+                angle = 30; // 优的中间位置
+                break;
+            case '良':
+                angle = 90; // 良的中间位置
+                break;
+            case '轻度污染':
+                angle = 150; // 轻度污染的中间位置
+                break;
+            case '中度污染':
+                angle = 210; // 中度污染的中间位置
+                break;
+            case '重度污染':
+                angle = 270; // 重度污染的中间位置
+                break;
+            case '严重污染':
+                angle = 330; // 严重污染的中间位置
+                break;
+            default:
+                angle = 30; // 默认为优
+        }
+        
+        console.log("空气质量:", aqiLevel, "计算角度:", angle);
+        
+        return angle;
+    },
+
+    // 获取当前日期，格式为yyyyMMdd
+    getCurrentDate() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        return `${year}${month}${day}`;
+    },
+
+    // 获取格式化的日期显示，例如：2025年06月08日
+    getFormattedDate() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        return `${year}年${month}月${day}日`;
+    },
+    
+    // 从ISO格式的时间字符串中提取时间部分（例如从"2025-06-08T04:47+08:00"提取"04:47"）
+    extractTimeFromISO(isoString) {
+        if (!isoString) return '';
+        // 使用正则表达式提取时间部分
+        const timeMatch = isoString.match(/T(\d{2}:\d{2})/);
+        return timeMatch ? timeMatch[1] : '';
+    },
+
+    // 计算紫外线指数角度
+    calculateUVAngle(uvLevel) {
+        // 默认角度为0度（弱）
+        let angle = 0;
+        
+        // 根据紫外线等级计算角度
+        if (!uvLevel) return angle;
+        
+        if (uvLevel <= 1) {
+            angle = 36; // 最弱
+        } else if (uvLevel <= 2) {
+            angle = 108; // 弱
+        } else if (uvLevel <= 3) {
+            angle = 180; // 中等
+        } else if (uvLevel <= 4) {
+            angle = 252; // 强
+        } else {
+            angle = 324; // 很强
+        }
+        console.log("紫外线等级:", uvLevel, "计算角度:", angle);
+        return angle;
     }
 })
