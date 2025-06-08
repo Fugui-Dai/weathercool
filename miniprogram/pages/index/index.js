@@ -357,6 +357,9 @@ Page({
             this.setData(weatherData, () => {
                 // 数据更新后确保雨效果依然显示
                 this.ensureRainEffect();
+                
+                // 检查和修复空气质量指示器
+                this.checkAndFixAQIDisplay();
             });
             
             // 缓存天气数据到本地
@@ -512,6 +515,9 @@ Page({
                     sunInfo: sunInfo,
                     moonInfo: moonInfo,
                     uvAngle: this.calculateUVAngle(cachedData.lifeIndices[4].level)
+                }, () => {
+                    // 检查和修复空气质量指示器
+                    this.checkAndFixAQIDisplay();
                 });
                 
                 console.log("已加载缓存的天气数据，上次更新时间:", formattedCacheTime);
@@ -2779,8 +2785,17 @@ Page({
 
     // 计算空气质量指示器角度
     calculateAQIAngle(aqiLevel) {
-        // 默认角度为0度（优）
-        let angle = 0;
+        // 默认角度为30度（优）
+        let angle = 30;
+        
+        // 添加日志，记录输入值
+        console.log("计算空气质量角度，输入值:", aqiLevel);
+        
+        // 如果aqiLevel为空，使用默认值
+        if (!aqiLevel) {
+            console.log("空气质量等级为空，使用默认角度:", angle);
+            return angle;
+        }
         
         // 根据空气质量等级计算角度
         switch(aqiLevel) {
@@ -2804,6 +2819,7 @@ Page({
                 break;
             default:
                 angle = 30; // 默认为优
+                console.log("未识别的空气质量等级，使用默认角度:", angle);
         }
         
         console.log("空气质量:", aqiLevel, "计算角度:", angle);
@@ -2858,5 +2874,28 @@ Page({
         }
         console.log("紫外线等级:", uvLevel, "计算角度:", angle);
         return angle;
+    },
+
+    // 新增方法：检查和修复空气质量指示器
+    checkAndFixAQIDisplay() {
+        // 检查aqiAngle是否存在
+        if (this.data.aqiAngle === undefined || this.data.aqiAngle === null) {
+            console.log("空气质量角度为空，设置默认值");
+            // 设置默认值
+            this.setData({
+                aqiAngle: 30 // 默认为"优"的位置
+            });
+        }
+        
+        // 检查zhiliang是否存在
+        if (!this.data.zhiliang) {
+            console.log("空气质量等级为空，设置默认值");
+            // 设置默认值
+            this.setData({
+                zhiliang: '优'
+            });
+        }
+        
+        console.log("空气质量指示器检查完成，当前角度:", this.data.aqiAngle, "当前等级:", this.data.zhiliang);
     }
 })

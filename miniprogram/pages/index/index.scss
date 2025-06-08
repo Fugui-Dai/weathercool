@@ -2072,6 +2072,7 @@ scroll-view {
     backface-visibility: hidden;
     perspective: 1000rpx;
     margin: 0 auto;  // 居中显示
+    z-index: 10; // 增加z-index确保显示在最上层
 }
 
 // -------------------------------- 空气质量指示器背景
@@ -2086,6 +2087,7 @@ scroll-view {
         inset 0 0 20rpx rgba(0, 0, 0, 0.6),
         0 0 20rpx rgba(255, 255, 255, 0.3);  // 增强阴影效果
     transition: all 0.3s ease;  // 添加过渡效果
+    z-index: 11; // 确保背景显示
 }
 
 // -------------------------------- 空气质量指示器刻度
@@ -2126,16 +2128,12 @@ scroll-view {
     transform: translateZ(0);
     will-change: transform;
     backface-visibility: hidden;
+    z-index: 12; // 确保刻度显示
     
     // 移除原来的内圆样式，因为我们现在使用mask来实现
     &::before {
         display: none;
     }
-}
-
-// -------------------------------- 空气质量等级 (隐藏原来的等级样式)
-.aqi-level {
-    display: none;
 }
 
 // -------------------------------- 空气质量指示器指针
@@ -2153,6 +2151,8 @@ scroll-view {
     margin-left: -2rpx; // 水平居中
     margin-top: -50rpx; // 垂直居中，值应该是高度的负值
     animation: pointerPulse 2s ease-in-out infinite alternate;
+    /* 添加默认旋转，确保即使没有角度值也能显示 */
+    transform: rotate(30deg);
 }
 
 // -------------------------------- 空气质量指示器指针箭头
@@ -2310,4 +2310,9 @@ scroll-view {
     font-size: 24rpx;
     margin-left: 6rpx;
     text-shadow: 0 0 10rpx rgba(255, 255, 255, 0.3);
+}
+
+// -------------------------------- 空气质量等级 (隐藏原来的等级样式)
+.aqi-level {
+    display: none;
 }
