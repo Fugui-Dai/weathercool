@@ -1175,6 +1175,9 @@ Page({
      * 从address页面返回数据
      */
     onShow: function () {
+        // 更新太阳和月亮位置
+        this.updateSunMoonPositions();
+        
         // 检查是否有从地址页面选择的城市
         if (this.data.selectedCity) {
             console.log("检测到选择的城市:", this.data.selectedCity);
@@ -1190,14 +1193,6 @@ Page({
             this.requestNetWeatherData().then(() => {
                 console.log("已更新选中城市的天气数据");
                 this.setData({ dataLoaded: true });
-                
-                // 确保太阳和月亮位置也被更新
-                const sunProgress = this.calculateSunProgress();
-                const moonProgress = this.calculateMoonProgress();
-                this.setData({
-                    sunProgress: sunProgress,
-                    moonProgress: moonProgress
-                });
                 
                 // 清除selectedCity数据，防止再次进入页面时重复处理
                 this.setData({
@@ -1344,14 +1339,8 @@ Page({
                     this.ensureThunderEffect();
                 }
                 
-                // 重新计算太阳和月亮位置
-                const sunProgress = this.calculateSunProgress();
-                const moonProgress = this.calculateMoonProgress();
-                this.setData({
-                    sunProgress: sunProgress,
-                    moonProgress: moonProgress,
-                    dataLoaded: true
-                });
+                // 设置数据已加载标志
+                this.setData({ dataLoaded: true });
                 
                 wx.stopPullDownRefresh();
             }).catch(error => {
@@ -2702,13 +2691,7 @@ Page({
             };
             
             // 先设置基本数据
-            this.setData(weatherData, () => {
-                // 数据更新后确保雨效果依然显示
-                this.ensureRainEffect();
-                
-                // 检查和修复空气质量指示器
-                this.checkAndFixAQIDisplay();
-            });
+            this.setData(weatherData);
             
             // 然后立即计算并设置太阳和月亮位置
             this.setData({
@@ -3312,6 +3295,15 @@ Page({
                     });
                 });
             }
+        });
+    },
+
+    // 新增方法：更新太阳和月亮位置
+    updateSunMoonPositions() {
+        // 计算并设置太阳和月亮位置
+        this.setData({
+            sunProgress: this.calculateSunProgress(),
+            moonProgress: this.calculateMoonProgress()
         });
     },
 })
