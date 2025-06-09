@@ -151,334 +151,332 @@
     </view>
     
     <view class="scrollarea">
-        <scroll-view scroll-y>
-            <!--标题-->
-            <view class="title">
-                <view style="display: flex; align-items: center; width: 100%; flex-wrap: wrap;">
-                    <view style="display: flex; align-items: center; flex-wrap: wrap;">
-                        <van-icon name="plus" size="35rpx" />
-                        <!--<image class="add" src="../../assets/title/icon_add.png" mode="heightFix" />-->
-                        <text bindtap="clickAddress" style="color: white;margin-inline-start: 5rpx;">{{ cityData.adm2 }} · {{ cityData.name }}</text>
-                        
-                        <!-- 离线模式指示器 -->
-                        <view wx:if="{{isOffline}}" class="offline-indicator">
-                            <view class="offline-status">
-                                <van-icon name="warn-o" size="28rpx" color="#FFD700" />
-                                <text>离线</text>
-                                <text class="update-time">上次更新: {{lastUpdateTime}}</text>
-                            </view>
+        <!--标题-->
+        <view class="title">
+            <view style="display: flex; align-items: center; width: 100%; flex-wrap: wrap;">
+                <view style="display: flex; align-items: center; flex-wrap: wrap;">
+                    <van-icon name="plus" size="35rpx" />
+                    <!--<image class="add" src="../../assets/title/icon_add.png" mode="heightFix" />-->
+                    <text bindtap="clickAddress" style="color: white;margin-inline-start: 5rpx;">{{ cityData.adm2 }} · {{ cityData.name }}</text>
+                    
+                    <!-- 离线模式指示器 -->
+                    <view wx:if="{{isOffline}}" class="offline-indicator">
+                        <view class="offline-status">
+                            <van-icon name="warn-o" size="28rpx" color="#FFD700" />
+                            <text>离线</text>
+                            <text class="update-time">上次更新: {{lastUpdateTime}}</text>
                         </view>
                     </view>
                 </view>
             </view>
-            <!--头部-->
-            <view class="header">
-                <view class="temp-container">
-                    <text class="temperature">{{shishitianqi.temp}}<text style="font-size:35rpx; font-weight:normal; vertical-align:text-top; position:relative; top:0rpx; margin-left:-20rpx;">℃</text></text>
-                </view>
-                <view>
-                    <text class="weather">实时天气:{{shishitianqi.text}} </text>
-                    <text> | </text>
-                    <text class="comfort"> 风速:{{shishitianqi.windScale}}级{{shishitianqi.windSpeed}}公里/小时</text>
-                </view>
-                <view>
-                    <text>{{shishitianqi.windDir}}</text>
-                    <text> | </text>
-                    <text>空气质量·{{zhiliang}}</text>
-                </view>
+        </view>
+        <!--头部-->
+        <view class="header">
+            <view class="temp-container">
+                <text class="temperature">{{shishitianqi.temp}}<text style="font-size:35rpx; font-weight:normal; vertical-align:text-top; position:relative; top:0rpx; margin-left:-20rpx;">℃</text></text>
             </view>
-            <!--今天、明天、后天-->
-            <text style="margin-left: 10rpx;">3天预报</text>
-            <view class="ytt">
-                <block wx:for="{{daily3Weather}}" wx:key="index">
-                    <view class="item">
-                        <view class="temp" style="display: flex; flex-direction: column;">
-                            <!--今天、明天、后天-->
-                            <text>{{item.dayLabel}}</text>
-                            <!--最高温度和最低温度-->
-                            <text>{{item.tempMax}}/{{item.tempMin}}℃</text>
+            <view>
+                <text class="weather">实时天气:{{shishitianqi.text}} </text>
+                <text> | </text>
+                <text class="comfort"> 风速:{{shishitianqi.windScale}}级{{shishitianqi.windSpeed}}公里/小时</text>
+            </view>
+            <view>
+                <text>{{shishitianqi.windDir}}</text>
+                <text> | </text>
+                <text>空气质量·{{zhiliang}}</text>
+            </view>
+        </view>
+        <!--今天、明天、后天-->
+        <text style="margin-left: 10rpx;">3天预报</text>
+        <view class="ytt">
+            <block wx:for="{{daily3Weather}}" wx:key="index">
+                <view class="item">
+                    <view class="temp" style="display: flex; flex-direction: column;">
+                        <!--今天、明天、后天-->
+                        <text>{{item.dayLabel}}</text>
+                        <!--最高温度和最低温度-->
+                        <text>{{item.tempMax}}/{{item.tempMin}}℃</text>
+                    </view>
+                    <view class="weather">
+                        <!--多云、阴天-->
+                        <text>{{item.textDay}}</text>
+                        <!--天气图片-->
+                        <image class="weathericon" src="../../assets/icons/{{item.iconDay}}-fill.svg"></image>
+                    </view>
+                </view>
+            </block>
+        </view>
+        <!--24小时日落时间+天气显示-->
+        <text style="margin-left: 10rpx;">24小时预报</text>
+        <view class="hourweather24">
+            <scroll-view scroll-x class="scroll-x">
+                <block wx:for="{{hourlyWeather}}" wx:key="index">
+                    <view class="hourweather24_item">
+                        <view class="hourweather24_item_info">
+                            <text>{{item.time}}</text>
+                            <image class="hourweather24_item_img" src="../../assets/icons/{{item.icon}}-fill.svg"></image>
+                            <text>{{item.temp}}℃</text>
                         </view>
-                        <view class="weather">
-                            <!--多云、阴天-->
+                    </view>
+                </block>
+            </scroll-view>
+        </view>
+        <!--7天预报-->
+        <text style="margin-left: 10rpx;">7天预报</text>
+        <view class="yubao7day">
+            <!-- 上部分天气信息 -->
+            <view class="yubao7day_container">
+                <block wx:for="{{daily7Weather}}" wx:key="index">
+                    <view class="yubao7day_item">
+                        <view class="yubao7day_item_info">
+                            <text>{{item.weekday}}</text>
+                            <text>{{item.date}}</text>
                             <text>{{item.textDay}}</text>
-                            <!--天气图片-->
-                            <image class="weathericon" src="../../assets/icons/{{item.iconDay}}-fill.svg"></image>
+                            <image class="lifeimg" src="../../assets/icons/{{item.iconDay}}-fill.svg"></image>
                         </view>
                     </view>
                 </block>
             </view>
-            <!--24小时日落时间+天气显示-->
-            <text style="margin-left: 10rpx;">24小时预报</text>
-            <view class="hourweather24">
-                <scroll-view scroll-x class="scroll-x">
-                    <block wx:for="{{hourlyWeather}}" wx:key="index">
-                        <view class="hourweather24_item">
-                            <view class="hourweather24_item_info">
-                                <text>{{item.time}}</text>
-                                <image class="hourweather24_item_img" src="../../assets/icons/{{item.icon}}-fill.svg"></image>
-                                <text>{{item.temp}}℃</text>
-                            </view>
-                        </view>
-                    </block>
-                </scroll-view>
+            
+            <!-- 折线图容器 - 使用固定高度和绝对定位 -->
+            <view class="chart-container">
+                <canvas canvas-id="weatherCanvas" class="weatherCanvas" />
             </view>
-            <!--7天预报-->
-            <text style="margin-left: 10rpx;">7天预报</text>
-            <view class="yubao7day">
-                <!-- 上部分天气信息 -->
-                <view class="yubao7day_container">
-                    <block wx:for="{{daily7Weather}}" wx:key="index">
-                        <view class="yubao7day_item">
-                            <view class="yubao7day_item_info">
-                                <text>{{item.weekday}}</text>
-                                <text>{{item.date}}</text>
-                                <text>{{item.textDay}}</text>
-                                <image class="lifeimg" src="../../assets/icons/{{item.iconDay}}-fill.svg"></image>
-                            </view>
-                        </view>
-                    </block>
-                </view>
-                
-                <!-- 折线图容器 - 使用固定高度和绝对定位 -->
-                <view class="chart-container">
-                    <canvas canvas-id="weatherCanvas" class="weatherCanvas" />
-                </view>
-                
-                <!-- 下部分天气信息 -->
-                <view class="yubao7day_container">
-                    <block wx:for="{{daily7Weather}}" wx:key="index">
-                        <view class="yubao7day_item">
-                            <view class="yubao7day_item_info">
-                                <image class="lifeimg" src="../../assets/icons/{{item.iconNight}}-fill.svg"></image>
-                                <text>{{item.windDirDay}}</text>
-                                <text>{{item.windScaleDay}}级</text>
-                            </view>
-                        </view>
-                    </block>
-                </view>
-            </view>
-            <!--天气指标-->
-            <text style="margin-left: 10rpx;">天气指标</text>
-            <view class="weatherzhibiao">
-                <!-- 第一行 -->
-                <view class="weatherzhibiao-row">
-                    <!--湿度-->
-                    <view class="weatherzhibiao-item">
-                        <!-- 调整布局为水平排列 -->
-                        <view style="display: flex; align-items: center; justify-content: space-between;">
-                            <!-- 湿度文本放在右边 -->
-                            <view style="display: flex; flex-direction: column; align-items: center;">
-                                <view style="display: flex; justify-content: center;">
-                                  <text style="font-size: 40rpx; margin-right: 5rpx;">湿度</text>
-                                </view>
-                                <text style="font-size: 30rpx; text-align: center; width: 100%;margin-top: 10rpx;">{{shishitianqi.humidity}}%</text>
-                            </view>
-                            <text style="font-size: 40rpx;visibility: hidden;">啊</text><!--隐藏-->
-                            <!-- 湿度圆环指示器 -->
-                            <view class="humidity-circle-container" style="margin-left: 15rpx;">
-                                <!-- 灰色底层圆圈 -->
-                                <view class="humidity-circle-bg"></view>
-                                <!-- 蓝色动态覆盖圆圈，根据湿度百分比调整 -->
-                                <view class="humidity-circle-fill" style="clip-path: inset({{100 - shishitianqi.humidity}}% 0 0 0);"></view>
-                                <!-- 显示湿度数值 -->
-                                <view class="humidity-text">
-                                    <block wx:if="{{shishitianqi.humidity <= 30}}">干燥</block>
-                                    <block wx:elif="{{shishitianqi.humidity <= 50}}">干燥</block>
-                                    <block wx:elif="{{shishitianqi.humidity <= 70}}">舒适</block>
-                                    <block wx:elif="{{shishitianqi.humidity <= 90}}">潮湿</block>
-                                    <block wx:else>潮湿</block>
-                                </view>
-                            </view>
-                        </view>
-                    </view>
-                    <!--紫外线-->
-                    <view class="weatherzhibiao-item">
-                        <!-- 调整布局为水平排列 -->
-                        <view style="display: flex; align-items: center; justify-content: space-between;">
-                            <!-- 紫外线文本放在右边 -->
-                            <view style="display: flex; flex-direction: column; align-items: center;">
-                                <view style="display: flex; justify-content: center;">
-                                  <text style="font-size: 40rpx;">紫外线</text>
-                                </view>
-                                <view bindtap="showLifeDetail" data-text="{{lifeIndices[4].text}}" style="width: 100%; text-align: center; margin-top: 10rpx;">
-                                    <text style="text-align: center; width: 100%;">{{lifeIndices[4].level ? (lifeIndices[4].level <= 1 ? '最弱' : lifeIndices[4].level <=2 ? '弱' : lifeIndices[4].level <=3 ? '中等' : lifeIndices[4].level <=4 ? '强' : '很强' ) : '弱' }}</text>
-                                </view>
-                            </view>
-                            <text style="font-size: 40rpx;visibility: hidden;">啊</text><!--隐藏-->
-                            <!-- 紫外线圆环指示器 -->
-                            <view class="uv-circle-container">
-                                <!-- 底部透明圆 -->
-                                <view class="uv-circle-base"></view>
-                                <!-- 渐变色圆环 -->
-                                <view class="uv-circle-gradient"></view>
-                                <!-- 指针指示器 - 添加样式变量 -->
-                                <view class="uv-dot" style="transform: rotate({{uvAngle}}deg); --uv-color: {{uvColor}};"></view>
-                            </view>
-                        </view>
-                    </view>
-                </view>
-                
-                <!-- 第一行 -->
-                <view class="weatherzhibiao-row">
-                <!-- 风向 -->
-                    <view class="weatherzhibiao-item">
-                        <!-- 调整布局为水平排列 -->
-                        <view style="display: flex; align-items: center; justify-content: space-between;">
-                            <!-- 风向文本放在左边 -->
-                            <view style="display: flex; flex-direction: column; align-items: center;">
-                              <view>
-                                <text  style="font-size: 40rpx; margin-right: 5rpx;">{{shishitianqi.windDir}}</text>
-                              </view>
-                              <text style="font-size: 30rpx;margin-top: 10rpx;">{{shishitianqi.windScale}}级</text>
-                            </view>
-                            <!-- 当 windDir 不是3个字时，显示占位 text -->
-                            <block wx:if="{{shishitianqi.windDir.length != 3}}">
-                              <text style="font-size: 40rpx; visibility: hidden;">啊</text>
-                            </block>
-                            
-                            <!-- 风向指南针容器 -->
-                            <view class="wind-compass-container" style="margin-left: 15rpx;">
-                                <!-- 指南针背景圆圈 -->
-                                <view class="compass-bg">
-                                    <!-- 刻度线 -->
-                                    <view class="compass-ticks"></view>
-                                    
-                                    <!-- 方向标记 -->
-                                    <text class="compass-direction north">北</text>
-                                    <text class="compass-direction east">东</text>
-                                    <text class="compass-direction south">南</text>
-                                    <text class="compass-direction west">西</text>
-                                    <!-- 添加四个斜方向 -->
-                                    <text class="compass-direction northeast">东北</text>
-                                    <text class="compass-direction southeast">东南</text>
-                                    <text class="compass-direction southwest">西南</text>
-                                    <text class="compass-direction northwest">西北</text>
-                                    
-                                    <!-- 方向指示线 -->
-                                    <view class="direction-line north"></view>
-                                    <view class="direction-line south"></view>
-                                    <view class="direction-line east"></view>
-                                    <view class="direction-line west"></view>
-                                    <!-- 添加四个斜方向指示线 -->
-                                    <view class="direction-line northeast"></view>
-                                    <view class="direction-line southeast"></view>
-                                    <view class="direction-line southwest"></view>
-                                    <view class="direction-line northwest"></view>
-                                    
-                                    <!-- 中心圆点 -->
-                                    <view class="compass-center">
-                                        <!-- 风向图标 -->
-                                        <view class="wind-icon">
-                                            <!-- 风向箭头 -->
-                                            <view class="wind-arrow" style="transform: rotate({{windDirectionAngle}}deg)"></view>
-                                        </view>
-                                    </view>
-                                </view>
-                            </view>
-                        </view>
-                    </view>
-                    <view class="weatherzhibiao-item">
-                        <!-- 调整布局为水平排列 -->
-                        <view style="display: flex; align-items: center; justify-content: space-between;">
-                            <!-- 空气质量文本放在左边 -->
-                            <view style="display: flex; flex-direction: column; align-items: center;">
-                                <view style="display: flex; justify-content: center;">
-                                  <text style="font-size: 40rpx;">空气值</text>
-                                </view>
-                                <text style="font-size: 30rpx; text-align: center; width: 100%; margin-top: 10rpx;">{{zhiliang}}</text>
-                            </view>
-                            <text style="font-size: 40rpx;visibility: hidden;">啊</text><!--隐藏-->
-                            
-                            <!-- 空气质量指示器 -->
-                            <view class="aqi-container">
-                                <!-- 底部透明圆 -->
-                                <view class="aqi-circle-base"></view>
-                                <!-- 空气质量指示器刻度 -->
-                                <view class="aqi-scale"></view>
-                                <!-- 空气质量指示器指针 - 添加aqi-level类 -->
-                                <view class="aqi-pointer aqi-level-{{aqiLevelClass}}" style="transform: rotate({{aqiAngle}}deg)"></view>
-                            </view>
-                        </view>
-                    </view>
-                </view>
-                
-                <!-- 第三行 -->
-                <view class="weatherzhibiao-row">
-                    <view class="weatherzhibiao-item">
-                      <view>日出日落</view>
-                        <!-- 日出日落信息 - 新版小组件 -->
-                        <view class="sun-cycle-widget">
-                            <view class="sun-cycle-content">
-                                <!-- 日出时间 -->
-                                <view class="sun-time-display">
-                                    <text class="sunrise-time">{{sunInfo.sunriseTime}}</text>
-                                </view>
-                                
-                                <!-- 日落时间 -->
-                                <view class="sun-time-display">
-                                    <text class="sunset-time">{{sunInfo.sunsetTime}}</text>
-                                </view>
-                                
-                                <!-- 太阳轨迹 -->
-                                <view class="sun-path-container">
-                                    <view class="sun-path-curve">
-                                        <!-- 轨迹弧线 -->
-                                        <view class="sun-path-arc"></view>
-                                        <!-- 太阳当前位置 -->
-                                        <view class="sun-position" style="--sun-progress: {{sunProgress}};"></view>
-                                        <!-- 标签 -->
-                                        <text class="sunrise-label">日出</text>
-                                        <text class="sunset-label">日落</text>
-                                    </view>
-                                </view>
-                            </view>
-                        </view>
-                    </view>
-                    <view class="weatherzhibiao-item">
-                      <view>月升月落</view>
-                        <!-- 月升月落信息 - 新版小组件 -->
-                        <view class="moon-cycle-widget">
-                            <view class="moon-cycle-content">
-                                <!-- 月升时间 -->
-                                <view class="moon-time-display">
-                                    <text class="moonrise-time">{{moonInfo.moonriseTime}}</text>
-                                </view>
-                                
-                                <!-- 月落时间 -->
-                                <view class="moon-time-display">
-                                    <text class="moonset-time">{{moonInfo.moonsetTime}}</text>
-                                </view>
-                                
-                                <!-- 月亮轨迹 -->
-                                <view class="moon-path-container">
-                                    <view class="moon-path-curve">
-                                        <!-- 轨迹弧线 -->
-                                        <view class="moon-path-arc"></view>
-                                        <!-- 月亮当前位置 -->
-                                        <view class="moon-position" style="--moon-progress: {{moonProgress}};"></view>
-                                        <!-- 标签 -->
-                                        <text class="moonrise-label">月升</text>
-                                        <text class="moonset-label">月落</text>
-                                    </view>
-                                </view>
-                            </view>
-                        </view>
-                    </view>
-                </view>
-            </view>
-            <!--生活指数-->
-            <text style="margin-left: 10rpx;">生活指数</text>
-            <view class="life">
-                <block wx:for="{{lifeIndices}}" wx:key="index">
-                    <view class="life_item" bindtap="showLifeDetail" data-text="{{item.text}}">
-                        <view class="life_item_info">
-                            <image class="lifeimg" src="../../assets/life/life_{{item.type}}.png"></image>
-                            <text>{{item.name}}·{{item.level}}</text>
-                            <text>{{item.category}}</text>
+            
+            <!-- 下部分天气信息 -->
+            <view class="yubao7day_container">
+                <block wx:for="{{daily7Weather}}" wx:key="index">
+                    <view class="yubao7day_item">
+                        <view class="yubao7day_item_info">
+                            <image class="lifeimg" src="../../assets/icons/{{item.iconNight}}-fill.svg"></image>
+                            <text>{{item.windDirDay}}</text>
+                            <text>{{item.windScaleDay}}级</text>
                         </view>
                     </view>
                 </block>
             </view>
-        </scroll-view>
+        </view>
+        <!--天气指标-->
+        <text style="margin-left: 10rpx;">天气指标</text>
+        <view class="weatherzhibiao">
+            <!-- 第一行 -->
+            <view class="weatherzhibiao-row">
+                <!--湿度-->
+                <view class="weatherzhibiao-item">
+                    <!-- 调整布局为水平排列 -->
+                    <view style="display: flex; align-items: center; justify-content: space-between;">
+                        <!-- 湿度文本放在右边 -->
+                        <view style="display: flex; flex-direction: column; align-items: center;">
+                            <view style="display: flex; justify-content: center;">
+                              <text style="font-size: 40rpx; margin-right: 5rpx;">湿度</text>
+                            </view>
+                            <text style="font-size: 30rpx; text-align: center; width: 100%;margin-top: 10rpx;">{{shishitianqi.humidity}}%</text>
+                        </view>
+                        <text style="font-size: 40rpx;visibility: hidden;">啊</text><!--隐藏-->
+                        <!-- 湿度圆环指示器 -->
+                        <view class="humidity-circle-container" style="margin-left: 15rpx;">
+                            <!-- 灰色底层圆圈 -->
+                            <view class="humidity-circle-bg"></view>
+                            <!-- 蓝色动态覆盖圆圈，根据湿度百分比调整 -->
+                            <view class="humidity-circle-fill" style="clip-path: inset({{100 - shishitianqi.humidity}}% 0 0 0);"></view>
+                            <!-- 显示湿度数值 -->
+                            <view class="humidity-text">
+                                <block wx:if="{{shishitianqi.humidity <= 30}}">干燥</block>
+                                <block wx:elif="{{shishitianqi.humidity <= 50}}">干燥</block>
+                                <block wx:elif="{{shishitianqi.humidity <= 70}}">舒适</block>
+                                <block wx:elif="{{shishitianqi.humidity <= 90}}">潮湿</block>
+                                <block wx:else>潮湿</block>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+                <!--紫外线-->
+                <view class="weatherzhibiao-item">
+                    <!-- 调整布局为水平排列 -->
+                    <view style="display: flex; align-items: center; justify-content: space-between;">
+                        <!-- 紫外线文本放在右边 -->
+                        <view style="display: flex; flex-direction: column; align-items: center;">
+                            <view style="display: flex; justify-content: center;">
+                              <text style="font-size: 40rpx;">紫外线</text>
+                            </view>
+                            <view data-text="{{lifeIndices[4].text}}" style="width: 100%; text-align: center; margin-top: 10rpx;">
+                                <text style="text-align: center; width: 100%;">{{lifeIndices[4].level ? (lifeIndices[4].level <= 1 ? '最弱' : lifeIndices[4].level <=2 ? '弱' : lifeIndices[4].level <=3 ? '中等' : lifeIndices[4].level <=4 ? '强' : '很强' ) : '弱' }}</text>
+                            </view>
+                        </view>
+                        <text style="font-size: 40rpx;visibility: hidden;">啊</text><!--隐藏-->
+                        <!-- 紫外线圆环指示器 -->
+                        <view class="uv-circle-container">
+                            <!-- 底部透明圆 -->
+                            <view class="uv-circle-base"></view>
+                            <!-- 渐变色圆环 -->
+                            <view class="uv-circle-gradient"></view>
+                            <!-- 指针指示器 - 添加样式变量 -->
+                            <view class="uv-dot" style="transform: rotate({{uvAngle}}deg); --uv-color: {{uvColor}};"></view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+            
+            <!-- 第一行 -->
+            <view class="weatherzhibiao-row">
+            <!-- 风向 -->
+                <view class="weatherzhibiao-item">
+                    <!-- 调整布局为水平排列 -->
+                    <view style="display: flex; align-items: center; justify-content: space-between;">
+                        <!-- 风向文本放在左边 -->
+                        <view style="display: flex; flex-direction: column; align-items: center;">
+                          <view>
+                            <text  style="font-size: 40rpx; margin-right: 5rpx;">{{shishitianqi.windDir}}</text>
+                          </view>
+                          <text style="font-size: 30rpx;margin-top: 10rpx;">{{shishitianqi.windScale}}级</text>
+                        </view>
+                        <!-- 当 windDir 不是3个字时，显示占位 text -->
+                        <block wx:if="{{shishitianqi.windDir.length != 3}}">
+                          <text style="font-size: 40rpx; visibility: hidden;">啊</text>
+                        </block>
+                        
+                        <!-- 风向指南针容器 -->
+                        <view class="wind-compass-container" style="margin-left: 15rpx;">
+                            <!-- 指南针背景圆圈 -->
+                            <view class="compass-bg">
+                                <!-- 刻度线 -->
+                                <view class="compass-ticks"></view>
+                                
+                                <!-- 方向标记 -->
+                                <text class="compass-direction north">北</text>
+                                <text class="compass-direction east">东</text>
+                                <text class="compass-direction south">南</text>
+                                <text class="compass-direction west">西</text>
+                                <!-- 添加四个斜方向 -->
+                                <text class="compass-direction northeast">东北</text>
+                                <text class="compass-direction southeast">东南</text>
+                                <text class="compass-direction southwest">西南</text>
+                                <text class="compass-direction northwest">西北</text>
+                                
+                                <!-- 方向指示线 -->
+                                <view class="direction-line north"></view>
+                                <view class="direction-line south"></view>
+                                <view class="direction-line east"></view>
+                                <view class="direction-line west"></view>
+                                <!-- 添加四个斜方向指示线 -->
+                                <view class="direction-line northeast"></view>
+                                <view class="direction-line southeast"></view>
+                                <view class="direction-line southwest"></view>
+                                <view class="direction-line northwest"></view>
+                                
+                                <!-- 中心圆点 -->
+                                <view class="compass-center">
+                                    <!-- 风向图标 -->
+                                    <view class="wind-icon">
+                                        <!-- 风向箭头 -->
+                                        <view class="wind-arrow" style="transform: rotate({{windDirectionAngle}}deg)"></view>
+                                    </view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+                <view class="weatherzhibiao-item">
+                    <!-- 调整布局为水平排列 -->
+                    <view style="display: flex; align-items: center; justify-content: space-between;">
+                        <!-- 空气质量文本放在左边 -->
+                        <view style="display: flex; flex-direction: column; align-items: center;">
+                            <view style="display: flex; justify-content: center;">
+                              <text style="font-size: 40rpx;">空气值</text>
+                            </view>
+                            <text style="font-size: 30rpx; text-align: center; width: 100%; margin-top: 10rpx;">{{zhiliang}}</text>
+                        </view>
+                        <text style="font-size: 40rpx;visibility: hidden;">啊</text><!--隐藏-->
+                        
+                        <!-- 空气质量指示器 -->
+                        <view class="aqi-container">
+                            <!-- 底部透明圆 -->
+                            <view class="aqi-circle-base"></view>
+                            <!-- 空气质量指示器刻度 -->
+                            <view class="aqi-scale"></view>
+                            <!-- 空气质量指示器指针 - 添加aqi-level类 -->
+                            <view class="aqi-pointer aqi-level-{{aqiLevelClass}}" style="transform: rotate({{aqiAngle}}deg)"></view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+            
+            <!-- 第三行 -->
+            <view class="weatherzhibiao-row">
+                <view class="weatherzhibiao-item">
+                  <view>日出日落</view>
+                    <!-- 日出日落信息 - 新版小组件 -->
+                    <view class="sun-cycle-widget">
+                        <view class="sun-cycle-content">
+                            <!-- 日出时间 -->
+                            <view class="sun-time-display">
+                                <text class="sunrise-time">{{sunInfo.sunriseTime}}</text>
+                            </view>
+                            
+                            <!-- 日落时间 -->
+                            <view class="sun-time-display">
+                                <text class="sunset-time">{{sunInfo.sunsetTime}}</text>
+                            </view>
+                            
+                            <!-- 太阳轨迹 -->
+                            <view class="sun-path-container">
+                                <view class="sun-path-curve">
+                                    <!-- 轨迹弧线 -->
+                                    <view class="sun-path-arc"></view>
+                                    <!-- 太阳当前位置 -->
+                                    <view class="sun-position" style="--sun-progress: {{sunProgress}};"></view>
+                                    <!-- 标签 -->
+                                    <text class="sunrise-label">日出</text>
+                                    <text class="sunset-label">日落</text>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+                <view class="weatherzhibiao-item">
+                  <view>月升月落</view>
+                    <!-- 月升月落信息 - 新版小组件 -->
+                    <view class="moon-cycle-widget">
+                        <view class="moon-cycle-content">
+                            <!-- 月升时间 -->
+                            <view class="moon-time-display">
+                                <text class="moonrise-time">{{moonInfo.moonriseTime}}</text>
+                            </view>
+                            
+                            <!-- 月落时间 -->
+                            <view class="moon-time-display">
+                                <text class="moonset-time">{{moonInfo.moonsetTime}}</text>
+                            </view>
+                            
+                            <!-- 月亮轨迹 -->
+                            <view class="moon-path-container">
+                                <view class="moon-path-curve">
+                                    <!-- 轨迹弧线 -->
+                                    <view class="moon-path-arc"></view>
+                                    <!-- 月亮当前位置 -->
+                                    <view class="moon-position" style="--moon-progress: {{moonProgress}};"></view>
+                                    <!-- 标签 -->
+                                    <text class="moonrise-label">月升</text>
+                                    <text class="moonset-label">月落</text>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </view>
+        <!--生活指数-->
+        <text style="margin-left: 10rpx;">生活指数</text>
+        <view class="life">
+            <block wx:for="{{lifeIndices}}" wx:key="index">
+                <view class="life_item" bindtap="showLifeDetail" data-text="{{item.text}}">
+                    <view class="life_item_info">
+                        <image class="lifeimg" src="../../assets/life/life_{{item.type}}.png"></image>
+                        <text>{{item.name}}·{{item.level}}</text>
+                        <text>{{item.category}}</text>
+                    </view>
+                </view>
+            </block>
+        </view>
     </view>
 </view>

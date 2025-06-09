@@ -48,7 +48,6 @@ scroll-view {
     min-height: 100vh;
     z-index: -2;
     opacity: 0.5;
-    transition: opacity 0.5s ease;
 }
 
 // --------------------------------标题区域
@@ -59,7 +58,7 @@ scroll-view {
     padding: 100rpx 0rpx 20rpx 10rpx;
     align-items: center;
     text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.5);
-    animation: fadeIn 1s ease;
+    
 }
 
 @keyframes fadeIn {
@@ -679,10 +678,11 @@ scroll-view {
     margin-top: 2rpx;
 }
 
-.weatherzhibiao-item:active {
-    transform: scale(0.98);
-    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
-}
+// 移除 weatherzhibiao-item 的点击效果
+// .weatherzhibiao-item:active {
+//     transform: scale(0.98);
+//     box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+// }
 
 // --------------------------------生活指数区域
 .life {
@@ -2369,6 +2369,7 @@ scroll-view {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    // 移除点击效果
 }
 
 // 标题样式
@@ -2511,6 +2512,7 @@ scroll-view {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    // 移除点击效果
 }
 
 // 月升月落内容容器
