@@ -449,16 +449,16 @@ scroll-view {
     font-size: 27rpx;
     margin: 5rpx 0;
 }
-// -------------------------------- 生活指标
-.lifezhibiao {
+// -------------------------------- 天气指标
+.weatherzhibiao {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    height: 600rpx;
+    height: 533rpx;
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
     border-radius: 20rpx;
     margin: 10rpx;
-    padding: 10rpx;
+    padding: 15rpx; // 增加内边距
     font-size: 28rpx;
     backdrop-filter: blur(10px);
     box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
@@ -466,34 +466,39 @@ scroll-view {
     animation: slideUp 0.8s ease 0.8s;
     color: #ffffff;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: space-between; // 使用 space-between 来均匀分布行
 }
 
 // -------------------------------- 生活指标行
-.lifezhibiao-row {
+.weatherzhibiao-row {
     display: flex;
     width: 100%;
-    justify-content: space-around;
+    justify-content: space-between; // 使用 space-between 来均匀分布列
     align-items: center;
-    padding: 10rpx 0;
+    padding: 0; // 移除内边距，由父容器控制
+    margin: 0; // 移除外边距，由父容器控制
 }
 
 // -------------------------------- 生活指标项
-.lifezhibiao-item {
+.weatherzhibiao-item {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 45%;
-    height: 150rpx;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%);
+    width: 47.5%; // 减小宽度，从48%到46%，增加间隙
+    height: 160rpx; // 保持原有高度
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%);
     border-radius: 20rpx;
-    padding: 10rpx;
+    padding: 6rpx; // 保持原有内边距
     font-size: 32rpx;
     color: #ffffff;
     text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
-    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
     flex-direction: column;
+}
+
+// 移除最后一个指标项的右边距样式，因为使用了space-between
+.weatherzhibiao-item:last-child {
+    // 不需要特殊样式
 }
 
 // -------------------------------- 湿度圆环容器
@@ -555,13 +560,24 @@ scroll-view {
     
 }
 
+// -------------------------------- 紫外线底部透明圆
+.uv-circle-base {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 0 15rpx rgba(255, 255, 255, 0.9), inset 0 0 8rpx rgba(0, 0, 0, 0.9);
+    animation: centerPulse 3s ease-in-out infinite alternate;  // 添加脉冲动画
+    z-index: 1; // 确保在渐变圆环下方
+}
+
 // -------------------------------- 紫外线渐变色圆环
 .uv-circle-gradient {
     position: absolute;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    animation: centerPulse 3s ease-in-out infinite alternate;  // 添加脉冲动画
     background: conic-gradient(
         #2196F3 0%, /* 最弱 - 蓝色 */
         #1EB5D4 12.5%, 
@@ -593,7 +609,7 @@ scroll-view {
     transform: translateZ(0);
     will-change: transform;
     backface-visibility: hidden;
-    animation: centerPulse 3s ease-in-out infinite alternate;  // 添加脉冲动画
+    z-index: 2; // 确保在底部透明圆上方
 }
 
 // -------------------------------- 紫外线中心圆
@@ -621,18 +637,21 @@ scroll-view {
 // -------------------------------- 紫外线指示器
 .uv-dot {
     position: absolute;
-    width: 4rpx;
-    height: 50rpx;
-    background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0.7));
-    box-shadow: 0 0 8rpx rgba(255, 255, 255, 0.9);
+    width: 3rpx; // 与空气质量指针保持一致
+    height: 35rpx; // 与空气质量指针保持一致
+    background: linear-gradient(to bottom, #ffffff, currentColor);
+    box-shadow: 0 0 8rpx currentColor;
     top: 50%;
     left: 50%;
     transform-origin: center bottom;
-    margin-left: -2rpx;
-    margin-top: -50rpx;
+    margin-left: -1.5rpx; // 与空气质量指针保持一致
+    margin-top: -35rpx; // 与空气质量指针保持一致
     z-index: 3;
-    border-radius: 3rpx;
+    border-radius: 2rpx; // 与空气质量指针保持一致
     animation: pointerPulse 2s ease-in-out infinite alternate;
+    /* 使用CSS变量来存储颜色，默认为白色 */
+    color: var(--uv-color, #ffffff);
+    transition: color 0.3s ease;
 }
 
 // 添加紫外线指针箭头
@@ -644,53 +663,14 @@ scroll-view {
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 8rpx solid transparent;
-    border-right: 8rpx solid transparent;
-    border-bottom: 14rpx solid #ffffff;
-    margin-top: -14rpx;
-    filter: drop-shadow(0 0 5rpx rgba(255, 255, 255, 1));
+    border-left: 6rpx solid transparent; // 与空气质量指针保持一致
+    border-right: 6rpx solid transparent; // 与空气质量指针保持一致
+    border-bottom: 10rpx solid currentColor; // 使用当前颜色
+    margin-top: -10rpx; // 与空气质量指针保持一致
+    filter: drop-shadow(0 0 4rpx currentColor);
 }
 
-// 根据不同级别设置不同颜色 - 保留原有功能但调整样式
-.uv-dot[style*="rotate(-45deg)"] {
-    background: linear-gradient(to bottom, #ffffff, #2196F3); /* 最弱 - 蓝色 */
-    box-shadow: 0 0 8rpx rgba(33, 150, 243, 0.8);
-}
-.uv-dot[style*="rotate(-45deg)"]::before {
-    border-bottom-color: #2196F3;
-}
-
-.uv-dot[style*="rotate(0deg)"] {
-    background: linear-gradient(to bottom, #ffffff, #00BCD4); /* 弱 - 青色 */
-    box-shadow: 0 0 8rpx rgba(0, 188, 212, 0.8);
-}
-.uv-dot[style*="rotate(0deg)"]::before {
-    border-bottom-color: #00BCD4;
-}
-
-.uv-dot[style*="rotate(45deg)"] {
-    background: linear-gradient(to bottom, #ffffff, #4CAF50); /* 中等 - 绿色 */
-    box-shadow: 0 0 8rpx rgba(76, 175, 80, 0.8);
-}
-.uv-dot[style*="rotate(45deg)"]::before {
-    border-bottom-color: #4CAF50;
-}
-
-.uv-dot[style*="rotate(135deg)"] {
-    background: linear-gradient(to bottom, #ffffff, #FF9800); /* 强 - 橙色 */
-    box-shadow: 0 0 8rpx rgba(255, 152, 0, 0.8);
-}
-.uv-dot[style*="rotate(135deg)"]::before {
-    border-bottom-color: #FF9800;
-}
-
-.uv-dot[style*="rotate(225deg)"] {
-    background: linear-gradient(to bottom, #ffffff, #F44336); /* 很强 - 红色 */
-    box-shadow: 0 0 8rpx rgba(244, 67, 54, 0.8);
-}
-.uv-dot[style*="rotate(225deg)"]::before {
-    border-bottom-color: #F44336;
-}
+// 删除所有基于角度的固定颜色样式，改为使用JS设置CSS变量
 
 // -------------------------------- UV标签
 .uv-label {
@@ -699,7 +679,7 @@ scroll-view {
     margin-top: 2rpx;
 }
 
-.lifezhibiao-item:active {
+.weatherzhibiao-item:active {
     transform: scale(0.98);
     box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
 }
@@ -2033,17 +2013,17 @@ scroll-view {
 .wind-arrow {
     display: block;
     position: absolute;
-    width: 6rpx;
-    height: 30%; // 增加箭头长度
-    background: linear-gradient(to bottom,  #36D1DC,  #36D1DC); // 蓝色箭头
-    box-shadow: 0 0 5rpx  #36D1DC;
-    border-radius: 3rpx;
+    width: 3rpx; // 从6rpx减小到3rpx，与紫外线指针一样细
+    height: 30%; // 保持原有长度
+    background: linear-gradient(to bottom, #FFD700, #FFA500); // 改为金色到橙色渐变
+    box-shadow: 0 0 5rpx #FFA500; // 改为橙色阴影
+    border-radius: 2rpx; // 从3rpx减小到2rpx，与紫外线指针一致
     transform-origin: bottom center; // 确保旋转点在箭头底部中心
     bottom: 50%; // 箭头底部位于中心点
     left: 50%; // 水平居中
-    margin-left: -3rpx; // 修正水平居中位置（宽度的一半）
+    margin-left: -1.5rpx; // 修正水平居中位置（宽度的一半），从-3rpx改为-1.5rpx
     z-index: 5; // 确保箭头在最上层
-    
+    animation: windArrowGlow 3s ease-in-out infinite alternate;  // 使用新的动画
 }
 
 .wind-arrow::before {
@@ -2054,41 +2034,54 @@ scroll-view {
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 10rpx solid transparent;
-    border-right: 10rpx solid transparent;
-    border-bottom: 15rpx solid  #36D1DC; // 蓝色箭头头部
-    margin-top: -15rpx;
+    border-left: 6rpx solid transparent; // 从10rpx减小到6rpx，与紫外线指针一致
+    border-right: 6rpx solid transparent; // 从10rpx减小到6rpx，与紫外线指针一致
+    border-bottom: 10rpx solid #FFD700; // 改为金色箭头
+    margin-top: -10rpx; // 从-15rpx改为-10rpx，与紫外线指针一致
+    filter: drop-shadow(0 0 4rpx rgba(255, 215, 0, 0.8)); // 添加金色阴影效果
+}
+
+// -------------------------------- 风向箭头发光动画
+@keyframes windArrowGlow {
+    0% {
+        box-shadow: 0 0 5rpx rgba(255, 165, 0, 0.7);
+    }
+    100% {
+        box-shadow: 0 0 10rpx rgba(255, 215, 0, 0.9);
+    }
 }
 
 // -------------------------------- 空气质量指示器容器
 .aqi-container {
     position: relative;
-    width: 160rpx;  // 增加尺寸
-    height: 160rpx;  // 增加尺寸
+    width: 140rpx;
+    height: 140rpx;
     display: flex;
     justify-content: center;
     align-items: center;
+    /* 添加容器平滑处理 */
     transform: translateZ(0);
     will-change: transform;
     backface-visibility: hidden;
-    perspective: 1000rpx;
-    margin: 0 auto;  // 居中显示
-    z-index: 10; // 增加z-index确保显示在最上层
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-// -------------------------------- 空气质量指示器背景
-.aqi-bg {
+// -------------------------------- 空气质量指示器底部透明圆
+.aqi-circle-base {
     position: absolute;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: rgba(30, 30, 40, 0.6);  // 更深的背景色
-    border: 2rpx solid rgba(255, 255, 255, 0.4);  // 更明显的边框
-    box-shadow: 
-        inset 0 0 20rpx rgba(0, 0, 0, 0.6),
-        0 0 20rpx rgba(255, 255, 255, 0.3);  // 增强阴影效果
-    transition: all 0.3s ease;  // 添加过渡效果
-    z-index: 11; // 确保背景显示
+    background: transparent;
+    box-shadow: 0 0 15rpx rgba(255, 255, 255, 0.9), inset 0 0 8rpx rgba(0, 0, 0, 0.9);
+    animation: centerPulse 3s ease-in-out infinite alternate;  // 添加脉冲动画
+    z-index: 1; // 确保在渐变圆环下方
+}
+
+// -------------------------------- 空气质量指示器背景
+.aqi-bg {
+    display: none; // 隐藏旧的背景，使用渐变圆环代替
 }
 
 // -------------------------------- 空气质量指示器刻度
@@ -2129,31 +2122,30 @@ scroll-view {
     transform: translateZ(0);
     will-change: transform;
     backface-visibility: hidden;
-    z-index: 12; // 确保刻度显示
-    
-    // 移除原来的内圆样式，因为我们现在使用mask来实现
-    &::before {
-        display: none;
-    }
+    box-shadow: none;
+    z-index: 2; // 确保在底部透明圆上方
+}
+
+// 移除不需要的旧样式
+.aqi-level {
+    display: none;
 }
 
 // -------------------------------- 空气质量指示器指针
 .aqi-pointer {
     position: absolute;
-    width: 4rpx;
-    height: 50rpx; // 缩短长度
+    width: 3rpx; // 将宽度从4rpx减少到3rpx
+    height: 35rpx; // 将高度从40rpx进一步减少到35rpx
     background: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0.7));
     box-shadow: 0 0 8rpx rgba(255, 255, 255, 0.9);
-    border-radius: 3rpx;
-    transform-origin: center bottom; // 确保从中心底部旋转
-    z-index: 20;
     top: 50%;
     left: 50%;
-    margin-left: -2rpx; // 水平居中
-    margin-top: -50rpx; // 垂直居中，值应该是高度的负值
+    transform-origin: center bottom;
+    margin-left: -1.5rpx; // 相应调整左边距，从-2rpx改为-1.5rpx
+    margin-top: -35rpx; // 相应调整上边距，从-40rpx改为-35rpx
+    z-index: 3;
+    border-radius: 2rpx; // 减小圆角半径
     animation: pointerPulse 2s ease-in-out infinite alternate;
-    /* 添加默认旋转，确保即使没有角度值也能显示 */
-    transform: rotate(30deg);
 }
 
 // -------------------------------- 空气质量指示器指针箭头
@@ -2165,26 +2157,75 @@ scroll-view {
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 8rpx solid transparent;
-    border-right: 8rpx solid transparent;
-    border-bottom: 14rpx solid #ffffff;
-    margin-top: -14rpx;
-    filter: drop-shadow(0 0 5rpx rgba(255, 255, 255, 1));
+    border-left: 6rpx solid transparent; // 进一步减小箭头宽度
+    border-right: 6rpx solid transparent; // 进一步减小箭头宽度
+    border-bottom: 10rpx solid #ffffff; // 进一步减小箭头高度
+    margin-top: -10rpx; // 相应调整上边距
+    filter: drop-shadow(0 0 4rpx rgba(255, 255, 255, 0.9));
 }
 
-// 指针脉冲动画
-@keyframes pointerPulse {
-    0% {
-        box-shadow: 0 0 10rpx rgba(255, 255, 255, 0.9);
-    }
-    100% {
-        box-shadow: 0 0 20rpx rgba(255, 255, 255, 1);
-    }
+// 添加基于类名的样式
+// 优 - 绿色
+.aqi-pointer.aqi-level-good {
+    background: linear-gradient(to bottom, #ffffff, #00E400);
+    box-shadow: 0 0 6rpx rgba(0, 228, 0, 0.8);
+}
+.aqi-pointer.aqi-level-good::before {
+    border-bottom-color: #00E400;
 }
 
-// -------------------------------- 空气质量指示器中心点
-.aqi-center {
-    position: absolute;
+// 良 - 黄色
+.aqi-pointer.aqi-level-moderate {
+    background: linear-gradient(to bottom, #ffffff, #FFFF00);
+    box-shadow: 0 0 6rpx rgba(255, 255, 0, 0.8);
+}
+.aqi-pointer.aqi-level-moderate::before {
+    border-bottom-color: #FFFF00;
+}
+
+// 轻度污染 - 橙色
+.aqi-pointer.aqi-level-lightly {
+    background: linear-gradient(to bottom, #ffffff, #FF7E00);
+    box-shadow: 0 0 6rpx rgba(255, 126, 0, 0.8);
+}
+.aqi-pointer.aqi-level-lightly::before {
+    border-bottom-color: #FF7E00;
+}
+
+// 中度污染 - 红色
+.aqi-pointer.aqi-level-moderately {
+    background: linear-gradient(to bottom, #ffffff, #FF0000);
+    box-shadow: 0 0 6rpx rgba(255, 0, 0, 0.8);
+}
+.aqi-pointer.aqi-level-moderately::before {
+    border-bottom-color: #FF0000;
+}
+
+// 重度污染 - 紫色
+.aqi-pointer.aqi-level-heavily {
+    background: linear-gradient(to bottom, #ffffff, #99004C);
+    box-shadow: 0 0 6rpx rgba(153, 0, 76, 0.8);
+}
+.aqi-pointer.aqi-level-heavily::before {
+    border-bottom-color: #99004C;
+}
+
+// 严重污染 - 深红色
+.aqi-pointer.aqi-level-severely {
+    background: linear-gradient(to bottom, #ffffff, #7E0023);
+    box-shadow: 0 0 6rpx rgba(126, 0, 35, 0.8);
+}
+.aqi-pointer.aqi-level-severely::before {
+    border-bottom-color: #7E0023;
+}
+
+// 保留原来基于旋转角度的样式（作为备份）
+.aqi-pointer[style*="rotate(30deg)"] {
+    background: linear-gradient(to bottom, #ffffff, #00E400); /* 优 - 绿色 */
+    box-shadow: 0 0 6rpx rgba(0, 228, 0, 0.8);
+}
+.aqi-pointer[style*="rotate(30deg)"]::before {
+    border-bottom-color: #00E400;
 }
 
 // 中心点脉冲动画
@@ -2316,4 +2357,304 @@ scroll-view {
 // -------------------------------- 空气质量等级 (隐藏原来的等级样式)
 .aqi-level {
     display: none;
+}
+
+// -------------------------------- 新版日出日落容器
+.sun-cycle-widget {
+    position: relative;
+    width: 100%;
+    height: 180rpx;
+    border-radius: 20rpx;
+    padding: 20rpx;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+// 标题样式
+.sun-cycle-title {
+    font-size: 28rpx;
+    color: #ffffff;
+    margin-bottom: 10rpx;
+    font-weight: 500;
+}
+
+// 日出日落内容容器
+.sun-cycle-content {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding: 0 20rpx;
+}
+
+// 时间显示容器
+.sun-time-display {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    min-width: 80rpx;
+}
+
+// 日出时间
+.sunrise-time {
+    color: #FF9500;
+    font-size: 32rpx;
+    font-weight: 600;
+}
+
+// 日落时间
+.sunset-time {
+    color: #8A2BE2;
+    font-size: 32rpx;
+    font-weight: 600;
+}
+
+// 太阳轨迹容器
+.sun-path-container {
+    position: absolute;
+    width: 100%;
+    height: 100rpx;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0 20rpx;
+    box-sizing: border-box;
+}
+
+// 太阳轨迹曲线
+.sun-path-curve {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+// 太阳轨迹渐变线 - 使用渐变色直线
+.sun-path-line {
+    position: absolute;
+    width: 100%;
+    height: 3rpx;
+    bottom: 40rpx;
+    background: linear-gradient(to right, #FF9500, #FF5B94, #8A2BE2);
+    border-radius: 4rpx;
+}
+
+// 太阳轨迹弧线 - 使用弧线替代直线
+.sun-path-arc {
+    position: absolute;
+    width: 100%;
+    height: 75rpx;
+    bottom: 0;
+    border-radius: 100% 100% 0 0;
+    border-top: 8rpx solid transparent;
+    border-image: linear-gradient(to right, #FF9500, #FF5B94, #8A2BE2) 1;
+    box-sizing: border-box;
+}
+
+// 太阳图标
+.sun-position {
+    position: absolute;
+    width: 16rpx;
+    height: 16rpx;
+    background: #FF9500;
+    border-radius: 50%;
+    bottom: 63rpx;
+    left: calc(var(--sun-progress) * 100%);
+    transform: translateX(-50%);
+    box-shadow: 0 0 10rpx rgba(255, 149, 0, 0.8);
+    z-index: 3;
+}
+
+// 太阳图标的光晕效果
+.sun-position::after {
+    content: '';
+    position: absolute;
+    width: 24rpx;
+    height: 24rpx;
+    background: rgba(255, 149, 0, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+// 日出标签
+.sunrise-label {
+    position: absolute;
+    bottom: -10rpx;
+    left: 20rpx;
+    font-size: 25rpx;
+    color: #FF9500;
+}
+
+// 日落标签
+.sunset-label {
+    position: absolute;
+    bottom: -10rpx;
+    right: 20rpx;
+    font-size: 25rpx;
+    color: #8A2BE2;
+}
+
+// -------------------------------- 新版月升月落容器
+.moon-cycle-widget {
+    position: relative;
+    width: 100%;
+    height: 180rpx;
+    border-radius: 20rpx;
+    padding: 20rpx;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+// 月升月落内容容器
+.moon-cycle-content {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    padding: 0 20rpx;
+}
+
+// 时间显示容器
+.moon-time-display {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    min-width: 80rpx;
+}
+
+// 月升时间
+.moonrise-time {
+    color: #4A90E2;
+    font-size: 32rpx;
+    font-weight: 600;
+}
+
+// 月落时间
+.moonset-time {
+    color: #8A2BE2;
+    font-size: 32rpx;
+    font-weight: 600;
+}
+
+// 月亮轨迹容器
+.moon-path-container {
+    position: absolute;
+    width: 100%;
+    height: 100rpx;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    padding: 0 20rpx;
+    box-sizing: border-box;
+}
+
+// 月亮轨迹曲线
+.moon-path-curve {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+// 月亮轨迹弧线
+.moon-path-arc {
+    position: absolute;
+    width: 100%;
+    height: 75rpx;
+    bottom: 0;
+    border-radius: 100% 100% 0 0;
+    border-top: 8rpx solid transparent;
+    border-image: linear-gradient(to right, #4A90E2, #6A5ACD, #8A2BE2) 1;
+    box-sizing: border-box;
+}
+
+// 月亮图标
+.moon-position {
+    position: absolute;
+    width: 16rpx;
+    height: 16rpx;
+    background: #E0E0E0;
+    border-radius: 50%;
+    bottom: 63rpx;
+    left: calc(var(--moon-progress) * 100%);
+    transform: translateX(-50%);
+    box-shadow: 0 0 10rpx rgba(224, 224, 224, 0.8);
+    z-index: 3;
+}
+
+// 月亮图标的光晕效果
+.moon-position::after {
+    content: '';
+    position: absolute;
+    width: 24rpx;
+    height: 24rpx;
+    background: rgba(224, 224, 224, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+// 月升标签
+.moonrise-label {
+    position: absolute;
+    bottom: -10rpx;
+    left: 20rpx;
+    font-size: 25rpx;
+    color: #4A90E2;
+}
+
+// 月落标签
+.moonset-label {
+    position: absolute;
+    bottom: -10rpx;
+    right: 20rpx;
+    font-size: 25rpx;
+    color: #8A2BE2;
+}
+
+// -------------------------------- 空气质量指示器中心点
+.aqi-center {
+    display: block;
+    position: absolute;
+    width: 100rpx;
+    height: 100rpx;
+    border-radius: 50%;
+    /* 增加不透明度，确保完全覆盖内部 */
+    background: rgba(0, 0, 0, 0.7);
+    /* 添加边框使边缘更清晰 */
+    border: 2rpx solid rgba(0, 0, 0, 0.8);
+    /* 添加内阴影增强立体感 */
+    box-shadow: inset 0 0 10rpx rgba(0, 0, 0, 0.5);
+    top: 50%;
+    left: 50%;
+    margin-left: -50rpx;
+    margin-top: -50rpx;
+    z-index: 2;
+    /* 隐藏这个元素，因为我们现在直接在渐变圆环中处理中心区域 */
+    display: none;
+}
+
+// 指针脉冲动画
+@keyframes pointerPulse {
+    0% {
+        opacity: 0.8;
+        box-shadow: 0 0 4rpx rgba(255, 255, 255, 0.7);
+    }
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 8rpx rgba(255, 255, 255, 0.9);
+    }
 }

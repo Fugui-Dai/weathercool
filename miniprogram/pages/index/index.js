@@ -131,7 +131,11 @@ Page({
         dataLoaded: false, // 新增：标记是否已加载过数据
         windDirectionAngle: 0, // 风向角度
         aqiAngle: 0, // 空气质量指示器角度
+        aqiLevelClass: 'good', // 空气质量等级类名
         uvAngle: 0, // 紫外线指示器角度
+        sunProgress: 0, // 太阳位置进度
+        moonProgress: 0, // 月亮位置进度
+        uvColor: '#ffffff' // 紫外线颜色
     },
     // 地理定位
     // 地理定位
@@ -339,6 +343,19 @@ Page({
                 isRaining: shouldRain,  // 设置是否下雨，保留之前的雨天状态
                 windDirectionAngle: this.calculateWindDirectionAngle(weatherNow.data.now.windDir), // 计算风向角度
                 aqiAngle: this.calculateAQIAngle(airQuality.data.now.category), // 计算空气质量指示器角度
+                // 根据空气质量类别设置 aqiLevelClass
+                aqiLevelClass: (() => {
+                    const aqiLevel = airQuality.data.now.category;
+                    switch(aqiLevel) {
+                        case '优': return 'good';
+                        case '良': return 'moderate';
+                        case '轻度污染': return 'lightly';
+                        case '中度污染': return 'moderately';
+                        case '重度污染': return 'heavily';
+                        case '严重污染': return 'severely';
+                        default: return 'good';
+                    }
+                })(),
                 currentDate: currentDate, // 添加当前日期
                 formattedDate: this.getFormattedDate(), // 添加格式化的日期
                 sunInfo: {
@@ -351,7 +368,10 @@ Page({
                     moonriseTime: this.extractTimeFromISO(yueshengyueluo.data.moonrise),
                     moonsetTime: this.extractTimeFromISO(yueshengyueluo.data.moonset)
                 }, // 添加月升月落信息
-                uvAngle: this.calculateUVAngle(lifeIndex.data.daily[4].level)
+                uvAngle: this.calculateUVAngle(lifeIndex.data.daily[4].level),
+                uvColor: this.calculateUVColor(this.calculateUVAngle(lifeIndex.data.daily[4].level)),
+                sunProgress: this.calculateSunProgress(), // 添加太阳位置进度
+                moonProgress: this.calculateMoonProgress() // 添加月亮位置进度
             };
             
             this.setData(weatherData, () => {
@@ -477,8 +497,32 @@ Page({
                 
                 // 计算空气质量指示器角度
                 let aqiAngle = 0;
+                let aqiLevelClass = 'good'; // 默认为"优"的类名
                 if (cachedData.zhiliang) {
                     aqiAngle = this.calculateAQIAngle(cachedData.zhiliang);
+                    // 根据空气质量等级设置对应的类名
+                    switch(cachedData.zhiliang) {
+                        case '优':
+                            aqiLevelClass = 'good';
+                            break;
+                        case '良':
+                            aqiLevelClass = 'moderate';
+                            break;
+                        case '轻度污染':
+                            aqiLevelClass = 'lightly';
+                            break;
+                        case '中度污染':
+                            aqiLevelClass = 'moderately';
+                            break;
+                        case '重度污染':
+                            aqiLevelClass = 'heavily';
+                            break;
+                        case '严重污染':
+                            aqiLevelClass = 'severely';
+                            break;
+                        default:
+                            aqiLevelClass = 'good';
+                    }
                 }
                 
                 // 获取当前日期
@@ -510,11 +554,15 @@ Page({
                     lastUpdateTime: formattedCacheTime,
                     windDirectionAngle: windDirectionAngle,
                     aqiAngle: aqiAngle,
+                    aqiLevelClass: aqiLevelClass, // 设置空气质量等级类名
                     currentDate: cachedData.currentDate || currentDate, // 使用缓存的日期或当前日期
                     formattedDate: cachedData.formattedDate || formattedDate, // 使用缓存的格式化日期或当前格式化日期
                     sunInfo: sunInfo,
                     moonInfo: moonInfo,
-                    uvAngle: this.calculateUVAngle(cachedData.lifeIndices[4].level)
+                    uvAngle: this.calculateUVAngle(cachedData.lifeIndices[4].level),
+                    sunProgress: this.calculateSunProgress(),
+                    moonProgress: this.calculateMoonProgress(),
+                    uvColor: this.calculateUVColor(this.calculateUVAngle(cachedData.lifeIndices[4].level))
                 }, () => {
                     // 检查和修复空气质量指示器
                     this.checkAndFixAQIDisplay();
@@ -992,6 +1040,14 @@ Page({
         
         // 确保强制显示的天气效果生效
         this.ensureForcedWeatherEffects();
+        
+        // 每分钟更新太阳位置
+        this.sunPositionTimer = setInterval(() => {
+            this.setData({
+                sunProgress: this.calculateSunProgress(),
+                moonProgress: this.calculateMoonProgress()
+            });
+        }, 60000); // 每分钟更新一次
     },
     
     /**
@@ -2593,6 +2649,19 @@ Page({
                 isOffline: false,  // 明确设置为非离线模式
                 windDirectionAngle: this.calculateWindDirectionAngle(weatherNow.data.now.windDir), // 计算风向角度
                 aqiAngle: this.calculateAQIAngle(airQuality.data.now.category), // 计算空气质量指示器角度
+                // 根据空气质量类别设置 aqiLevelClass
+                aqiLevelClass: (() => {
+                    const aqiLevel = airQuality.data.now.category;
+                    switch(aqiLevel) {
+                        case '优': return 'good';
+                        case '良': return 'moderate';
+                        case '轻度污染': return 'lightly';
+                        case '中度污染': return 'moderately';
+                        case '重度污染': return 'heavily';
+                        case '严重污染': return 'severely';
+                        default: return 'good';
+                    }
+                })(),
                 currentDate: currentDate, // 添加当前日期
                 formattedDate: formattedDate, // 添加格式化的日期
                 sunInfo: {
@@ -2605,7 +2674,10 @@ Page({
                     moonriseTime: this.extractTimeFromISO(yueshengyueluo.data.moonrise),
                     moonsetTime: this.extractTimeFromISO(yueshengyueluo.data.moonset)
                 }, // 添加月升月落信息
-                uvAngle: this.calculateUVAngle(lifeIndex.data.daily[4].level)
+                uvAngle: this.calculateUVAngle(lifeIndex.data.daily[4].level),
+                uvColor: this.calculateUVColor(this.calculateUVAngle(lifeIndex.data.daily[4].level)),
+                sunProgress: this.calculateSunProgress(), // 添加太阳位置进度
+                moonProgress: this.calculateMoonProgress() // 添加月亮位置进度
             };
             
             this.setData(weatherData);
@@ -2667,6 +2739,11 @@ Page({
         if (this.diagonalRayTimer) {
             clearInterval(this.diagonalRayTimer);
             this.diagonalRayTimer = null;
+        }
+        
+        // 清除太阳位置更新定时器
+        if (this.sunPositionTimer) {
+            clearInterval(this.sunPositionTimer);
         }
     },
     
@@ -2787,6 +2864,8 @@ Page({
     calculateAQIAngle(aqiLevel) {
         // 默认角度为30度（优）
         let angle = 30;
+        // 默认级别类名为'good'
+        let levelClass = 'good';
         
         // 添加日志，记录输入值
         console.log("计算空气质量角度，输入值:", aqiLevel);
@@ -2794,35 +2873,46 @@ Page({
         // 如果aqiLevel为空，使用默认值
         if (!aqiLevel) {
             console.log("空气质量等级为空，使用默认角度:", angle);
+            this.setData({ aqiLevelClass: levelClass });
             return angle;
         }
         
-        // 根据空气质量等级计算角度
+        // 根据空气质量等级计算角度和类名
         switch(aqiLevel) {
             case '优':
                 angle = 30; // 优的中间位置
+                levelClass = 'good';
                 break;
             case '良':
                 angle = 90; // 良的中间位置
+                levelClass = 'moderate';
                 break;
             case '轻度污染':
                 angle = 150; // 轻度污染的中间位置
+                levelClass = 'lightly';
                 break;
             case '中度污染':
                 angle = 210; // 中度污染的中间位置
+                levelClass = 'moderately';
                 break;
             case '重度污染':
                 angle = 270; // 重度污染的中间位置
+                levelClass = 'heavily';
                 break;
             case '严重污染':
                 angle = 330; // 严重污染的中间位置
+                levelClass = 'severely';
                 break;
             default:
                 angle = 30; // 默认为优
+                levelClass = 'good';
                 console.log("未识别的空气质量等级，使用默认角度:", angle);
         }
         
-        console.log("空气质量:", aqiLevel, "计算角度:", angle);
+        console.log("空气质量:", aqiLevel, "计算角度:", angle, "类名:", levelClass);
+        
+        // 更新类名
+        this.setData({ aqiLevelClass: levelClass });
         
         return angle;
     },
@@ -2861,17 +2951,14 @@ Page({
         // 根据紫外线等级计算角度
         if (!uvLevel) return angle;
         
-        if (uvLevel <= 1) {
-            angle = 36; // 最弱
-        } else if (uvLevel <= 2) {
-            angle = 108; // 弱
-        } else if (uvLevel <= 3) {
-            angle = 180; // 中等
-        } else if (uvLevel <= 4) {
-            angle = 252; // 强
-        } else {
-            angle = 324; // 很强
-        }
+        // 将紫外线等级映射到0-360度的范围内，使其更连续
+        // 紫外线指数通常为0-15，我们将其映射到0-360度
+        // 0级 -> 0度，15级 -> 360度
+        angle = (uvLevel / 15) * 360;
+        
+        // 限制角度在0-360度之间
+        angle = Math.max(0, Math.min(360, angle));
+        
         console.log("紫外线等级:", uvLevel, "计算角度:", angle);
         return angle;
     },
@@ -2883,7 +2970,8 @@ Page({
             console.log("空气质量角度为空，设置默认值");
             // 设置默认值
             this.setData({
-                aqiAngle: 30 // 默认为"优"的位置
+                aqiAngle: 30, // 默认为"优"的位置
+                aqiLevelClass: 'good' // 默认为"优"的类名
             });
         }
         
@@ -2892,10 +2980,147 @@ Page({
             console.log("空气质量等级为空，设置默认值");
             // 设置默认值
             this.setData({
-                zhiliang: '优'
+                zhiliang: '优',
+                aqiLevelClass: 'good'
             });
         }
         
-        console.log("空气质量指示器检查完成，当前角度:", this.data.aqiAngle, "当前等级:", this.data.zhiliang);
+        console.log("空气质量指示器检查完成，当前角度:", this.data.aqiAngle, "当前等级:", this.data.zhiliang, "当前类名:", this.data.aqiLevelClass);
+    },
+    
+    // 计算太阳在轨迹上的位置（0-1之间的值）
+    calculateSunProgress() {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        
+        // 将当前时间转换为分钟数
+        const currentTimeInMinutes = currentHour * 60 + currentMinute;
+        
+        // 获取日出日落时间
+        let sunriseTime = this.data.sunInfo?.sunriseTime || "05:39";
+        let sunsetTime = this.data.sunInfo?.sunsetTime || "19:07";
+        
+        // 将日出日落时间转换为分钟数
+        const sunriseParts = sunriseTime.split(':');
+        const sunsetParts = sunsetTime.split(':');
+        
+        const sunriseInMinutes = parseInt(sunriseParts[0]) * 60 + parseInt(sunriseParts[1]);
+        const sunsetInMinutes = parseInt(sunsetParts[0]) * 60 + parseInt(sunsetParts[1]);
+        
+        // 计算白天总时长（分钟）
+        const dayDurationInMinutes = sunsetInMinutes - sunriseInMinutes;
+        
+        // 计算当前时间相对于日出后经过的时间（分钟）
+        const timePassedSinceSunrise = currentTimeInMinutes - sunriseInMinutes;
+        
+        // 计算太阳位置的进度（0-1之间）
+        let progress = timePassedSinceSunrise / dayDurationInMinutes;
+        
+        // 确保进度在0-1之间
+        progress = Math.max(0, Math.min(1, progress));
+        
+        return progress;
+    },
+    
+    // 计算月亮在轨迹上的位置（0-1之间的值）
+    calculateMoonProgress() {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        
+        // 将当前时间转换为分钟数
+        const currentTimeInMinutes = currentHour * 60 + currentMinute;
+        
+        // 获取月升月落时间
+        let moonriseTime = this.data.moonInfo?.moonriseTime || "18:00";
+        let moonsetTime = this.data.moonInfo?.moonsetTime || "06:00";
+        
+        // 将月升月落时间转换为分钟数
+        const moonriseParts = moonriseTime.split(':');
+        const moonsetParts = moonsetTime.split(':');
+        
+        let moonriseInMinutes = parseInt(moonriseParts[0]) * 60 + parseInt(moonriseParts[1]);
+        let moonsetInMinutes = parseInt(moonsetParts[0]) * 60 + parseInt(moonsetParts[1]);
+        
+        // 处理月落时间可能在第二天的情况
+        if (moonsetInMinutes < moonriseInMinutes) {
+            moonsetInMinutes += 24 * 60; // 加上24小时
+        }
+        
+        // 计算月亮可见时长（分钟）
+        const moonDurationInMinutes = moonsetInMinutes - moonriseInMinutes;
+        
+        // 计算当前时间相对于月升后经过的时间（分钟）
+        let timePassedSinceMoonrise = currentTimeInMinutes - moonriseInMinutes;
+        
+        // 如果当前时间小于月升时间，可能是第二天了
+        if (timePassedSinceMoonrise < 0) {
+            timePassedSinceMoonrise += 24 * 60; // 加上24小时
+        }
+        
+        // 计算月亮位置的进度（0-1之间）
+        let progress = timePassedSinceMoonrise / moonDurationInMinutes;
+        
+        // 确保进度在0-1之间
+        progress = Math.max(0, Math.min(1, progress));
+        
+        return progress;
+    },
+    
+    // 计算紫外线颜色
+    calculateUVColor(angle) {
+        // 根据角度计算颜色
+        // 紫外线圆环的颜色从蓝色(#2196F3)到红色(#F44336)
+        const colors = [
+            { angle: 0, color: '#2196F3' },    // 最弱 - 蓝色
+            { angle: 90, color: '#00BCD4' },   // 弱 - 青色
+            { angle: 180, color: '#4CAF50' },  // 中等 - 绿色
+            { angle: 270, color: '#FF9800' },  // 强 - 橙色
+            { angle: 360, color: '#F44336' }   // 很强 - 红色
+        ];
+        
+        // 找到角度所在的区间
+        let startColor, endColor, startAngle, endAngle;
+        for (let i = 0; i < colors.length - 1; i++) {
+            if (angle >= colors[i].angle && angle <= colors[i+1].angle) {
+                startColor = colors[i].color;
+                endColor = colors[i+1].color;
+                startAngle = colors[i].angle;
+                endAngle = colors[i+1].angle;
+                break;
+            }
+        }
+        
+        // 如果找不到区间，使用默认颜色
+        if (!startColor) return '#ffffff';
+        
+        // 计算颜色插值比例
+        const ratio = (angle - startAngle) / (endAngle - startAngle);
+        
+        // 将颜色从十六进制转换为RGB
+        const startRGB = this.hexToRgb(startColor);
+        const endRGB = this.hexToRgb(endColor);
+        
+        // 计算插值后的RGB值
+        const r = Math.round(startRGB.r + ratio * (endRGB.r - startRGB.r));
+        const g = Math.round(startRGB.g + ratio * (endRGB.g - startRGB.g));
+        const b = Math.round(startRGB.b + ratio * (endRGB.b - startRGB.b));
+        
+        // 返回RGB颜色
+        return `rgb(${r}, ${g}, ${b})`;
+    },
+    
+    // 十六进制颜色转RGB
+    hexToRgb(hex) {
+        // 去掉#号
+        hex = hex.replace('#', '');
+        
+        // 解析RGB值
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        
+        return { r, g, b };
     }
 })
