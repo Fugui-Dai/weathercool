@@ -275,7 +275,7 @@
                             </view>
                             <text style="font-size: 40rpx;visibility: hidden;">啊</text><!--隐藏-->
                             <!-- 湿度圆环指示器 -->
-                            <view class="humidity-circle-container">
+                            <view class="humidity-circle-container" style="margin-left: 15rpx;">
                                 <!-- 灰色底层圆圈 -->
                                 <view class="humidity-circle-bg"></view>
                                 <!-- 蓝色动态覆盖圆圈，根据湿度百分比调整 -->
@@ -327,16 +327,17 @@
                             <!-- 风向文本放在左边 -->
                             <view style="display: flex; flex-direction: column; align-items: center;">
                               <view>
-                                <text style="font-size: 40rpx; margin-right: 5rpx;">{{shishitianqi.windDir}}</text>
+                                <text  style="font-size: 40rpx; margin-right: 5rpx;">{{shishitianqi.windDir}}</text>
                               </view>
                               <text style="font-size: 30rpx;margin-top: 10rpx;">{{shishitianqi.windScale}}级</text>
                             </view>
                             <!-- 当 windDir 不是3个字时，显示占位 text -->
                             <block wx:if="{{shishitianqi.windDir.length != 3}}">
-                                  <text style="font-size: 40rpx; visibility: hidden;">啊</text>
-                                </block>
+                              <text style="font-size: 40rpx; visibility: hidden;">啊</text>
+                            </block>
+                            
                             <!-- 风向指南针容器 -->
-                            <view class="wind-compass-container">
+                            <view class="wind-compass-container" style="margin-left: 15rpx;">
                                 <!-- 指南针背景圆圈 -->
                                 <view class="compass-bg">
                                     <!-- 刻度线 -->
