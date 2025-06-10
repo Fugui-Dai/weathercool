@@ -1221,6 +1221,9 @@ Page({
                 console.log("已更新选中城市的天气数据");
                 this.setData({ dataLoaded: true });
                 
+                // 确保更新太阳和月亮位置
+                this.updateSunMoonPositions();
+                
                 // 清除selectedCity数据，防止再次进入页面时重复处理
                 this.setData({
                     selectedCity: null
@@ -1276,6 +1279,8 @@ Page({
                 // 请求新的天气数据
                 this.requestNetWeatherData().then(() => {
                     this.setData({ dataLoaded: true });
+                    // 确保更新太阳和月亮位置
+                    this.updateSunMoonPositions();
                 });
               })
               .catch(error => {
@@ -1289,6 +1294,9 @@ Page({
                     this.zhexiantu();
                 }, 300);
             }
+            
+            // 确保更新太阳和月亮位置
+            this.updateSunMoonPositions();
         }
     },
 
@@ -1368,6 +1376,9 @@ Page({
                 
                 // 设置数据已加载标志
                 this.setData({ dataLoaded: true });
+                
+                // 确保更新太阳和月亮位置
+                this.updateSunMoonPositions();
                 
                 wx.stopPullDownRefresh();
             }).catch(error => {
@@ -3339,10 +3350,20 @@ Page({
 
     // 新增方法：更新太阳和月亮位置
     updateSunMoonPositions() {
-        // 计算并设置太阳和月亮位置
-        this.setData({
-            sunProgress: this.calculateSunProgress(),
-            moonProgress: this.calculateMoonProgress()
-        });
+        // 检查是否有日出日落和月升月落数据
+        if (this.data.sunInfo && this.data.moonInfo) {
+            // 计算并设置太阳和月亮位置
+            const sunProgress = this.calculateSunProgress();
+            const moonProgress = this.calculateMoonProgress();
+            
+            console.log("更新太阳月亮位置 - 太阳进度:", sunProgress, "月亮进度:", moonProgress);
+            
+            this.setData({
+                sunProgress: sunProgress,
+                moonProgress: moonProgress
+            });
+        } else {
+            console.log("无法更新太阳月亮位置 - 缺少日出日落或月升月落数据");
+        }
     },
 })
