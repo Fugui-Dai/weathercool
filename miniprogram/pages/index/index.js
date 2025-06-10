@@ -776,40 +776,39 @@ Page({
                                             "#99FF99"  // 淡绿色
                                         ];
                                         
-                                        // 每2个像素一个点，增加点的密度
-                                        const dotCount = Math.floor(Math.abs(low.y - high.y) / 2);
-                                        // 减小点的大小
-                                        const dotSize = 0.6;
+                                        // 使用固定间距而不是固定数量的点
+                                        const fixedDistance = 5; // 点之间固定间距为5像素
+                                        const dotSize = 0.8; // 固定点的大小
                                         
-                                        // 使用点代替线段
-                                        for (let j = 0; j < dotCount; j++) {
-                                            // 计算点的位置
-                                            const dotX = high.x + Math.cos(angle) * (j * 2); // 间隔改为2
-                                            const dotY = high.y + Math.sin(angle) * (j * 2); // 间隔改为2
+                                        // 计算两点之间的距离
+                                        const distanceX = low.x - high.x;
+                                        const distanceY = low.y - high.y;
+                                        const lineLength = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+                                        
+                                        // 计算需要多少个点来填充这条线
+                                        const dotsNeeded = Math.max(Math.floor(lineLength / fixedDistance), 2); // 至少2个点
+                                        
+                                        // 绘制固定间距的点
+                                        for (let j = 0; j <= dotsNeeded; j++) {
+                                            // 计算点在线段上的位置比例
+                                            const position = j / dotsNeeded;
                                             
-                                            // 确保点不超过高温点和低温点的范围
-                                            const isInRange = (high.y < low.y) ? 
-                                                (dotY >= high.y && dotY <= low.y) : 
-                                                (dotY >= low.y && dotY <= high.y);
-                                                
-                                            if (isInRange) {
-                                                // 计算当前点在线段中的位置比例
-                                                const position = j / dotCount;
-                                                
-                                                // 根据位置选择颜色
-                                                const colorIndex = Math.floor(position * gradientColors.length);
-                                                const dotColor = gradientColors[colorIndex];
-                                                
-                                                // 根据位置调整点的大小，中间部分稍大
-                                                const sizeMultiplier = Math.sin(position * Math.PI) * 0.4 + 0.7; // 0.7-1.1之间变化，整体更小
-                                                const dynamicDotSize = dotSize * sizeMultiplier;
-                                                
-                                                // 绘制点
-                                                ctx.beginPath();
-                                                ctx.arc(dotX, dotY, dynamicDotSize, 0, 2 * Math.PI);
-                                                ctx.setFillStyle(dotColor);
-                                                ctx.fill();
-                                            }
+                                            // 使用线性插值计算点的位置
+                                            const dotX = high.x + distanceX * position;
+                                            const dotY = high.y + distanceY * position;
+                                            
+                                            // 根据位置选择颜色
+                                            const colorIndex = Math.floor(position * gradientColors.length);
+                                            const dotColor = gradientColors[Math.min(colorIndex, gradientColors.length - 1)];
+                                            
+                                            // 保持固定大小，不再变化
+                                            const dynamicDotSize = dotSize;
+                                            
+                                            // 绘制点
+                                            ctx.beginPath();
+                                            ctx.arc(dotX, dotY, dynamicDotSize, 0, 2 * Math.PI);
+                                            ctx.setFillStyle(dotColor);
+                                            ctx.fill();
                                         }
                                         
                                         // 最高温点
@@ -2728,7 +2727,7 @@ Page({
                     moonriseTime: this.extractTimeFromISO(yueshengyueluo.data.moonrise),
                     moonsetTime: this.extractTimeFromISO(yueshengyueluo.data.moonset)
                 }, // 添加月升月落信息
-                uvAngle: this.calculateUVAngle(lifeIndex.data.daily[4].level),
+                uvAngle: this.calculateUVAngle(lifeIndex.data.daily[4].level),// 紫外线。最弱(1)、弱(2)、中等(3)、强(4)、很强(5)
                 uvColor: this.calculateUVColor(this.calculateUVAngle(lifeIndex.data.daily[4].level)),
                 sunProgress: this.calculateSunProgress(), // 重新计算太阳位置进度
                 moonProgress: this.calculateMoonProgress() // 重新计算月亮位置进度
@@ -3008,21 +3007,33 @@ Page({
 
     // 计算紫外线指数角度
     calculateUVAngle(uvLevel) {
-        // 默认角度为0度（弱）
+        // 默认角度为0度（最弱）
         let angle = 0;
         
-        // 根据紫外线等级计算角度
-        if (!uvLevel) return angle;
+        // 如果值为null、undefined或0，返回默认角度0
+        if (!uvLevel) {
+            console.log("紫外线等级无效:", uvLevel, "使用默认角度:", angle);
+            return angle;
+        }
         
-        // 将紫外线等级映射到0-360度的范围内，使其更连续
-        // 紫外线指数通常为0-15，我们将其映射到0-360度
-        // 0级 -> 0度，15级 -> 360度
-        angle = (uvLevel / 15) * 360;
+        // 确保uvLevel是数字
+        const level = Number(uvLevel);
         
-        // 限制角度在0-360度之间
-        angle = Math.max(0, Math.min(360, angle));
+        // 紫外线等级为1-5级
+        // 有效范围检查
+        if (level < 1 || level > 5) {
+            console.log("紫外线等级超出范围:", level, "使用默认角度:", angle);
+            return angle;
+        }
         
-        console.log("紫外线等级:", uvLevel, "计算角度:", angle);
+        // 将紫外线等级1-5映射到0-360度范围，并调整起始位置
+        // 基本映射：1级(最弱) -> 0度，5级(很强) -> 360度
+        // 减去45度是为了调整指针在刻度盘上的起始位置，使其对准刻度盘的特定位置
+        // 这样可以让指针初始位置从左侧开始（-45度位置），更符合仪表盘的视觉习惯
+        // 最终映射：1级 -> -45度，2级 -> 45度，3级 -> 135度，4级 -> 225度，5级 -> 315度
+        angle = ((level - 1) / 4) * 360 - 45;
+        
+        console.log("紫外线等级:", level, "计算角度:", angle);
         return angle;
     },
 
