@@ -28,7 +28,9 @@ Page({
         //热门城市的数据
         hotCities: [],
         // 刷新状态
-        refreshing: false
+        refreshing: false,
+        // 是否有网络连接
+        hasNetwork: true
     },
 
     // 阻止滚动穿透
@@ -45,6 +47,9 @@ Page({
         });
         
         try {
+            // 检查网络状态
+            await this.checkNetworkStatus();
+            
             // 重新获取热门城市数据
             await this.locationAndSearch();
             
@@ -70,17 +75,47 @@ Page({
         }
     },
 
+    // 检查网络状态
+    checkNetworkStatus() {
+        return new Promise((resolve) => {
+            wx.getNetworkType({
+                success: (res) => {
+                    const networkType = res.networkType;
+                    const hasNetwork = networkType !== 'none';
+                    this.setData({ hasNetwork });
+                    resolve(hasNetwork);
+                },
+                fail: () => {
+                    this.setData({ hasNetwork: false });
+                    resolve(false);
+                }
+            });
+        });
+    },
+
     // 定位和搜索
     async locationAndSearch() {
-        // 热门城市
-        const hotcity = await instanceGeoapi.get('/v2/city/top', {
-            number: 12, range: 'cn', key: "2d57f1cc456d421c8bbdd925db34555a"
-        })
-        //console.log("热门城市", hotcity);
-        this.setData({
+        try {
+            // 检查网络状态
+            const hasNetwork = await this.checkNetworkStatus();
+            if (!hasNetwork) {
+                console.log("无网络连接");
+                return;
+            }
+            
             // 热门城市
-            hotCities: hotcity.data.topCityList // 存储返回的城市数据
-        })
+            const hotcity = await instanceGeoapi.get('/v2/city/top', {
+                number: 12, range: 'cn', key: "2d57f1cc456d421c8bbdd925db34555a"
+            });
+            //console.log("热门城市", hotcity);
+            this.setData({
+                // 热门城市
+                hotCities: hotcity.data.topCityList || [] // 存储返回的城市数据
+            });
+        } catch (error) {
+            console.error("获取热门城市失败:", error);
+            // 即使请求失败，也不改变页面布局
+        }
     },
     // 返回
     clickBack() {
@@ -102,6 +137,13 @@ Page({
         debounceTimer = setTimeout(async () => {
             if (value) {
                 try {
+                    // 检查网络状态
+                    const hasNetwork = await this.checkNetworkStatus();
+                    if (!hasNetwork) {
+                        console.log("无网络连接，无法搜索");
+                        return;
+                    }
+                    
                     // 城市搜索请求
                     const citySearch = await instanceGeoapi.get('/v2/city/lookup', {
                         location: value, number: 20, range: 'cn', key: "2d57f1cc456d421c8bbdd925db34555a"
@@ -110,10 +152,14 @@ Page({
                     // 请求成功后，更新城市列表
                     console.log('成功')
                     this.setData({
-                        cityList: citySearch.data.location
+                        cityList: citySearch.data.location || []
                     });
                 } catch (error) {
                     console.error("城市搜索失败:", error);
+                    // 搜索失败时，清空列表但保持布局
+                    this.setData({
+                        cityList: []
+                    });
                 }
             } else {
                 // 如果输入为空，清空列表
@@ -165,7 +211,11 @@ Page({
      * 生命周期函数--监听页面加载
      */
     onLoad() {
-        this.locationAndSearch();
+        // 检查网络并获取数据
+        this.checkNetworkStatus().then(() => {
+            this.locationAndSearch();
+        });
+        
         // 页面触摸事件监听
         wx.createSelectorQuery().select('.scrollarea').boundingClientRect(rect => {
             wx.pageScrollTo({
@@ -197,7 +247,8 @@ Page({
      * 生命周期函数--监听页面显示
      */
     onShow() {
-
+        // 页面显示时检查网络状态
+        this.checkNetworkStatus();
     },
 
     /**

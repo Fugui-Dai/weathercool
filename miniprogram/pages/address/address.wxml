@@ -22,13 +22,19 @@
                     <image src="../../assets/search/icon_search.png" class="search-icon" />
                     <input type="text" placeholder="输入城市名称" placeholder-style="color: white;" bindinput="onInput" value="{{searchValue}}" />
                 </view>
-                <!-- 城市列表（固定浮动） -->
-                <view class="city-list-container" wx:if="{{cityList.length > 0}}" catchtouchmove="catchTouchmove">
+                <!-- 城市列表（固定浮动）- 移除条件渲染 -->
+                <view class="city-list-container" catchtouchmove="catchTouchmove" style="{{cityList.length > 0 ? '' : 'visibility: hidden;'}}">
                     <scroll-view scroll-y class="city-list" catchtouchmove="catchTouchmove">
-                        <block wx:for="{{cityList}}" wx:key="index">
-                            <view class="city-item" bindtap="onSelectCity" data-city="{{item}}">
-                                <text>{{item.adm1}}·{{item.name}}</text>
-                            </view>
+                        <block wx:if="{{cityList.length > 0}}">
+                            <block wx:for="{{cityList}}" wx:key="index">
+                                <view class="city-item" bindtap="onSelectCity" data-city="{{item}}">
+                                    <text>{{item.adm1}}·{{item.name}}</text>
+                                </view>
+                            </block>
+                        </block>
+                        <!-- 占位元素，保持布局但不显示内容 -->
+                        <block wx:else>
+                            <view class="city-item-placeholder"></view>
                         </block>
                     </scroll-view>
                 </view>
@@ -37,9 +43,18 @@
             <view>
                 <text style="margin-left: 10rpx;">热门城市</text>
                 <view class="hotcity">
-                    <view class="city-box" wx:for="{{hotCities}}" wx:key="id" bindtap="onSelectHotCity" data-city="{{item}}">
-                        <text>{{item.name}}</text>
-                    </view>
+                    <!-- 有数据时显示真实数据 -->
+                    <block wx:if="{{hotCities.length > 0}}">
+                        <view class="city-box" wx:for="{{hotCities}}" wx:key="id" bindtap="onSelectHotCity" data-city="{{item}}">
+                            <text>{{item.name}}</text>
+                        </view>
+                    </block>
+                    <!-- 无数据时显示占位元素，保持布局 -->
+                    <block wx:else>
+                        <view class="city-box" wx:for="{{[1,2,3,4,5,6,7,8,9,10,11,12]}}" wx:key="*this">
+                            <text></text>
+                        </view>
+                    </block>
                 </view>
             </view>
         </scroll-view>
