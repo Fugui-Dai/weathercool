@@ -583,20 +583,24 @@ scroll-view {
         height: 100%;
         border-radius: 50%;
         background: conic-gradient(
-            #2196F3 0%, /* 最弱 - 蓝色 */
-            #1EB5D4 12.5%, 
-            #00BCD4 25%, /* 弱 - 青色 */
-            #26B590 37.5%, 
-            #4CAF50 50%, /* 中等 - 绿色 */
-            #8DC24A 62.5%, 
-            #FF9800 75%, /* 强 - 橙色 */
-            #FF7043 87.5%, 
-            #F44336 100% /* 很强 - 红色 */
+            #00A2FF 0%, /* 最弱 - 鲜亮蓝色 */
+            #00D4FF 12.5%, 
+            #00FFCC 25%, /* 弱 - 亮青色 */
+            #00FF88 37.5%, 
+            #4AFF00 50%, /* 中等 - 亮绿色 */
+            #FFCC00 62.5%, 
+            #FF8800 75%, /* 强 - 亮橙色 */
+            #FF4400 87.5%, 
+            #FF0000 100% /* 很强 - 鲜红色 */
         );
         z-index: 1;
-        // 使用mask-image创建中心镂空效果
-        -webkit-mask-image: radial-gradient(circle at center, transparent 0, transparent 47rpx, black 35rpx);
-        mask-image: radial-gradient(circle at center, transparent 0, transparent 47rpx, black 35rpx);
+        // 改进mask-image以去除毛刺
+        -webkit-mask-image: radial-gradient(circle at center, transparent 0, transparent 47rpx, black 48rpx);
+        mask-image: radial-gradient(circle at center, transparent 0, transparent 47rpx, black 48rpx);
+        // 添加平滑边缘
+        box-shadow: 0 0 10rpx rgba(255, 255, 255, 0.2);
+        // 添加抗锯齿效果
+        filter: blur(0.5rpx);
     }
 }
 
