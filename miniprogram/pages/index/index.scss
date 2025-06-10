@@ -27,7 +27,6 @@ page {
     z-index: 1;
     height: 100%;
     width: 100%;
-    overflow: auto;
 }
 
 // 添加scroll-view的z-index样式
@@ -35,6 +34,7 @@ scroll-view {
     position: relative;
     z-index: 1;
     height: 100%;
+    width: 100%;
 }
 
 // --------------------------------背景图

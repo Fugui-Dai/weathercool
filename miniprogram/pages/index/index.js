@@ -764,24 +764,52 @@ Page({
                                         
                                         // 绘制高温点和低温点之间的辅助虚线
                                         ctx.beginPath();
-                                        // 计算点的数量和间距
-                                        const dotCount = Math.floor(Math.sqrt(Math.pow(low.y - high.y, 2)) / 6); // 每6个像素一个点
-                                        const dotSize = 1; // 点的大小
                                         
                                         // 计算线条角度
                                         const angle = Math.atan2(low.y - high.y, low.x - high.x);
                                         
+                                        // 创建颜色数组（淡化版的红、橙、黄、绿）
+                                        const gradientColors = [
+                                            "#FF9999", // 淡红色
+                                            "#FFBE99", // 淡橙色
+                                            "#FFFFAA", // 淡黄色
+                                            "#99FF99"  // 淡绿色
+                                        ];
+                                        
+                                        // 每2个像素一个点，增加点的密度
+                                        const dotCount = Math.floor(Math.abs(low.y - high.y) / 2);
+                                        // 减小点的大小
+                                        const dotSize = 0.6;
+                                        
                                         // 使用点代替线段
                                         for (let j = 0; j < dotCount; j++) {
                                             // 计算点的位置
-                                            const dotX = high.x + Math.cos(angle) * (j * 6);
-                                            const dotY = high.y + Math.sin(angle) * (j * 6);
+                                            const dotX = high.x + Math.cos(angle) * (j * 2); // 间隔改为2
+                                            const dotY = high.y + Math.sin(angle) * (j * 2); // 间隔改为2
                                             
-                                            // 绘制点
-                                            ctx.beginPath();
-                                            ctx.arc(dotX, dotY, dotSize, 0, 2 * Math.PI);
-                                            ctx.setFillStyle('#999999'); // 使用更浅的灰色，更加柔和
-                                            ctx.fill();
+                                            // 确保点不超过高温点和低温点的范围
+                                            const isInRange = (high.y < low.y) ? 
+                                                (dotY >= high.y && dotY <= low.y) : 
+                                                (dotY >= low.y && dotY <= high.y);
+                                                
+                                            if (isInRange) {
+                                                // 计算当前点在线段中的位置比例
+                                                const position = j / dotCount;
+                                                
+                                                // 根据位置选择颜色
+                                                const colorIndex = Math.floor(position * gradientColors.length);
+                                                const dotColor = gradientColors[colorIndex];
+                                                
+                                                // 根据位置调整点的大小，中间部分稍大
+                                                const sizeMultiplier = Math.sin(position * Math.PI) * 0.4 + 0.7; // 0.7-1.1之间变化，整体更小
+                                                const dynamicDotSize = dotSize * sizeMultiplier;
+                                                
+                                                // 绘制点
+                                                ctx.beginPath();
+                                                ctx.arc(dotX, dotY, dynamicDotSize, 0, 2 * Math.PI);
+                                                ctx.setFillStyle(dotColor);
+                                                ctx.fill();
+                                            }
                                         }
                                         
                                         // 最高温点

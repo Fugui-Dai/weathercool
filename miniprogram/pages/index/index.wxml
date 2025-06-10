@@ -150,7 +150,7 @@
         </view>
     </view>
     
-    <view class="scrollarea">
+    <scroll-view class="scrollarea" scroll-y="true" enhanced="true" show-scrollbar="true" bounces="true">
         <!--标题-->
         <view class="title">
             <view style="display: flex; align-items: center; width: 100%; flex-wrap: wrap;">
@@ -478,5 +478,5 @@
                 </view>
             </block>
         </view>
-    </view>
+    </scroll-view>
 </view>
