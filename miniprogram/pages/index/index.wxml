@@ -472,8 +472,8 @@
                 <view class="life_item" bindtap="showLifeDetail" data-text="{{item.text}}" data-name="{{item.name}}">
                     <view class="life_item_info">
                         <image class="lifeimg" src="../../assets/life/life_{{item.type}}.png"></image>
-                        <text>{{item.name}}·{{item.level}}</text>
-                        <text>{{item.category}}</text>
+                        <text style="font-size: 27rpx;">{{item.name}}·{{item.level}}</text>
+                        <text style="font-size: 27rpx;">{{item.category}}</text>
                     </view>
                 </view>
             </block>
