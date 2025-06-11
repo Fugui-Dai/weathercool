@@ -687,22 +687,25 @@ scroll-view {
     border-radius: 20rpx;
     margin: 10rpx;
     margin-bottom: 20rpx;
-    padding: 10rpx;
+    padding: 5rpx; // 减小内边距
     font-size: 28rpx;
     backdrop-filter: blur(10px);
     box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
     animation: slideUp 0.8s ease 0.8s;
     color: #ffffff;
+    justify-content: space-between; // 添加空间分布
 }
 
 // --------------------------------生活指数项
 .life_item {
-    width: 25%;
+    width: 23%; // 减小宽度，从25%减小到23%
     display: flex;
     justify-content: center;
     align-items: center;
     transition: all 0.3s ease;
+    margin: 2rpx; // 添加更小的外边距
+    padding: 0; // 减小内边距
 }
 
 // --------------------------------生活指数项信息
@@ -712,6 +715,8 @@ scroll-view {
     align-items: center;
     color: #ffffff;
     text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+    width: 100%; // 使内容容器占满父元素宽度
+    padding: 4rpx; // 添加小的内边距
 }
 
 // --------------------------------生活指数图标
