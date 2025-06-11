@@ -256,8 +256,8 @@
                 </block>
             </view>
         </view>
-        <!--天气指标-->
-        <text style="margin-left: 10rpx;">天气指标</text>
+        <!--天气指数-->
+        <text style="margin-left: 10rpx;">天气指数</text>
         <view class="weatherzhibiao">
             <!-- 第一行 -->
             <view class="weatherzhibiao-row">
