@@ -1848,58 +1848,80 @@ scroll-view {
 .compass-direction {
     position: absolute;
     font-size: 20rpx; // 稍微减小字体
-    color: #ffffff;
     font-weight: bold;
     z-index: 2;
+    // 使用文字渐变而不是背景渐变
+    background-image: linear-gradient(to bottom, #87CEFA, #1E90FF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 2rpx rgba(255, 255, 255, 0.3); // 添加轻微发光效果
 }
 
+// 为不同方向设置不同的渐变色
 .compass-direction.north {
     top: 10rpx; // 调整位置，靠近中心
     left: 50%; // 水平居中
     transform: translateX(-50%); // 确保水平居中
+    // 使用文字渐变而不是背景渐变
+    background-image: linear-gradient(to bottom, #FF6347, #FF0000); // 北方红色渐变
 }
 
 .compass-direction.south {
     bottom: 10rpx; // 调整位置，靠近中心
     left: 50%; // 水平居中
     transform: translateX(-50%); // 确保水平居中
+    // 使用文字渐变而不是背景渐变
+    background-image: linear-gradient(to bottom, #32CD32, #008000); // 南方绿色渐变
 }
 
 .compass-direction.east {
     right: 10rpx; // 调整位置，靠近中心
     top: 50%; // 垂直居中
     transform: translateY(-50%); // 确保垂直居中
+    // 使用文字渐变而不是背景渐变
+    background-image: linear-gradient(to bottom, #FFD700, #FFA500); // 东方金色渐变
 }
 
 .compass-direction.west {
     left: 10rpx; // 调整位置，靠近中心
     top: 50%; // 垂直居中
     transform: translateY(-50%); // 确保垂直居中
+    // 使用文字渐变而不是背景渐变
+    background-image: linear-gradient(to bottom, #C74AB9, #8A2BE2); // 西方紫色渐变，使用新的颜色
 }
 
 // 添加四个斜方向的样式
 .compass-direction.northeast {
     top: 20rpx;
     right: 20rpx;
-    font-size: 18rpx; // 斜方向字体稍小
+    font-size: 17rpx; // 斜方向字体减小1个单位，从18rpx到17rpx
+    // 使用文字渐变而不是背景渐变
+    background-image: linear-gradient(to bottom, #FF6347, #FFA500); // 东北方向红橙渐变
 }
 
 .compass-direction.southeast {
     bottom: 20rpx;
     right: 20rpx;
-    font-size: 18rpx;
+    font-size: 17rpx; // 斜方向字体减小1个单位，从18rpx到17rpx
+    // 使用文字渐变而不是背景渐变
+    background-image: linear-gradient(to bottom, #FFA500, #32CD32); // 东南方向橙绿渐变
 }
 
 .compass-direction.southwest {
     bottom: 20rpx;
     left: 20rpx;
-    font-size: 18rpx;
+    font-size: 17rpx; // 斜方向字体减小1个单位，从18rpx到17rpx
+    // 使用文字渐变而不是背景渐变
+    background-image: linear-gradient(to bottom, #32CD32, #C74AB9); // 西南方向绿紫渐变，结束色与西方一致
 }
 
 .compass-direction.northwest {
     top: 20rpx;
     left: 20rpx;
-    font-size: 18rpx;
+    font-size: 17rpx; // 斜方向字体减小1个单位，从18rpx到17rpx
+    // 使用文字渐变而不是背景渐变
+    background-image: linear-gradient(to bottom, #C74AB9, #FF6347); // 西北方向紫红渐变，开始色与西方一致
 }
 
 // -------------------------------- 方向指示线
