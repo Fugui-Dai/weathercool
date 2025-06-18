@@ -78,6 +78,16 @@ Page({
         daily7Weather: [],
         lifeIndices: [],
         
+        // 日出日落和月升月落信息
+        sunInfo: {
+            sunriseTime: "--:--",
+            sunsetTime: "--:--"
+        },
+        moonInfo: {
+            moonriseTime: "--:--",
+            moonsetTime: "--:--"
+        },
+        
         // 更新时间
         lastUpdateTime: '',
         
@@ -300,7 +310,18 @@ Page({
                 key: "2d57f1cc456d421c8bbdd925db34555a",
                 date: currentDate
             });
-            console.log("月升月落数据 weatherNow:", JSON.stringify(yueshengyueluo, null, 2));
+            
+            // 打印月升月落数据，方便调试
+            console.log("月升月落原始数据:", JSON.stringify(yueshengyueluo.data, null, 2));
+            
+            // 检查月升月落数据是否有效
+            if (!yueshengyueluo.data || !yueshengyueluo.data.moonrise || !yueshengyueluo.data.moonset) {
+                console.warn("月升月落数据无效或不完整:", yueshengyueluo.data);
+                // 确保设置默认值
+                yueshengyueluo.data = yueshengyueluo.data || {};
+                yueshengyueluo.data.moonrise = yueshengyueluo.data.moonrise || "";
+                yueshengyueluo.data.moonset = yueshengyueluo.data.moonset || "";
+            }
             
             // 获取生活指数
             const lifeIndex = await instance.get('/v7/indices/1d', {
@@ -378,10 +399,10 @@ Page({
             this.setData({
                 moonInfo: {
                     ...yueshengyueluo.data,
-                    moonriseTime: this.extractTimeFromISO(yueshengyueluo.data.moonrise),
-                    moonsetTime: this.extractTimeFromISO(yueshengyueluo.data.moonset)
+                    moonriseTime: this.extractTimeFromISO(yueshengyueluo.data.moonrise) || "--:--",
+                    moonsetTime: this.extractTimeFromISO(yueshengyueluo.data.moonset) || "--:--"
                 }, // 添加月升月落信息
-                uvAngle: this.calculateUVAngle(lifeIndex.data.daily[4].level),
+                uvAngle: this.calculateUVAngle(lifeIndex.data.daily[4].level),// 紫外线。最弱(1)、弱(2)、中等(3)、强(4)、很强(5)
                 uvColor: this.calculateUVColor(this.calculateUVAngle(lifeIndex.data.daily[4].level)),
                 sunProgress: this.calculateSunProgress(), // 重新计算太阳位置进度
                 moonProgress: this.calculateMoonProgress() // 重新计算月亮位置进度
@@ -392,8 +413,8 @@ Page({
                 ...weatherData,
                 moonInfo: {
                     ...yueshengyueluo.data,
-                    moonriseTime: this.extractTimeFromISO(yueshengyueluo.data.moonrise),
-                    moonsetTime: this.extractTimeFromISO(yueshengyueluo.data.moonset)
+                    moonriseTime: this.extractTimeFromISO(yueshengyueluo.data.moonrise) || "--:--",
+                    moonsetTime: this.extractTimeFromISO(yueshengyueluo.data.moonset) || "--:--"
                 },
                 uvAngle: this.data.uvAngle,
                 uvColor: this.data.uvColor,
@@ -561,6 +582,20 @@ Page({
                 }
                 if (moonInfo && !moonInfo.moonsetTime && moonInfo.moonset) {
                     moonInfo.moonsetTime = this.extractTimeFromISO(moonInfo.moonset);
+                }
+                
+                // 确保 moonInfo 和 sunInfo 有默认值
+                if (!moonInfo.moonriseTime || moonInfo.moonriseTime === '') {
+                    moonInfo.moonriseTime = "--:--";
+                }
+                if (!moonInfo.moonsetTime || moonInfo.moonsetTime === '') {
+                    moonInfo.moonsetTime = "--:--";
+                }
+                if (!sunInfo.sunriseTime || sunInfo.sunriseTime === '') {
+                    sunInfo.sunriseTime = "--:--";
+                }
+                if (!sunInfo.sunsetTime || sunInfo.sunsetTime === '') {
+                    sunInfo.sunsetTime = "--:--";
                 }
                 
                 // 设置数据，包括离线模式标志和上次更新时间
@@ -930,7 +965,16 @@ Page({
             forceHazeEffect: false, // 是否强制显示霾效果
             forceThunderEffect: false, // 是否强制显示打雷效果
             chartDrawn: false,
-            dataLoaded: false // 初始标记为未加载数据
+            dataLoaded: false, // 初始标记为未加载数据
+            // 确保日出日落和月升月落信息有默认值
+            sunInfo: {
+                sunriseTime: "--:--",
+                sunsetTime: "--:--"
+            },
+            moonInfo: {
+                moonriseTime: "--:--",
+                moonsetTime: "--:--"
+            }
         });
 
         // 获取系统信息设置顶部状态栏高度
@@ -1099,6 +1143,29 @@ Page({
      */
     onReady: function () {
         console.log("页面初次渲染完成");
+        
+        // 确保 moonInfo 和 sunInfo 有默认值
+        if (!this.data.moonInfo || !this.data.moonInfo.moonriseTime || this.data.moonInfo.moonriseTime === '') {
+            console.log("onReady: 设置 moonInfo 默认值");
+            this.setData({
+                moonInfo: {
+                    ...this.data.moonInfo,
+                    moonriseTime: "--:--",
+                    moonsetTime: "--:--"
+                }
+            });
+        }
+        
+        if (!this.data.sunInfo || !this.data.sunInfo.sunriseTime || this.data.sunInfo.sunriseTime === '') {
+            console.log("onReady: 设置 sunInfo 默认值");
+            this.setData({
+                sunInfo: {
+                    ...this.data.sunInfo,
+                    sunriseTime: "--:--",
+                    sunsetTime: "--:--"
+                }
+            });
+        }
         
         // 确保天气效果显示（但不再重复请求API）
         if (this.data.dataLoaded) {
@@ -3011,10 +3078,20 @@ Page({
     
     // 从ISO格式的时间字符串中提取时间部分（例如从"2025-06-08T04:47+08:00"提取"04:47"）
     extractTimeFromISO(isoString) {
-        if (!isoString) return '';
-        // 使用正则表达式提取时间部分
-        const timeMatch = isoString.match(/T(\d{2}:\d{2})/);
-        return timeMatch ? timeMatch[1] : '';
+        if (!isoString) return '--:--';
+        try {
+            // 使用正则表达式提取时间部分
+            const timeMatch = isoString.match(/T(\d{2}:\d{2})/);
+            if (timeMatch && timeMatch[1]) {
+                return timeMatch[1];
+            } else {
+                console.warn("无法从ISO时间字符串提取时间部分:", isoString);
+                return '--:--';
+            }
+        } catch (error) {
+            console.error("提取ISO时间字符串时出错:", error, "输入:", isoString);
+            return '--:--';
+        }
     },
 
     // 计算紫外线指数角度
@@ -3087,6 +3164,11 @@ Page({
         let sunriseTime = this.data.sunInfo?.sunriseTime || "05:39";
         let sunsetTime = this.data.sunInfo?.sunsetTime || "19:07";
         
+        // 如果日出日落时间是默认值 "--:--"，返回默认进度0.5
+        if (sunriseTime === "--:--" || sunsetTime === "--:--") {
+            return 0.5; // 默认显示在中间位置
+        }
+        
         // 将日出日落时间转换为分钟数
         const sunriseParts = sunriseTime.split(':');
         const sunsetParts = sunsetTime.split(':');
@@ -3119,8 +3201,13 @@ Page({
         const currentTimeInMinutes = currentHour * 60 + currentMinute;
         
         // 获取月升月落时间
-        let moonriseTime = this.data.moonInfo?.moonriseTime || "18:00";
-        let moonsetTime = this.data.moonInfo?.moonsetTime || "06:00";
+        let moonriseTime = this.data.moonInfo?.moonriseTime || "--:--";
+        let moonsetTime = this.data.moonInfo?.moonsetTime || "--:--";
+        
+        // 如果月升月落时间是默认值 "--:--"，返回默认进度0.5
+        if (moonriseTime === "--:--" || moonsetTime === "--:--") {
+            return 0.5; // 默认显示在中间位置
+        }
         
         // 将月升月落时间转换为分钟数
         const moonriseParts = moonriseTime.split(':');
@@ -3352,12 +3439,18 @@ Page({
     // 新增方法：更新太阳和月亮位置
     updateSunMoonPositions() {
         // 检查是否有日出日落和月升月落数据
+        console.log("开始更新太阳月亮位置");
+        console.log("当前 sunInfo:", JSON.stringify(this.data.sunInfo));
+        console.log("当前 moonInfo:", JSON.stringify(this.data.moonInfo));
+        
         if (this.data.sunInfo && this.data.moonInfo) {
             // 计算并设置太阳和月亮位置
             const sunProgress = this.calculateSunProgress();
             const moonProgress = this.calculateMoonProgress();
             
             console.log("更新太阳月亮位置 - 太阳进度:", sunProgress, "月亮进度:", moonProgress);
+            console.log("日出时间:", this.data.sunInfo.sunriseTime, "日落时间:", this.data.sunInfo.sunsetTime);
+            console.log("月升时间:", this.data.moonInfo.moonriseTime, "月落时间:", this.data.moonInfo.moonsetTime);
             
             this.setData({
                 sunProgress: sunProgress,
@@ -3365,6 +3458,33 @@ Page({
             });
         } else {
             console.log("无法更新太阳月亮位置 - 缺少日出日落或月升月落数据");
+            
+            // 确保设置默认值
+            if (!this.data.sunInfo) {
+                console.log("设置 sunInfo 默认值");
+                this.setData({
+                    sunInfo: {
+                        sunriseTime: "--:--",
+                        sunsetTime: "--:--"
+                    }
+                });
+            }
+            
+            if (!this.data.moonInfo) {
+                console.log("设置 moonInfo 默认值");
+                this.setData({
+                    moonInfo: {
+                        moonriseTime: "--:--",
+                        moonsetTime: "--:--"
+                    }
+                });
+            }
+            
+            // 设置默认进度
+            this.setData({
+                sunProgress: 0.5,
+                moonProgress: 0.5
+            });
         }
     },
 })
