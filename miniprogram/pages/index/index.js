@@ -5,12 +5,12 @@ import WxRequest from 'mina-request'
 
 // 对 WxRequest 进行实例化
 const instance = new WxRequest({
-    baseURL: 'https://devapi.qweather.com', // 使用时请换成真实接口
+    baseURL: 'https://devapi.qweather.com1', // 使用时请换成真实接口
     timeout: 10000, // 超时时长
     isLoading: false // 是否使用默认的 loading 效果
 })
 const instanceGeoapi = new WxRequest({
-    baseURL: 'https://geoapi.qweather.com', // 使用时请换成真实接口
+    baseURL: 'https://geoapi.qweather.com1', // 使用时请换成真实接口
     timeout: 10000, // 超时时长
     isLoading: false // 是否使用默认的 loading 效果
 })
@@ -235,23 +235,38 @@ Page({
                 throw new Error('空气质量API返回数据无效');
             }
 
-            // 获取3天的天气预报
-            const weather3Day = await instance.get('/v7/weather/3d', {
+            // 获取7天的天气预报
+            const weather7Day = await instance.get('/v7/weather/7d', {
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
             
-            // 验证3天天气预报响应数据
-            if (!weather3Day.data || !weather3Day.data.daily || !weather3Day.data.daily.length) {
-                throw new Error('3天天气预报API返回数据无效');
+            // 验证7天天气预报响应数据
+            if (!weather7Day.data || !weather7Day.data.daily || !weather7Day.data.daily.length) {
+                throw new Error('7天天气预报API返回数据无效');
             }
             
-            const daily3Weather = weather3Day.data.daily.map((day, index) => ({
+            // 从7天预报中提取前3天的数据
+            const daily3Weather = weather7Day.data.daily.slice(0, 3).map((day, index) => ({
                 dayLabel: ["今天", "明天", "后天"][index],  // 今天、明天、后天
                 tempMax: day.tempMax,
                 tempMin: day.tempMin,
                 iconDay: day.iconDay,
                 textDay: day.textDay
+            }));
+
+            const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+            const daily7Weather = weather7Day.data.daily.map((day, index) => ({
+                date: day.fxDate.slice(5),  // 提取 "MM-DD" 格式日期
+                weekday: weekdays[new Date(day.fxDate).getDay()],  // 获取星期几
+                tempMax: day.tempMax,  // 最高温度
+                tempMin: day.tempMin,  // 最低温度
+                iconDay: day.iconDay,  // 白天天气图标
+                iconNight: day.iconNight,  // 晚上天气图标
+                textDay: day.textDay,  // 白天天气描述
+                textNight: day.textNight,  // 夜晚天气描述
+                windDirDay: day.windDirDay,  // 白天风向
+                windScaleDay: day.windScaleDay  // 白天风力等级
             }));
 
             // 获取逐小时天气预报
@@ -271,30 +286,6 @@ Page({
                 icon: hour.icon  // 图标编号
             }));
 
-            // 获取7天的天气预报
-            const weather7Day = await instance.get('/v7/weather/7d', {
-                location: longitude + "," + latitude,
-                key: "2d57f1cc456d421c8bbdd925db34555a"
-            });
-            
-            // 验证7天天气预报响应数据
-            if (!weather7Day.data || !weather7Day.data.daily || !weather7Day.data.daily.length) {
-                throw new Error('7天天气预报API返回数据无效');
-            }
-
-            const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-            const daily7Weather = weather7Day.data.daily.map((day, index) => ({
-                date: day.fxDate.slice(5),  // 提取 "MM-DD" 格式日期
-                weekday: weekdays[new Date(day.fxDate).getDay()],  // 获取星期几
-                tempMax: day.tempMax,  // 最高温度
-                tempMin: day.tempMin,  // 最低温度
-                iconDay: day.iconDay,  // 白天天气图标
-                iconNight: day.iconNight,  // 晚上天气图标
-                textDay: day.textDay,  // 白天天气描述
-                textNight: day.textNight,  // 夜晚天气描述
-                windDirDay: day.windDirDay,  // 白天风向
-                windScaleDay: day.windScaleDay  // 白天风力等级
-            }));
             console.log("asfadasdasdasdasdasdasda:");
             // 获取当前日期用于日出日落和月升月落API
             const currentDate = this.getCurrentDate();
@@ -334,7 +325,7 @@ Page({
             if (!lifeIndex.data || !lifeIndex.data.daily || !lifeIndex.data.daily.length) {
                 throw new Error('生活指数API返回数据无效');
             }
-            
+
             // 获取当前时间作为更新时间
             const now = new Date();
             const lastUpdateTime = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -1492,9 +1483,9 @@ Page({
         console.log("原始天气文本:", weatherText, "转换后简体文本:", simplifiedText);
         
         // 打雷和大雨相关关键词（已合并）
-        const thunderKeywords = ['雷', '雷阵雨', '雷电', '打雷', '雷暴', '雷雨', '强雷阵雨', '雷阵雨伴有冰雹', '大雨', '暴雨', '大暴雨', '特大暴雨', '强降雨', '极端降雨', '大到暴雨', '暴雨到大暴雨', '大暴雨到特大暴雨'];
+        const thunderKeywords = ['雷', '雷阵雨', '雷电', '打雷', '雷暴', '雷雨', '强雷阵雨', '雷阵雨伴有冰雹',  '暴雨', '大暴雨', '特大暴雨', '强降雨', '极端降雨', '大到暴雨', '暴雨到大暴雨', '大暴雨到特大暴雨'];
         // 小雨相关关键词（包含原来的中雨关键词）
-        const lightRainKeywords = ['雨', '小雨', '毛毛雨', '细雨', '微雨', '阵雨', '中雨', '强阵雨', '小到中雨', '中到大雨', '冻雨', '毛毛雨/细雨'];
+        const lightRainKeywords = ['雨', '小雨','大雨', '毛毛雨', '细雨', '微雨', '阵雨', '中雨', '强阵雨', '小到中雨', '中到大雨', '冻雨', '毛毛雨/细雨'];
         // 雪相关关键词
         const snowKeywords = ['雪', '小雪', '中雪', '大雪', '暴雪', '雨夹雪', '雨雪天气', '阵雨夹雪', '阵雪', '小到中雪', '中到大雪', '大到暴雪'];
         // 晴天相关关键词
@@ -2507,7 +2498,7 @@ Page({
         }
     },
 
-    // 获取网络天气图片
+    // 刷新数据
     async requestNetWeatherData() {
         try {
             // 先尝试读取缓存数据，确保在无网络状态下也能显示数据
@@ -2606,23 +2597,38 @@ Page({
                 throw new Error('空气质量API返回数据无效');
             }
 
-            // 获取3天的天气预报
-            const weather3Day = await instance.get('/v7/weather/3d', {
+            // 获取7天的天气预报
+            const weather7Day = await instance.get('/v7/weather/7d', {
                 location: longitude + "," + latitude,
                 key: "2d57f1cc456d421c8bbdd925db34555a"
             });
             
-            // 验证3天天气预报响应数据
-            if (!weather3Day.data || !weather3Day.data.daily || !weather3Day.data.daily.length) {
-                throw new Error('3天天气预报API返回数据无效');
+            // 验证7天天气预报响应数据
+            if (!weather7Day.data || !weather7Day.data.daily || !weather7Day.data.daily.length) {
+                throw new Error('7天天气预报API返回数据无效');
             }
-            
-            const daily3Weather = weather3Day.data.daily.map((day, index) => ({
+
+            // 从7天预报中提取前3天的数据
+            const daily3Weather = weather7Day.data.daily.slice(0, 3).map((day, index) => ({
                 dayLabel: ["今天", "明天", "后天"][index],  // 今天、明天、后天
                 tempMax: day.tempMax,
                 tempMin: day.tempMin,
                 iconDay: day.iconDay,
                 textDay: day.textDay
+            }));
+
+            const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+            const daily7Weather = weather7Day.data.daily.map((day, index) => ({
+                date: day.fxDate.slice(5),  // 提取 "MM-DD" 格式日期
+                weekday: weekdays[new Date(day.fxDate).getDay()],  // 获取星期几
+                tempMax: day.tempMax,  // 最高温度
+                tempMin: day.tempMin,  // 最低温度
+                iconDay: day.iconDay,  // 白天天气图标
+                iconNight: day.iconNight,  // 晚上天气图标
+                textDay: day.textDay,  // 白天天气描述
+                textNight: day.textNight,  // 夜晚天气描述
+                windDirDay: day.windDirDay,  // 白天风向
+                windScaleDay: day.windScaleDay  // 白天风力等级
             }));
 
             // 获取逐小时天气预报
@@ -2640,31 +2646,6 @@ Page({
                 time: hour.fxTime.slice(11, 16),  // 提取 "15:00" 格式时间
                 temp: hour.temp,  // 温度
                 icon: hour.icon  // 图标编号
-            }));
-
-            // 获取7天的天气预报
-            const weather7Day = await instance.get('/v7/weather/7d', {
-                location: longitude + "," + latitude,
-                key: "2d57f1cc456d421c8bbdd925db34555a"
-            });
-            
-            // 验证7天天气预报响应数据
-            if (!weather7Day.data || !weather7Day.data.daily || !weather7Day.data.daily.length) {
-                throw new Error('7天天气预报API返回数据无效');
-            }
-
-            const weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
-            const daily7Weather = weather7Day.data.daily.map((day, index) => ({
-                date: day.fxDate.slice(5),  // 提取 "MM-DD" 格式日期
-                weekday: weekdays[new Date(day.fxDate).getDay()],  // 获取星期几
-                tempMax: day.tempMax,  // 最高温度
-                tempMin: day.tempMin,  // 最低温度
-                iconDay: day.iconDay,  // 白天天气图标
-                iconNight: day.iconNight,  // 晚上天气图标
-                textDay: day.textDay,  // 白天天气描述
-                textNight: day.textNight,  // 夜晚天气描述
-                windDirDay: day.windDirDay,  // 白天风向
-                windScaleDay: day.windScaleDay  // 白天风力等级
             }));
 
             // 获取生活指数
