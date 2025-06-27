@@ -369,7 +369,7 @@
                                     <!-- 风向图标 -->
                                     <view class="wind-icon">
                                         <!-- 风向箭头 -->
-                                        <view class="wind-arrow" style="transform: rotate({{windDirectionAngle}}deg)"></view>
+                                        <view class="wind-arrow wind-direction-{{windDirectionType}}" style="transform: rotate({{windDirectionAngle}}deg); background: linear-gradient(to bottom, {{windDirectionColor.start}}, {{windDirectionColor.end}}); box-shadow: 0 0 5rpx {{windDirectionColor.shadow}};"></view>
                                     </view>
                                 </view>
                             </view>

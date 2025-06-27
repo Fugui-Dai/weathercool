@@ -2035,8 +2035,9 @@ scroll-view {
     position: absolute;
     width: 3rpx; // 从6rpx减小到3rpx，与紫外线指针一样细
     height: 39%; // 保持原有长度
-    background: linear-gradient(to bottom, #FFD700, #FFA500); // 改为金色到橙色渐变
-    box-shadow: 0 0 5rpx #FFA500; // 改为橙色阴影
+    // 移除默认颜色，将在WXML中动态设置
+    // background: linear-gradient(to bottom, #FFD700, #FFA500); 
+    // box-shadow: 0 0 5rpx #FFA500;
     border-radius: 2rpx; // 从3rpx减小到2rpx，与紫外线指针一致
     transform-origin: bottom center; // 确保旋转点在箭头底部中心
     bottom: 50%; // 箭头底部位于中心点
@@ -2056,18 +2057,68 @@ scroll-view {
     height: 0;
     border-left: 6rpx solid transparent; // 从10rpx减小到6rpx，与紫外线指针一致
     border-right: 6rpx solid transparent; // 从10rpx减小到6rpx，与紫外线指针一致
-    border-bottom: 10rpx solid #FFD700; // 改为金色箭头
+    // 移除默认颜色，将在WXML中动态设置
+    // border-bottom: 10rpx solid #FFD700; 
+    // filter: drop-shadow(0 0 4rpx rgba(255, 215, 0, 0.8));
     margin-top: -10rpx; // 从-15rpx改为-10rpx，与紫外线指针一致
-    filter: drop-shadow(0 0 4rpx rgba(255, 215, 0, 0.8)); // 添加金色阴影效果
+}
+
+// 为不同方向的风向箭头添加样式
+// 北方 - 红色
+.wind-direction-north::before {
+    border-bottom: 10rpx solid #FF6347; // 北方红色
+    filter: drop-shadow(0 0 4rpx rgba(255, 99, 71, 0.8));
+}
+
+// 东方 - 金色
+.wind-direction-east::before {
+    border-bottom: 10rpx solid #FFD700; // 东方金色
+    filter: drop-shadow(0 0 4rpx rgba(255, 215, 0, 0.8));
+}
+
+// 南方 - 绿色
+.wind-direction-south::before {
+    border-bottom: 10rpx solid #32CD32; // 南方绿色
+    filter: drop-shadow(0 0 4rpx rgba(50, 205, 50, 0.8));
+}
+
+// 西方 - 紫色
+.wind-direction-west::before {
+    border-bottom: 10rpx solid #C74AB9; // 西方紫色
+    filter: drop-shadow(0 0 4rpx rgba(199, 74, 185, 0.8));
+}
+
+// 东北方 - 红橙色
+.wind-direction-northeast::before {
+    border-bottom: 10rpx solid #FF6347; // 东北方红橙色
+    filter: drop-shadow(0 0 4rpx rgba(255, 99, 71, 0.8));
+}
+
+// 东南方 - 橙绿色
+.wind-direction-southeast::before {
+    border-bottom: 10rpx solid #FFA500; // 东南方橙绿色
+    filter: drop-shadow(0 0 4rpx rgba(255, 165, 0, 0.8));
+}
+
+// 西南方 - 绿紫色
+.wind-direction-southwest::before {
+    border-bottom: 10rpx solid #32CD32; // 西南方绿紫色
+    filter: drop-shadow(0 0 4rpx rgba(50, 205, 50, 0.8));
+}
+
+// 西北方 - 紫红色
+.wind-direction-northwest::before {
+    border-bottom: 10rpx solid #C74AB9; // 西北方紫红色
+    filter: drop-shadow(0 0 4rpx rgba(199, 74, 185, 0.8));
 }
 
 // -------------------------------- 风向箭头发光动画
 @keyframes windArrowGlow {
     0% {
-        box-shadow: 0 0 5rpx rgba(255, 165, 0, 0.7);
+        box-shadow: 0 0 5rpx rgba(255, 255, 255, 0.5); // 使用通用白色光晕，由内联样式覆盖
     }
     100% {
-        box-shadow: 0 0 10rpx rgba(255, 215, 0, 0.9);
+        box-shadow: 0 0 10rpx rgba(255, 255, 255, 0.7); // 使用通用白色光晕，由内联样式覆盖
     }
 }
 

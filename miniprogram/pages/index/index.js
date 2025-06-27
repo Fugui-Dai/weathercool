@@ -5,12 +5,12 @@ import WxRequest from 'mina-request'
 
 // 对 WxRequest 进行实例化
 const instance = new WxRequest({
-    baseURL: 'https://devapi.qweather.com1', // 使用时请换成真实接口
+    baseURL: 'https://devapi.qweather.com', // 使用时请换成真实接口
     timeout: 10000, // 超时时长
     isLoading: false // 是否使用默认的 loading 效果
 })
 const instanceGeoapi = new WxRequest({
-    baseURL: 'https://geoapi.qweather.com1', // 使用时请换成真实接口
+    baseURL: 'https://geoapi.qweather.com', // 使用时请换成真实接口
     timeout: 10000, // 超时时长
     isLoading: false // 是否使用默认的 loading 效果
 })
@@ -140,6 +140,12 @@ Page({
         diagonalRayTimer: null, // 新增斜光角度更新定时器
         dataLoaded: false, // 新增：标记是否已加载过数据
         windDirectionAngle: 0, // 风向角度
+        windDirectionType: 'north', // 风向类型
+        windDirectionColor: {
+            start: '#FF6347',
+            end: '#FF0000',
+            shadow: 'rgba(255, 99, 71, 0.8)'
+        }, // 风向颜色
         aqiAngle: 0, // 空气质量指示器角度
         aqiLevelClass: 'good', // 空气质量等级类名
         uvAngle: 0, // 紫外线指示器角度
@@ -339,6 +345,9 @@ Page({
                 this.generateRaindrops();
             }
             
+            // 更新风向角度和颜色
+            const windDirection = this.calculateWindDirectionAngle(weatherNow.data.now.windDir);
+            
             // 更新数据
             const weatherData = {
                 cityData: citySearch.data.location[0],
@@ -353,7 +362,9 @@ Page({
                 lastUpdateTime: lastUpdateTime,
                 isOffline: false,  // 明确设置为非离线模式
                 isRaining: shouldRain,  // 设置是否下雨，保留之前的雨天状态
-                windDirectionAngle: this.calculateWindDirectionAngle(weatherNow.data.now.windDir), // 计算风向角度
+                windDirectionAngle: windDirection.angle, // 更新风向角度
+                windDirectionType: windDirection.directionType, // 更新风向类型
+                windDirectionColor: windDirection.directionColor, // 更新风向颜色
                 aqiAngle: this.calculateAQIAngle(airQuality.data.now.category), // 计算空气质量指示器角度
                 // 根据空气质量类别设置 aqiLevelClass
                 aqiLevelClass: (() => {
@@ -518,9 +529,14 @@ Page({
                 }
                 
                 // 计算风向角度
-                let windDirectionAngle = 0;
+                let windDirection = { angle: 0, directionType: 'north', directionColor: {
+                    start: '#FF6347',
+                    end: '#FF0000',
+                    shadow: 'rgba(255, 99, 71, 0.8)'
+                }};
+                
                 if (cachedData.shishitianqi && cachedData.shishitianqi.windDir) {
-                    windDirectionAngle = this.calculateWindDirectionAngle(cachedData.shishitianqi.windDir);
+                    windDirection = this.calculateWindDirectionAngle(cachedData.shishitianqi.windDir);
                 }
                 
                 // 计算空气质量指示器角度
@@ -594,7 +610,9 @@ Page({
                     ...cachedData,
                     isOffline: true,
                     lastUpdateTime: formattedCacheTime,
-                    windDirectionAngle: windDirectionAngle,
+                    windDirectionAngle: windDirection.angle,
+                    windDirectionType: windDirection.directionType,
+                    windDirectionColor: windDirection.directionColor,
                     aqiAngle: aqiAngle,
                     aqiLevelClass: aqiLevelClass, // 设置空气质量等级类名
                     currentDate: cachedData.currentDate || currentDate, // 使用缓存的日期或当前日期
@@ -2753,7 +2771,9 @@ Page({
                 lifeIndices: lifeIndex.data.daily,
                 lastUpdateTime: lastUpdateTime,
                 isOffline: false,  // 明确设置为非离线模式
-                windDirectionAngle: this.calculateWindDirectionAngle(weatherNow.data.now.windDir), // 计算风向角度
+                windDirectionAngle: this.calculateWindDirectionAngle(weatherNow.data.now.windDir).angle, // 更新风向角度
+                windDirectionType: this.calculateWindDirectionAngle(weatherNow.data.now.windDir).directionType, // 更新风向类型
+                windDirectionColor: this.calculateWindDirectionAngle(weatherNow.data.now.windDir).directionColor, // 更新风向颜色
                 aqiAngle: this.calculateAQIAngle(airQuality.data.now.category), // 计算空气质量指示器角度
                 // 根据空气质量类别设置 aqiLevelClass
                 aqiLevelClass: (() => {
@@ -2961,25 +2981,104 @@ Page({
     calculateWindDirectionAngle(windDir) {
         // 默认角度，北风为0度
         let angle = 0;
+        let directionType = 'north'; // 默认方向类型为北
         
         // 根据风向字符串判断角度
-        if (!windDir) return angle;
+        if (!windDir) return { angle, directionType };
         
         // 先判断组合风向，避免"东北风"被误判为"北风"
-        if (windDir.includes('东北风')) angle = 45; // 东北风箭头指向东北方
-        else if (windDir.includes('东南风')) angle = 135; // 东南风箭头指向东南方
-        else if (windDir.includes('西南风')) angle = 225; // 西南风箭头指向西南方
-        else if (windDir.includes('西北风')) angle = 315; // 西北风箭头指向西北方
+        if (windDir.includes('东北风')) {
+            angle = 45; // 东北风箭头指向东北方
+            directionType = 'northeast';
+        }
+        else if (windDir.includes('东南风')) {
+            angle = 135; // 东南风箭头指向东南方
+            directionType = 'southeast';
+        }
+        else if (windDir.includes('西南风')) {
+            angle = 225; // 西南风箭头指向西南方
+            directionType = 'southwest';
+        }
+        else if (windDir.includes('西北风')) {
+            angle = 315; // 西北风箭头指向西北方
+            directionType = 'northwest';
+        }
         // 再判断主风向
-        else if (windDir.includes('北风')) angle = 0; // 北风箭头指向北方
-        else if (windDir.includes('东风')) angle = 90; // 东风箭头指向东方
-        else if (windDir.includes('南风')) angle = 180; // 南风箭头指向南方
-        else if (windDir.includes('西风')) angle = 270; // 西风箭头指向西方
+        else if (windDir.includes('北风')) {
+            angle = 0; // 北风箭头指向北方
+            directionType = 'north';
+        }
+        else if (windDir.includes('东风')) {
+            angle = 90; // 东风箭头指向东方
+            directionType = 'east';
+        }
+        else if (windDir.includes('南风')) {
+            angle = 180; // 南风箭头指向南方
+            directionType = 'south';
+        }
+        else if (windDir.includes('西风')) {
+            angle = 270; // 西风箭头指向西方
+            directionType = 'west';
+        }
         
         // 打印检查风向和计算的角度
-        console.log("风向:", windDir, "计算角度:", angle);
+        console.log("风向:", windDir, "计算角度:", angle, "方向类型:", directionType);
         
-        return angle;
+        // 获取对应方向的颜色
+        const directionColor = this.getWindDirectionColor(directionType);
+        
+        // 返回包含角度和颜色的对象
+        return { angle, directionType, directionColor };
+    },
+    
+    // 根据方向类型获取对应的颜色
+    getWindDirectionColor(directionType) {
+        // 定义各方向的颜色渐变
+        const directionColors = {
+            north: {
+                start: '#FF6347', // 北方红色渐变起始色
+                end: '#FF0000',   // 北方红色渐变结束色
+                shadow: 'rgba(255, 99, 71, 0.8)' // 北方阴影色
+            },
+            east: {
+                start: '#FFD700', // 东方金色渐变起始色
+                end: '#FFA500',   // 东方金色渐变结束色
+                shadow: 'rgba(255, 215, 0, 0.8)' // 东方阴影色
+            },
+            south: {
+                start: '#32CD32', // 南方绿色渐变起始色
+                end: '#008000',   // 南方绿色渐变结束色
+                shadow: 'rgba(50, 205, 50, 0.8)' // 南方阴影色
+            },
+            west: {
+                start: '#C74AB9', // 西方紫色渐变起始色
+                end: '#8A2BE2',   // 西方紫色渐变结束色
+                shadow: 'rgba(199, 74, 185, 0.8)' // 西方阴影色
+            },
+            northeast: {
+                start: '#FF6347', // 东北方向红橙渐变起始色
+                end: '#FFA500',   // 东北方向红橙渐变结束色
+                shadow: 'rgba(255, 99, 71, 0.8)' // 东北方阴影色
+            },
+            southeast: {
+                start: '#FFA500', // 东南方向橙绿渐变起始色
+                end: '#32CD32',   // 东南方向橙绿渐变结束色
+                shadow: 'rgba(255, 165, 0, 0.8)' // 东南方阴影色
+            },
+            southwest: {
+                start: '#32CD32', // 西南方向绿紫渐变起始色
+                end: '#C74AB9',   // 西南方向绿紫渐变结束色
+                shadow: 'rgba(50, 205, 50, 0.8)' // 西南方阴影色
+            },
+            northwest: {
+                start: '#C74AB9', // 西北方向紫红渐变起始色
+                end: '#FF6347',   // 西北方向紫红渐变结束色
+                shadow: 'rgba(199, 74, 185, 0.8)' // 西北方阴影色
+            }
+        };
+        
+        // 返回对应方向的颜色，如果没有找到则返回默认颜色（北方）
+        return directionColors[directionType] || directionColors.north;
     },
 
     // 计算空气质量指示器角度
