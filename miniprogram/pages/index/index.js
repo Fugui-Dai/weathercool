@@ -718,11 +718,12 @@ Page({
                         const maxTemp = Math.max(...data1);  // 计算最大温度
                         const minTemp = Math.min(...data2);  // 计算最小温度
 
-                        // 调整温度范围，使高温和低温曲线更靠近
-                        const tempRangeExpansion = 1; // 温度范围调整系数（值越大，两条线间距越大）
+                        // 调整温度范围，使高温和低温曲线保持合理间距
+                        // 增大温度范围调整系数，使两条线保持更大距离
+                        const tempRangeExpansion = 1; // 温度范围调整系数，0.5表示保持50%的温度差
                         const tempDiff = maxTemp - minTemp; // 原始温度差
                         const adjustedMaxTemp = maxTemp + tempDiff * (1 - tempRangeExpansion) / 2; // 向上扩展
-                        const adjustedMinTemp = minTemp - tempDiff * (1 - tempRangeExpansion) / 2;
+                        const adjustedMinTemp = minTemp - tempDiff * (1 - tempRangeExpansion) / 2; // 向下扩展
 
                         // 使用wx.createSelectorQuery()获取canvas的宽度和容器宽度
                         wx.createSelectorQuery()
@@ -790,8 +791,8 @@ Page({
                                         }
 
                                         // 动画绘制参数
-                                        const animationDuration = 300; // 动画持续时间，毫秒
-                                        const totalFrames = 20; // 总帧数
+                                        const animationDuration = 375; // 保持375毫秒的动画时长
+                                        const totalFrames = 20; // 降低帧数，减少渲染压力
                                         const frameInterval = animationDuration / totalFrames; // 每帧间隔
                                         let currentFrame = 0;
                                         let animationTimer = null;
@@ -831,6 +832,17 @@ Page({
                                                 // 请求下一帧
                                                 animationTimer = setTimeout(animate, frameInterval);
                                             } else {
+                                                // 最后一帧确保完全绘制
+                                                // 清空画布
+                                                ctx.clearRect(0, 0, chartWidth, chartHeight);
+
+                                                // 绘制完整曲线
+                                                drawCurveWithProgress(points1, 1);
+                                                drawCurveWithProgress(points2, 1);
+
+                                                // 绘制点和文本
+                                                drawPointsWithProgress(points1, points2, 1);
+                                                
                                                 // 动画完成，标记图表已绘制
                                                 this.setData({ chartDrawn: true });
                                                 this.isDrawingChart = false;
