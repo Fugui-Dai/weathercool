@@ -387,15 +387,9 @@ scroll-view {
   margin: 10px 0;
   padding: 0;
   z-index: 50;
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
-  backface-visibility: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  contain: layout paint;
-  touch-action: auto;
-  pointer-events: auto;
 }
 
 // --------------------------------折线图画布
@@ -404,10 +398,7 @@ scroll-view {
   height: 120px;
   display: block;
   z-index: 50;
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
-  backface-visibility: hidden;
-  pointer-events: none;
+  position: absolute;
 }
 
 // --------------------------------7天预报项

@@ -12,8 +12,8 @@
             bindrefresherrefresh="onRefresh"
             style="height: 100vh;">
             <!-- 标题 -->
-            <view class="title" bind:tap="clickBack">
-                <van-icon name="arrow-left" size="40rpx" />
+            <view class="title" bind:tap="clickBack" style="width: fit-content;">
+                <van-icon name="arrow-left" size="35rpx" />
                 <text style="color: white;margin-inline-start: 5rpx;">返回</text>
             </view>
             <!-- 搜索框 -->

@@ -240,7 +240,7 @@
             
             <!-- 折线图容器 - 使用固定高度和绝对定位 -->
             <view class="chart-container">
-                <canvas canvas-id="weatherCanvas" class="weatherCanvas" />
+                <canvas type="2d" id="weatherCanvas" class="weatherCanvas"></canvas>
             </view>
             
             <!-- 下部分天气信息 -->
