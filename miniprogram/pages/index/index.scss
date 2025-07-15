@@ -754,23 +754,28 @@ scroll-view {
     opacity: 0.7;
     z-index: -1;
     animation: rain linear infinite;
-    filter: drop-shadow(0 0 3rpx rgba(255, 255, 255, 0.5));
-    box-shadow: 0 0 4rpx rgba(200, 220, 255, 0.6);
+    /* 减少阴影效果，降低渲染负担 */
+    filter: none;
+    box-shadow: none;
     top: -100rpx;
+    /* 优化性能的属性 */
     will-change: transform;
     transform: translateZ(0);
+    /* 添加硬件加速 */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 /* 每三个雨滴使用不同的颜色 - 大雨 */
 .rain-container .raindrop:nth-child(3n) {
     background: linear-gradient(to bottom, rgba(200, 220, 255, 0), rgba(200, 220, 255, 0.8));
-    box-shadow: 0 0 4rpx rgba(200, 220, 255, 0.7);
+    box-shadow: none; /* 移除阴影 */
     width: 3.5rpx;
 }
 
 .rain-container .raindrop:nth-child(3n+1) {
     background: linear-gradient(to bottom, rgba(220, 255, 255, 0), rgba(220, 255, 255, 0.8));
-    box-shadow: 0 0 4rpx rgba(220, 255, 255, 0.7);
+    box-shadow: none; /* 移除阴影 */
     width: 3.5rpx;
 }
 
@@ -794,18 +799,23 @@ scroll-view {
     opacity: 0.65;
     z-index: -1;
     animation: lightRain linear infinite;
-    filter: drop-shadow(0 0 2rpx rgba(255, 255, 255, 0.45));
-    box-shadow: 0 0 3rpx rgba(200, 220, 255, 0.55);
+    /* 减少阴影效果，降低渲染负担 */
+    filter: none;
+    box-shadow: none;
     animation-duration: 1.8s;
     top: -100rpx;
+    /* 优化性能的属性 */
     will-change: transform;
     transform: translateZ(0);
+    /* 添加硬件加速 */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 /* 小雨滴使用不同的颜色 - 第一种变体 (小雨) */
 .light-rain-container .raindrop:nth-child(3n) {
     background: linear-gradient(to bottom, rgba(200, 220, 255, 0), rgba(200, 220, 255, 0.7));
-    box-shadow: 0 0 3rpx rgba(200, 220, 255, 0.6);
+    box-shadow: none; /* 移除阴影 */
     width: 1.2rpx;
     height: 35rpx;
     animation-duration: 2s;
@@ -814,7 +824,7 @@ scroll-view {
 /* 小雨滴使用不同的颜色 - 第二种变体 (小雨) */
 .light-rain-container .raindrop:nth-child(3n+1) {
     background: linear-gradient(to bottom, rgba(220, 255, 255, 0), rgba(220, 255, 255, 0.7));
-    box-shadow: 0 0 3rpx rgba(220, 255, 255, 0.6);
+    box-shadow: none; /* 移除阴影 */
     width: 1rpx;
     height: 30rpx;
     animation-duration: 2.2s;
@@ -823,7 +833,7 @@ scroll-view {
 /* 中雨滴使用不同的颜色 - 第三种变体 (中雨) */
 .light-rain-container .raindrop:nth-child(5n+2) {
     background: linear-gradient(to bottom, rgba(210, 235, 255, 0), rgba(210, 235, 255, 0.75));
-    box-shadow: 0 0 3.5rpx rgba(210, 235, 255, 0.65);
+    box-shadow: none; /* 移除阴影 */
     width: 2rpx;
     height: 50rpx;
     opacity: 0.7;
@@ -1645,6 +1655,11 @@ scroll-view {
     animation: flash 12s ease-in-out infinite;
     z-index: 1;
     overflow: visible;
+    /* 添加硬件加速 */
+    will-change: opacity;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .lightning-branch {
@@ -1652,13 +1667,16 @@ scroll-view {
     width: 60%;
     height: 6rpx;
     background: linear-gradient(to right, rgba(150, 220, 255, 0.95), rgba(180, 160, 255, 0.95));
-    box-shadow: 
-        0 0 20rpx 8rpx rgba(150, 220, 255, 0.9), 
-        0 0 40rpx 12rpx rgba(180, 160, 255, 0.8),
-        0 0 60rpx 16rpx rgba(120, 140, 255, 0.6);
+    /* 减少阴影数量和复杂度 */
+    box-shadow: 0 0 20rpx 8rpx rgba(150, 220, 255, 0.9);
     transform-origin: left center;
     border-radius: 8rpx;
     position: relative;
+    /* 添加硬件加速 */
+    will-change: opacity;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 /* 为每个闪电分支添加子分支，模拟树根状纹路 */
@@ -1669,9 +1687,8 @@ scroll-view {
     width: 40%;
     height: 4rpx;
     background: linear-gradient(to right, rgba(150, 220, 255, 0.9), rgba(180, 160, 255, 0.9));
-    box-shadow: 
-        0 0 15rpx 5rpx rgba(150, 220, 255, 0.8), 
-        0 0 30rpx 8rpx rgba(180, 160, 255, 0.7);
+    /* 减少阴影数量和复杂度 */
+    box-shadow: 0 0 15rpx 5rpx rgba(150, 220, 255, 0.8);
     transform-origin: left center;
     border-radius: 8rpx;
 }
@@ -1723,24 +1740,6 @@ scroll-view {
     background: linear-gradient(to right, rgba(180, 210, 255, 0.95), rgba(190, 170, 255, 0.95));
 }
 
-.lightning-branch:nth-child(5) {
-    top: 45%;
-    left: 0;
-    transform: rotate(-40deg);
-    width: 85%;
-    animation: branchGlow 12s ease-in-out infinite 0.25s;
-    background: linear-gradient(to right, rgba(160, 220, 255, 0.95), rgba(210, 150, 255, 0.95));
-}
-
-.lightning-branch:nth-child(6) {
-    top: 65%;
-    left: 0;
-    transform: rotate(10deg);
-    width: 100%;
-    animation: branchGlow 12s ease-in-out infinite 0.3s;
-    background: linear-gradient(to right, rgba(140, 230, 255, 0.95), rgba(230, 140, 255, 0.95));
-}
-
 @keyframes flash {
     0%, 90%, 92%, 94%, 96%, 98%, 100% {
         background-color: rgba(255, 255, 255, 0);
@@ -1748,10 +1747,8 @@ scroll-view {
     }
     91%, 93%, 95%, 97%, 99% {
         background-color: rgba(180, 200, 255, 0.4);
-        box-shadow: 
-            0 0 80rpx 15rpx rgba(150, 220, 255, 0.8), 
-            0 0 160rpx 30rpx rgba(180, 160, 255, 0.7),
-            0 0 240rpx 45rpx rgba(120, 140, 255, 0.6);
+        /* 减少阴影数量和复杂度 */
+        box-shadow: 0 0 80rpx 15rpx rgba(150, 220, 255, 0.8);
     }
 }
 

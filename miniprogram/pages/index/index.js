@@ -1408,12 +1408,12 @@ Page({
                 console.error("获取选中城市天气数据失败:", error);
             });
             
+            // 重置图表状态，确保重新绘制带有虚线的折线图
+          this.resetChartState();
+
             // 已经处理了选中城市，不需要执行后续的天气效果代码
             return;
         }
-        
-        // 重置图表状态，确保重新绘制带有虚线的折线图
-        this.resetChartState();
         
         // 确保天气效果显示
         if (this.data.forceRainEffect) {
@@ -1675,7 +1675,7 @@ Page({
         this.stopRaindropHeartbeat();
         
         // 根据强度调整最大雨滴数
-        let maxCount = intensity === 'heavy' ? 30 : 25;
+        let maxCount = intensity === 'heavy' ? 20 : 15; // 减少雨滴数量，从30/25降低到20/15
         
         // 创建初始雨滴池
         const raindrops = [];
@@ -1717,8 +1717,8 @@ Page({
                     break;
             }
             
-            // 大雨速度更快
-            duration = (0.6 + (index % 3) * 0.3) + 's';
+            // 大雨速度更快，但增加持续时间以减少更新频率
+            duration = (0.8 + (index % 3) * 0.4) + 's'; // 增加持续时间
             opacity = 0.7;
         } else {
             // 小雨雨滴
@@ -1739,8 +1739,8 @@ Page({
                     break;
             }
             
-            // 小雨速度更慢
-            duration = (1.0 + (index % 3) * 0.3) + 's';
+            // 小雨速度更慢，但同样增加持续时间
+            duration = (1.2 + (index % 3) * 0.5) + 's'; // 增加持续时间
             opacity = 0.65;
         }
         
@@ -1785,11 +1785,13 @@ Page({
             // 获取当前雨滴数组的副本
             const raindrops = [...this.data.raindrops];
             let updated = false;
+            let updateCount = 0; // 跟踪单次心跳中更新的雨滴数量
+            const maxUpdatesPerBeat = 5; // 每次心跳最多更新5个雨滴
             
             // 更新每个雨滴的位置
-            for (let i = 0; i < raindrops.length; i++) {
+            for (let i = 0; i < raindrops.length && updateCount < maxUpdatesPerBeat; i++) {
                 // 随机决定是否重置这个雨滴的位置
-                if (Math.random() < 0.2) { // 20%的几率重置位置
+                if (Math.random() < 0.2) { // 降低重置概率从30%到20%
                     const left = Math.random() * 100;
                     const top = Math.random() * -50; // 起始位置在屏幕上方
                     
@@ -1800,6 +1802,7 @@ Page({
                     };
                     
                     updated = true;
+                    updateCount++; // 增加更新计数
                 }
             }
             
@@ -1807,7 +1810,7 @@ Page({
             if (updated) {
                 this.setData({ raindrops });
             }
-        }, 300); // 每300毫秒执行一次心跳
+        }, 600); // 增加心跳间隔从450ms到600ms，减少更新频率
     },
     
     // 新增方法：停止雨滴心跳机制
@@ -2257,15 +2260,15 @@ Page({
         const left = Math.random() * 60 + 20; // 20-80% 范围内，使闪电更居中
         
         // 随机闪电形状参数
-        const width = (Math.random() * 10 + 6) + 'rpx'; // 6-16rpx 宽度
-        const height = (Math.random() * 30 + 90) + 'vh'; // 90-120vh 高度，确保闪电足够长
-        const branches = 6; // 固定使用6个分支，最大化分支数量
+        const width = (Math.random() * 8 + 6) + 'rpx'; // 6-14rpx 宽度，减小宽度范围
+        const height = (Math.random() * 20 + 90) + 'vh'; // 90-110vh 高度，减小高度变化范围
+        const branches = 4; // 减少分支数量从6个到4个
         
         // 闪电时间间隔
-        const interval = 12; // 固定12秒间隔，与CSS动画时间匹配
+        const interval = 15; // 增加间隔从12秒到15秒，减少闪电频率
         
         // 闪电亮度
-        const brightness = 1.0; // 最大亮度
+        const brightness = 0.9; // 略微降低亮度，减少视觉冲击
         
         lightnings.push({
             left: left + 'vw',
@@ -2584,16 +2587,16 @@ Page({
             // 每隔一段时间刷新闪电效果，使闪电看起来更加动态
             setTimeout(() => {
                 // 保持雨滴，但重新生成闪电
-                const lightningCount = 7;
+                const lightningCount = 3; // 减少闪电数量从7个到3个
                 const lightnings = [];
                 
                 for (let i = 0; i < lightningCount; i++) {
                     const left = Math.random() * 80 + 10;
-                    const width = (Math.random() * 8 + 4) + 'rpx';
-                    const height = (Math.random() * 50 + 70) + 'vh';
-                    const branches = Math.floor(Math.random() * 3) + 4;
-                    const interval = Math.random() * 5 + 3;
-                    const brightness = Math.random() * 0.2 + 0.8;
+                    const width = (Math.random() * 6 + 4) + 'rpx'; // 减小宽度
+                    const height = (Math.random() * 40 + 70) + 'vh'; // 减小高度
+                    const branches = Math.floor(Math.random() * 2) + 2; // 减少分支数量，2-3个分支
+                    const interval = Math.random() * 5 + 5; // 增加最小间隔
+                    const brightness = Math.random() * 0.2 + 0.7; // 略微降低亮度
                     
                     lightnings.push({
                         left: left + 'vw',
@@ -2610,8 +2613,8 @@ Page({
                 // 继续确保打雷效果显示
                 setTimeout(() => {
                     this.ensureThunderEffect();
-                }, 10000); // 每10秒刷新一次闪电效果
-            }, 5000); // 5秒后刷新第一次
+                }, 15000); // 增加刷新间隔从10秒到15秒
+            }, 8000); // 增加首次刷新延迟从5秒到8秒
         }
     },
 
