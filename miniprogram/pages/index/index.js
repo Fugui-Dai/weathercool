@@ -2070,29 +2070,22 @@ Page({
         const clouds = [];
         
         for (let i = 0; i < cloudCount; i++) {
-            // 随机位置，适应更大的显示区域
-            const left = (i * 25) + (Math.random() * 15); // 均匀分布云朵，覆盖整个宽度
-            const top = (Math.random() * 30) + (i % 3) * 12; // 扩大垂直分布范围
+            // 随机位置，适应更小的显示区域
+            const left = (i * 15) + (Math.random() * 10); // 均匀分布云朵，覆盖整个宽度，间距从25减小到20
+            const top = (Math.random() * 10) + (i % 3) * 10; // 减小垂直分布范围，从30减小到10，间距从12减小到10
             
-            // 随机大小 - 适合扩大后的区域
-            const scale = (Math.random() * 0.5 + 0.9); // 稍微增大云朵
-            
-            // 随机速度 (云朵移动缓慢且更均匀)
-            const speedBase = 160 + (i * 15); // 基础速度随索引递增
-            const duration = (Math.random() * 30 + speedBase) + 's'; // 保持速度变化较小
+            // 随机大小 - 适合更小的区域
+            const scale = (Math.random() * 0.3 + 0.8); // 稍微缩小云朵，从0.5+0.9改为0.3+0.8
             
             // 随机透明度 - 更柔和
-            const opacity = (Math.random() * 0.15 + 0.7); // 增加透明度
-            
-            // 随机延迟 - 确保不会同时开始移动
-            const delay = (i * 15) + (Math.random() * 20) + 's';
+            const opacity = (Math.random() * 0.15 + 0.7); // 保持不变
             
             clouds.push({
                 left: left + 'vw', // 随机水平位置
                 top: top + 'vh', // 随机垂直位置
-                delay: delay, // 错开的延迟时间
+                delay: '0s', // 不需要延迟
                 scale: scale, // 随机大小
-                duration: duration, // 随机移动速度
+                duration: '0s', // 不需要动画持续时间
                 opacity: opacity // 随机透明度
             });
         }
@@ -2111,34 +2104,27 @@ Page({
     
     // 生成阴天效果
     generateOvercastEffect() {
-        const cloudCount = 4; // 增加云朵数量，更好地填充扩大的区域
+        const cloudCount = 6; // 增加云朵数量，更好地填充扩大的区域
         const overcastClouds = [];
         
         for (let i = 0; i < cloudCount; i++) {
-            // 随机位置，适应更大的显示区域
-            const left = (i * 25) + (Math.random() * 15); // 均匀分布云朵，覆盖整个宽度
-            const top = (Math.random() * 30) + (i % 3) * 12; // 扩大垂直分布范围
+            // 随机位置，适应更小的显示区域
+            const left = (i * 20) + (Math.random() * 10); // 均匀分布云朵，覆盖整个宽度，间距从25减小到20
+            const top = (Math.random() * 10) + (i % 3) * 10; // 减小垂直分布范围，从30减小到10，间距从12减小到10
             
-            // 随机大小 - 适合扩大后的区域
-            const scale = (Math.random() * 0.5 + 1.0); // 稍微增大云朵
+            // 随机大小 - 适合更小的区域
+            const scale = (Math.random() * 0.3 + 0.9); // 稍微缩小云朵，从0.5+1.0改为0.3+0.9
             
             // 随机不透明度 (阴天云朵较暗)
-            const opacity = (Math.random() * 0.25 + 0.6); // 增加透明度
-            
-            // 随机速度 (阴天云朵移动更缓慢且更均匀)
-            const speedBase = 190 + (i * 20); // 基础速度随索引递增
-            const duration = (Math.random() * 40 + speedBase) + 's'; // 保持速度变化较小
-            
-            // 随机延迟 - 确保不会同时开始移动
-            const delay = (i * 20) + (Math.random() * 30) + 's';
+            const opacity = (Math.random() * 0.25 + 0.6); // 保持不变
             
             overcastClouds.push({
                 left: left + 'vw', // 随机水平位置
                 top: top + 'vh', // 随机垂直位置
-                delay: delay, // 错开的延迟时间
+                delay: '0s', // 不需要延迟
                 scale: scale, // 随机大小
                 opacity: opacity, // 随机不透明度
-                duration: duration // 随机移动速度
+                duration: '0s' // 不需要动画持续时间
             });
         }
         

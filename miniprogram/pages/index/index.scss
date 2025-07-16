@@ -1139,10 +1139,10 @@ scroll-view {
 // 新增 - header区域云朵容器
 .header-clouds-container {
     position: absolute;
-    width: 110%;
-    height: 450rpx;
-    top: 120rpx;
-    left: -5%;
+    width: 90%; // 从110%减小到90%
+    height: 300rpx; // 从450rpx减小到300rpx
+    top: 80rpx; // 从120rpx调整到80rpx，更靠近顶部
+    left: 5%; // 从-5%调整到5%，居中显示
     overflow: visible;
     z-index: 0;
     animation: fadeIn 1.5s ease-in-out; // 添加淡入动画
@@ -1160,12 +1160,11 @@ scroll-view {
         80rpx -20rpx 0 rgba(255, 255, 255, 0.65),
         120rpx 10rpx 0 rgba(255, 255, 255, 0.55),
         40rpx 15rpx 0 rgba(255, 255, 255, 0.6);
-    animation: floatHeader 160s linear infinite;
     filter: drop-shadow(0 5rpx 10rpx rgba(0, 0, 0, 0.08));
     transition: all 1s ease;
     transform-origin: center center;
     opacity: 0;
-    animation: cloudAppear 1.5s ease-in-out forwards; // 添加云朵出现动画
+    animation: cloudAppear 1.5s ease-in-out forwards; // 只添加出现动画，移除浮动动画
 }
 
 .cloud-header:nth-child(2n) {
@@ -1344,10 +1343,10 @@ scroll-view {
 // 新增 - header区域阴天云朵容器
 .header-overcast-container {
     position: absolute;
-    width: 110%;
-    height: 450rpx;
-    top: 120rpx;
-    left: -5%;
+    width: 90%; // 从110%减小到90%
+    height: 300rpx; // 从450rpx减小到300rpx
+    top: 80rpx; // 从120rpx调整到80rpx，更靠近顶部
+    left: 5%; // 从-5%调整到5%，居中显示
     overflow: visible;
     z-index: 0;
     animation: fadeIn 1.5s ease-in-out; // 添加淡入动画
@@ -1365,12 +1364,11 @@ scroll-view {
         90rpx -25rpx 0 rgba(75, 85, 105, 0.65),
         140rpx 12rpx 0 rgba(65, 75, 95, 0.55),
         45rpx 20rpx 0 rgba(55, 65, 85, 0.6);
-    animation: driftHeader linear infinite;
     filter: brightness(0.92) contrast(1.05);
     transition: all 1s ease;
     transform-origin: center center;
     opacity: 0;
-    animation: cloudAppear 1.5s ease-in-out forwards, driftHeader linear infinite; // 添加云朵出现动画
+    animation: cloudAppear 1.5s ease-in-out forwards; // 只添加出现动画，移除浮动动画
 }
 
 .overcast-cloud-header:nth-child(2n) {
@@ -2727,11 +2725,11 @@ scroll-view {
 @keyframes cloudAppear {
     0% {
         opacity: 0;
-        transform: translateY(20rpx) scale(0.8);
+        transform: translateY(-10rpx);
     }
     100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
     }
 }
 
