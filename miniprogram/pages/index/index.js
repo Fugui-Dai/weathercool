@@ -1404,12 +1404,15 @@ Page({
                 this.setData({
                     selectedCity: null
                 });
+                
+                // 添加：重新触发天气效果的动画
+                this.refreshWeatherEffectAnimation();
             }).catch(error => {
                 console.error("获取选中城市天气数据失败:", error);
             });
             
             // 重置图表状态，确保重新绘制带有虚线的折线图
-          this.resetChartState();
+            this.resetChartState();
 
             // 已经处理了选中城市，不需要执行后续的天气效果代码
             return;
@@ -1436,6 +1439,9 @@ Page({
             this.ensureHazeEffect();
         } else if (this.data.forceThunderEffect) {
             this.ensureThunderEffect();
+        } else if (this.data.weatherEffect) {
+            // 添加：如果已有天气效果，重新触发动画
+            this.refreshWeatherEffectAnimation();
         }
 
         // 只有在数据未加载过的情况下才请求新数据
@@ -1548,6 +1554,9 @@ Page({
                     this.ensureHazeEffect();
                 } else if (this.data.forceThunderEffect) {
                     this.ensureThunderEffect();
+                } else if (this.data.weatherEffect) {
+                    // 添加：如果已有天气效果，重新触发动画
+                    this.refreshWeatherEffectAnimation();
                 }
                 
                 // 设置数据已加载标志
@@ -3667,6 +3676,141 @@ Page({
                 sunProgress: 0.5,
                 moonProgress: 0.5
             });
+        }
+    },
+
+    // 添加新方法：刷新天气效果动画
+    refreshWeatherEffectAnimation() {
+        // 根据当前天气效果类型重新生成动画
+        const currentEffect = this.data.weatherEffect;
+        
+        if (currentEffect === 'cloudy') {
+            // 保存当前云朵数据
+            const currentClouds = this.data.clouds;
+            
+            // 清空天气效果，触发新的动画
+            this.setData({ 
+                clouds: [], // 先清空云朵
+                weatherEffect: 'cloudy' // 保持天气效果类型不变
+            }, () => {
+                // 短暂延迟后重新生成云朵
+                setTimeout(() => {
+                    // 生成新的云朵数据
+                    const cloudCount = 4;
+                    const clouds = [];
+                    
+                    for (let i = 0; i < cloudCount; i++) {
+                        // 随机位置，适应更大的显示区域
+                        const left = (i * 25) + (Math.random() * 15);
+                        const top = (Math.random() * 30) + (i % 3) * 12;
+                        
+                        // 随机大小 - 适合扩大后的区域
+                        const scale = (Math.random() * 0.5 + 0.9);
+                        
+                        // 随机速度 (云朵移动缓慢且更均匀)
+                        const speedBase = 160 + (i * 15);
+                        const duration = (Math.random() * 30 + speedBase) + 's';
+                        
+                        // 随机透明度 - 更柔和
+                        const opacity = (Math.random() * 0.15 + 0.7);
+                        
+                        // 随机延迟 - 确保不会同时开始移动
+                        const delay = (i * 15) + (Math.random() * 20) + 's';
+                        
+                        clouds.push({
+                            left: left + 'vw',
+                            top: top + 'vh',
+                            delay: delay,
+                            scale: scale,
+                            duration: duration,
+                            opacity: opacity
+                        });
+                    }
+                    
+                    // 设置新的云朵数据
+                    this.setData({ clouds });
+                }, 50);
+            });
+        } 
+        else if (currentEffect === 'overcast') {
+            // 保存当前阴天云朵数据
+            const currentOvercastClouds = this.data.overcastClouds;
+            
+            // 清空天气效果，触发新的动画
+            this.setData({ 
+                overcastClouds: [], // 先清空云朵
+                weatherEffect: 'overcast' // 保持天气效果类型不变
+            }, () => {
+                // 短暂延迟后重新生成阴天云朵
+                setTimeout(() => {
+                    // 生成新的阴天云朵数据
+                    const cloudCount = 4;
+                    const overcastClouds = [];
+                    
+                    for (let i = 0; i < cloudCount; i++) {
+                        // 随机位置，适应更大的显示区域
+                        const left = (i * 25) + (Math.random() * 15);
+                        const top = (Math.random() * 30) + (i % 3) * 12;
+                        
+                        // 随机大小 - 适合扩大后的区域
+                        const scale = (Math.random() * 0.5 + 1.0);
+                        
+                        // 随机不透明度 (阴天云朵较暗)
+                        const opacity = (Math.random() * 0.25 + 0.6);
+                        
+                        // 随机速度 (阴天云朵移动更缓慢且更均匀)
+                        const speedBase = 190 + (i * 20);
+                        const duration = (Math.random() * 40 + speedBase) + 's';
+                        
+                        // 随机延迟 - 确保不会同时开始移动
+                        const delay = (i * 20) + (Math.random() * 30) + 's';
+                        
+                        overcastClouds.push({
+                            left: left + 'vw',
+                            top: top + 'vh',
+                            delay: delay,
+                            scale: scale,
+                            opacity: opacity,
+                            duration: duration
+                        });
+                    }
+                    
+                    // 设置新的阴天云朵数据
+                    this.setData({ overcastClouds });
+                }, 50);
+            });
+        }
+        else if (currentEffect === 'sunny') {
+            // 重新生成晴天效果
+            this.generateSunnyEffect();
+        }
+        else if (currentEffect === 'rain') {
+            // 重新生成雨效果
+            this.generateRaindrops();
+        }
+        else if (currentEffect === 'lightRain') {
+            // 重新生成小雨效果
+            this.generateLightRaindrops();
+        }
+        else if (currentEffect === 'snow') {
+            // 重新生成雪效果
+            this.generateSnowflakes();
+        }
+        else if (currentEffect === 'thunder') {
+            // 重新生成打雷效果
+            this.generateThunderEffect();
+        }
+        else if (currentEffect === 'sandstorm') {
+            // 重新生成沙尘暴效果
+            this.generateSandstormEffect();
+        }
+        else if (currentEffect === 'fog') {
+            // 重新生成雾效果
+            this.generateFogEffect();
+        }
+        else if (currentEffect === 'haze') {
+            // 重新生成霾效果
+            this.generateHazeEffect();
         }
     },
 })

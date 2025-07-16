@@ -82,7 +82,7 @@
             </view>
         </view>
 
-        <!-- 多云效果 - 修改后 -->
+        <!-- 多云效果-->
         <view class="cloudy-container" wx:if="{{weatherEffect === 'cloudy'}}">
             <!-- 背景渐变层 -->
             <view class="cloudy-bg-layer"></view>
@@ -99,7 +99,7 @@
             </view>
         </view>
 
-        <!-- 阴天效果 - 修改后 -->
+        <!-- 阴天效果-->
         <view class="overcast-container" wx:if="{{weatherEffect === 'overcast'}}">
             <!-- 背景渐变层 -->
             <view class="overcast-bg-layer"></view>
