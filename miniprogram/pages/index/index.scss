@@ -913,6 +913,27 @@ scroll-view {
     z-index: -1;
     pointer-events: none;
     overflow: visible;
+    opacity: 0;
+    transform: translateY(100rpx) scale(0.6);
+}
+
+// 太阳出现动画类
+.sun-appear {
+    animation: sunAppear 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes sunAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(100rpx) scale(0.6);
+    }
+    40% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 // 新增 - 特殊斜光效果

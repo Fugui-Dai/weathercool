@@ -1439,10 +1439,7 @@ Page({
             this.ensureHazeEffect();
         } else if (this.data.forceThunderEffect) {
             this.ensureThunderEffect();
-        } else if (this.data.weatherEffect) {
-            // 添加：如果已有天气效果，重新触发动画
-            this.refreshWeatherEffectAnimation();
-        }
+        } 
 
         // 只有在数据未加载过的情况下才请求新数据
         if (!this.data.dataLoaded) {
@@ -2024,12 +2021,21 @@ Page({
             diagonalRayAngle = 225 + timeProgress * 180;
         }
         
+        // 先设置基本数据，但不添加动画类
         this.setData({ 
             sunrays,
             sunGlows: glows,
             diagonalRayAngle: diagonalRayAngle, // 新增斜光角度
-            weatherEffect: 'sunny'
+            weatherEffect: 'sunny',
+            sunAnimationClass: '' // 清空动画类
         });
+        
+        // 短暂延迟后添加动画类，确保DOM已经渲染
+        setTimeout(() => {
+            this.setData({
+                sunAnimationClass: 'sun-appear' // 添加太阳出现动画类
+            });
+        }, 100);
         
         // 启动斜光角度更新定时器 - 每分钟更新一次角度
         if (this.diagonalRayTimer) {
@@ -2446,6 +2452,19 @@ Page({
 
     // 新增方法：强制显示晴天效果
     forceSunnyEffect() {
+        console.log("强制显示晴天效果");
+        this.setData({
+            weatherEffect: 'sunny',
+            snowflakes: [],
+            raindrops: [],
+            clouds: [],
+            overcastClouds: [],
+            stars: [],
+            sandParticles: [],
+            fogParticles: [],
+            hazeParticles: [],
+            lightnings: []
+        });
         // 生成晴天效果并设置天气效果类型
         this.generateSunnyEffect();
     },
@@ -2458,6 +2477,15 @@ Page({
             this.forceSunnyEffect();
         } else {
             console.log('已经启用晴天效果');
+            // 如果已经是晴天效果，刷新动画
+            this.setData({
+                sunAnimationClass: ''
+            });
+            setTimeout(() => {
+                this.setData({
+                    sunAnimationClass: 'sun-appear'
+                });
+            }, 100);
         }
     },
 
@@ -3767,8 +3795,16 @@ Page({
             });
         }
         else if (currentEffect === 'sunny') {
-            // 重新生成晴天效果
-            this.generateSunnyEffect();
+            // 先清除动画类
+            this.setData({
+                sunAnimationClass: ''
+            });
+            
+            // 短暂延迟后重新生成晴天效果并添加动画
+            setTimeout(() => {
+                // 重新生成晴天效果
+                this.generateSunnyEffect();
+            }, 50);
         }
         else if (currentEffect === 'rain') {
             // 重新生成雨效果

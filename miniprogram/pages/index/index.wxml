@@ -58,7 +58,7 @@
         </view>
 
         <!-- 晴天效果 -->
-        <view class="sunny-container" wx:if="{{weatherEffect === 'sunny'}}">
+        <view class="sunny-container {{sunAnimationClass}}" wx:if="{{weatherEffect === 'sunny'}}">
             <!-- 太阳中心 -->
             <view class="sun"></view>
             
