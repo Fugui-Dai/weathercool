@@ -429,7 +429,7 @@ Page({
             if (!this.data.chartDrawn) {
                 setTimeout(() => {
                     this.zhexiantu();  // 等待绘制图表
-                }, 300);
+                }, 0);
             }
             
             // 返回成功的Promise
@@ -791,8 +791,8 @@ Page({
                                         }
 
                                         // 动画绘制参数
-                                        const animationDuration = 375; // 保持375毫秒的动画时长
-                                        const totalFrames = 20; // 降低帧数，减少渲染压力
+                                        const animationDuration = 250; // 减少到250毫秒的动画时长
+                                        const totalFrames = 15; // 降低帧数到15帧，减少渲染压力
                                         const frameInterval = animationDuration / totalFrames; // 每帧间隔
                                         let currentFrame = 0;
                                         let animationTimer = null;
@@ -1000,7 +1000,7 @@ Page({
                                     }).exec();
                             }).exec();
                     });
-            }, 500); // 延迟500毫秒再绘制折线图，让页面先完成渲染
+            }, 200); // 延迟200毫秒再绘制折线图，让页面先完成渲染
         });
         
         // 根据温度获取对应颜色
