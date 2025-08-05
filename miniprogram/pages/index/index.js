@@ -429,7 +429,7 @@ Page({
             if (!this.data.chartDrawn) {
                 setTimeout(() => {
                     this.zhexiantu();  // 等待绘制图表
-                }, 0);
+                }, 150);
             }
             
             // 返回成功的Promise
